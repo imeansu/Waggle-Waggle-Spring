@@ -38,3 +38,6 @@ out/
 
 ### oauth 정보 ###
 application-oauth.properties
+
+### application ###
+application.yml
