@@ -9,4 +9,5 @@ import javax.servlet.http.HttpSession;
 public class IndexController {
 
     private final HttpSession httpSession;
+    private int num;
 }
