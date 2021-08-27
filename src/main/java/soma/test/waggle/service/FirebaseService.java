@@ -1,6 +1,7 @@
 package soma.test.waggle.service;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,15 +13,10 @@ public class FirebaseService {
 
     private final FirebaseAuth firebaseAuth;
 
-    public String firebaseAuthentication(FirebaseTokenDto idToken){
+    public FirebaseToken firebaseAuthentication(FirebaseTokenDto idToken) throws FirebaseAuthException {
         // idToken comes from the client app (shown above)
-        try {
-            FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken.getFirebaseToken());
-            String uid = decodedToken.getUid();
-            return uid;
-        } catch (Exception e){
-            return "fail";
-        }
+        FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken.getFirebaseToken());
+        return decodedToken;
     }
 
 }

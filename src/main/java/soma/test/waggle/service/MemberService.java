@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import soma.test.waggle.dto.MemberDto;
 import soma.test.waggle.dto.MemberResponseDto;
+import soma.test.waggle.entity.Member;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
@@ -26,5 +28,11 @@ public class MemberService {
         return memberRepository.findById(SecurityUtil.getCurrentMemberId())
                 .map(MemberResponseDto::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+    }
+
+    // 처음 파이어베이스 로그인 시
+    @Transactional(readOnly = true)
+    public MemberDto initMemberJoin(MemberDto memberDto){
+        return memberRepository.save(memberDto);
     }
 }

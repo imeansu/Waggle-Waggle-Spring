@@ -29,9 +29,9 @@ public class AuthService {
 
     @Transactional
     public MemberResponseDto signup(MemberRequestDto memberRequestDto){
-        if(memberRepository.existsByEmail(memberRequestDto.getEmail())){
-            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
-        }
+//        if(memberRepository.existsByEmail(memberRequestDto.getEmail())){
+//            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
+//        }
 
         Member member = memberRequestDto.toMember(passwordEncoder);
         return MemberResponseDto.of(memberRepository.save(member));
