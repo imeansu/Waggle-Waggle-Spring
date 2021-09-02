@@ -4,12 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.repository.JpaRepository;
+import soma.test.waggle.dto.InitMemberDto;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -21,7 +20,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    private String fireBaseId;
+    private String firebaseId;
 
     private String name;
     @NotNull
@@ -48,7 +47,7 @@ public class Member {
     private OnStatus entranceStatus;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "entrance_id")
     private EntranceRoom entranceRoom;
 
 
@@ -58,10 +57,19 @@ public class Member {
     private Authority authority;
 
     @Builder
-    public Member(String email, String password, Authority authority) {
+    public Member(String email, String name, String password, String firebaseId, Authority authority, LocalDate date) {
         this.email = email;
+        this.name = name;
         this.password = password;
+        this.firebaseId = firebaseId;
         this.authority = authority;
+        this.date = date;
+    }
+
+    public Member(InitMemberDto dto) {
+        this.email = dto.getEmail();
+        this.name = dto.getName();
+        this.firebaseId = dto.getFirebaseId();
     }
 
 }
