@@ -1,9 +1,8 @@
 package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import soma.test.waggle.dto.MemberDto;
+import soma.test.waggle.dto.InitMemberDto;
 import soma.test.waggle.entity.Member;
 
 import javax.persistence.EntityManager;
@@ -21,23 +20,20 @@ public class MemberRepository {
         return member;
     }
 
-    public MemberDto save(MemberDto memberDto){
-        Member member = new Member();
-        member.setEmail(memberDto.getEmail());
-        member.setName(memberDto.getName());
-        member.setFireBaseId(memberDto.getFirebaseId());
-        em.persist(member);
-        return memberDto;
-    }
-
     public Optional<Member> findById(Long id){
         return Optional.ofNullable(em.find(Member.class, id));
     }
 
-    public Optional<Member> findByFirebaseId(String id){
-        return Optional.ofNullable(em.createQuery("select m from Member m where m.firebaseId = :firebaseId", Member.class)
+    public boolean findByFirebaseId(String id){
+        String jpql = "select m from Member m where m.firebaseId = :firebaseId";
+        List<Member> findMember = em.createQuery(jpql, Member.class)
                 .setParameter("firebaseId", id)
-                .getSingleResult());
+                .getResultList();
+        if (findMember.size() == 0){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public List<Member> findAll(){
