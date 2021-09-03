@@ -3,16 +3,13 @@ package soma.test.waggle.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.InitMemberDto;
-import soma.test.waggle.dto.MemberInfoRequestDto;
-import soma.test.waggle.dto.MemberResponseDto;
-import soma.test.waggle.dto.OnlineMemberResponseDto;
+import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,6 +77,52 @@ public class MemberService {
                 .onlineFollowingMembers(followingMembers)
                 .onlineMemberSize(onlineMembers.size())
                 .onlineMembers(onlineMembers)
+                .build();
+    }
+
+    public CreateResponseDto createFollowing(Long followedUserId) {
+        Following following = Following.builder()
+                .followingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
+                .followedMember(memberRepository.find(followedUserId))
+                .dateTime(LocalDateTime.now())
+                .build();
+        if(memberRepository.createFollowing(following)){
+            return new CreateResponseDto("ok");
+        } else {
+            return new CreateResponseDto("blocked");
+        }
+    }
+
+    public CreateResponseDto createBlocking(Long blockedUserId) {
+        Blocking blocking = Blocking.builder()
+                .blockingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
+                .blockedMember(memberRepository.find(blockedUserId))
+                .dateTime(LocalDateTime.now())
+                .build();
+        if(memberRepository.createBlocking(blocking)){
+            return new CreateResponseDto("ok");
+        } else {
+            return new CreateResponseDto("fail");
+        }
+    }
+
+    public MemberListDto getFollowing(Long userId) {
+        List<MemberInfoRequestDto> members = memberRepository.findFollowingWho(userId).stream()
+                .map(MemberInfoRequestDto::of)
+                .collect(Collectors.toList());
+        return MemberListDto.builder()
+                .size(members.size())
+                .members(members)
+                .build();
+    }
+
+    public MemberListDto getFollower(Long userId) {
+        List<MemberInfoRequestDto> members = memberRepository.findWhoIsFollower(userId).stream()
+                .map(MemberInfoRequestDto::of)
+                .collect(Collectors.toList());
+        return MemberListDto.builder()
+                .size(members.size())
+                .members(members)
                 .build();
     }
 }

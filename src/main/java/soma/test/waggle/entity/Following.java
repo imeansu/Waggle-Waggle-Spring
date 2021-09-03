@@ -1,12 +1,13 @@
 package soma.test.waggle.entity;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
+@Builder @Getter
 public class Following {
 
     @Id @GeneratedValue

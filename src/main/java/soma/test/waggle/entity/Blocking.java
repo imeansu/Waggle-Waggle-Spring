@@ -1,9 +1,13 @@
 package soma.test.waggle.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity @Getter
+@Builder
 public class Blocking {
 
     @Id @GeneratedValue

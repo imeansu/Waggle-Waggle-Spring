@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class MemberInfoRequestDto {
 
+    private Long id;
     private String nickName;
     private Country country;
     private Language language;
@@ -24,6 +25,7 @@ public class MemberInfoRequestDto {
 
     public static MemberInfoRequestDto of(Member member){
         return MemberInfoRequestDto.builder()
+                .id(member.getId())
                 .nickName(member.getNickName())
                 .country(member.getCountry())
                 .language(member.getLanguage())
