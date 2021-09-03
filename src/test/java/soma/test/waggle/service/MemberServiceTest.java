@@ -142,6 +142,7 @@ public class MemberServiceTest {
         assertThat(follower.get(0).getId()).isEqualTo(1L);
 
         List<MemberInfoRequestDto> following = memberService.getFollowing(1L).getMembers();
+        
         assertThat(following.get(0).getId()).isEqualTo(2L);
 
 
