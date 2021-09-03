@@ -26,8 +26,7 @@ public class WorldController {
     }
 
     @PostMapping("/world_room/new")
-    public ResponseEntity<WorldCreateRequestDto> worldCreate(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
-
-
+    public ResponseEntity<WorldCreateRequestDto> CreateWorld(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
+        return ResponseEntity.ok(worldRoomService.createWorld(worldCreateRequestDto));
     }
 }

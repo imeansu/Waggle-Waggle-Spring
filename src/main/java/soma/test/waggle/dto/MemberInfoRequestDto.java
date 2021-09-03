@@ -22,4 +22,17 @@ public class MemberInfoRequestDto {
     private OnStatus entranceStatus;
     private EntranceRoom entranceRoom;
 
+    public static MemberInfoRequestDto of(Member member){
+        return MemberInfoRequestDto.builder()
+                .nickName(member.getNickName())
+                .country(member.getCountry())
+                .language(member.getLanguage())
+                .introduction(member.getIntroduction())
+                .avatar(member.getAvatar())
+                .onlineStatus(member.getOnlineStatus())
+                .entranceStatus(member.getEntranceStatus())
+                .entranceRoom(member.getEntranceRoom())
+                .build();
+    }
+
 }

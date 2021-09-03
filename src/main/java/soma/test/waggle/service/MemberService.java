@@ -6,11 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.InitMemberDto;
 import soma.test.waggle.dto.MemberInfoRequestDto;
 import soma.test.waggle.dto.MemberResponseDto;
+import soma.test.waggle.dto.OnlineMemberResponseDto;
 import soma.test.waggle.entity.*;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +63,23 @@ public class MemberService {
             member.setEntranceRoom(memberInfoRequestDto.getEntranceRoom());
         }
         return memberInfoRequestDto;
+    }
+
+    public OnlineMemberResponseDto getOnlineMembers() {
+        List<MemberInfoRequestDto> followingMembers = memberRepository.getOnlineFollowingMembers().stream()
+                .map(MemberInfoRequestDto::of)
+                .collect(Collectors.toList());
+
+        List<MemberInfoRequestDto> onlineMembers = memberRepository.getOnlineMembers().stream()
+                .map(MemberInfoRequestDto::of)
+                .filter(m -> !followingMembers.contains(m))
+                .collect(Collectors.toList());
+
+        return OnlineMemberResponseDto.builder()
+                .onlineFollowingMemberSize(followingMembers.size())
+                .onlineFollowingMembers(followingMembers)
+                .onlineMemberSize(onlineMembers.size())
+                .onlineMembers(onlineMembers)
+                .build();
     }
 }

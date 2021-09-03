@@ -7,6 +7,7 @@ import soma.test.waggle.entity.WorldRoom;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 @AllArgsConstructor
@@ -20,6 +21,7 @@ public class WorldRoomResponseDto {
     private WorldMap map;
     private int people;
     private LocalDateTime dateTime;
+    private List<String> keywords;
     private String photon_server;
 
     public static WorldRoomResponseDto of(WorldRoom worldRoom){
@@ -31,6 +33,7 @@ public class WorldRoomResponseDto {
                 .people(worldRoom.getPeople())
                 .dateTime(worldRoom.getDateTime())
                 .photon_server(worldRoom.getPhoton_server())
+                .keywords(worldRoom.getKeywords())
                 .build();
     }
 

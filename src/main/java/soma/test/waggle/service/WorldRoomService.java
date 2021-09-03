@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import soma.test.waggle.dto.WorldCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
 import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.WorldRoom;
@@ -29,4 +30,8 @@ public class WorldRoomService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public WorldCreateRequestDto createWorld(WorldCreateRequestDto worldCreateRequestDto) {
+        return WorldCreateRequestDto.of(worldRoomRepository.save(worldCreateRequestDto.toWorldRoom()));
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.MemberInfoRequestDto;
 import soma.test.waggle.dto.MemberResponseDto;
+import soma.test.waggle.dto.OnlineMemberResponseDto;
 import soma.test.waggle.service.MemberService;
 
 @RestController
@@ -26,5 +27,10 @@ public class MemberController {
     @PutMapping("/edit_member")
     public ResponseEntity<Object> editMemberInfo(@RequestBody MemberInfoRequestDto memberInfoRequestDto){
         return ResponseEntity.ok(memberService.putMemberInfo(memberInfoRequestDto));
+    }
+
+    @GetMapping("/online")
+    public ResponseEntity<OnlineMemberResponseDto> onlineMemberList(){
+        return ResponseEntity.ok(memberService.getOnlineMembers());
     }
 }

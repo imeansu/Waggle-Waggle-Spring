@@ -1,15 +1,19 @@
 package soma.test.waggle.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity @Getter @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WorldRoom {
 
 
@@ -44,4 +48,30 @@ public class WorldRoom {
     @OneToMany(mappedBy = "worldRoom")
     List<EntranceRoom> entranceRooms = new ArrayList<>();
 
+    private String keywords;
+
+    public List<String> getKeywords() {
+        if (this.keywords != null && keywords.length() > 0) {
+            return Arrays.asList(this.keywords.split(","));
+        }
+        return new ArrayList<>();
+    }
+
+    public void setKeywords(List<String> keywords){
+        if (keywords != null && keywords.size() > 0) {
+            this.keywords = keywords.stream().map(k -> String.valueOf(k)).collect(Collectors.joining(","));
+        }
+        else{
+            this.keywords = new String();
+        }
+    }
+
+    public static String keywordListToString(List<String> list){
+        if (list != null && list.size() > 0) {
+            return list.stream().map(k -> String.valueOf(k)).collect(Collectors.joining(","));
+        }
+        else{
+            return new String();
+        }
+    }
 }
