@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.Following;
 import soma.test.waggle.entity.Member;
+import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.service.AuthService;
 import soma.test.waggle.service.FirebaseService;
 import soma.test.waggle.service.MemberService;
@@ -41,7 +42,7 @@ public class FirebaseTestController {
             result = firebaseService.firebaseAuthentication(firebaseTokenDto.getFirebaseToken());
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("잘못된 토큰입니다.");
+            return ResponseEntity.badRequest().body("result: 잘못된 토큰입니다.");
         }
         System.out.println("result = " + result);
         System.out.println("==============end========");
@@ -75,6 +76,7 @@ public class FirebaseTestController {
         Member member2 = new Member();
         member2.setEmail("dfsf");
         member2.setName("member1");
+        member2.setOnlineStatus(OnStatus.Y);
         em.persist(member2);
 
         Following following = Following.builder()

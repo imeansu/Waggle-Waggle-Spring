@@ -19,13 +19,13 @@ public class WorldController {
     private final WorldService worldService;
     private final WorldRoomService worldRoomService;
 
-    @GetMapping("/world_room/list")
+    @GetMapping("/world-room/list")
     public ResponseEntity<WorldRoomListResponseDto> worldRoomList(){
         List<WorldRoomResponseDto> openWorldRoomList = worldRoomService.openWorldRoomList();
         return ResponseEntity.ok(new WorldRoomListResponseDto(openWorldRoomList.size(), openWorldRoomList));
     }
 
-    @PostMapping("/world_room/new")
+    @PostMapping("/world-room/new")
     public ResponseEntity<WorldCreateRequestDto> CreateWorld(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
         return ResponseEntity.ok(worldRoomService.createWorld(worldCreateRequestDto));
     }

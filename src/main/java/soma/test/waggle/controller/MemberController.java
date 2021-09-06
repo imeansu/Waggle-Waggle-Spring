@@ -25,7 +25,7 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMemberInfo(email));
     }
 
-    @PutMapping("/edit_member")
+    @PutMapping("/edit-member")
     public ResponseEntity<Object> editMemberInfo(@RequestBody MemberInfoRequestDto memberInfoRequestDto){
         return ResponseEntity.ok(memberService.putMemberInfo(memberInfoRequestDto));
     }

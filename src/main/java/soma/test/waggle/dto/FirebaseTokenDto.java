@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class FirebaseTokenDto {
-    @JsonProperty(value = "firebase_token")
+//    @JsonProperty(value = "firebase_token")
     private String firebaseToken;
 }
