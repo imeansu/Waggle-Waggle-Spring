@@ -1,6 +1,7 @@
 package soma.test.waggle.service;
 
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
+
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.CreateResponseDto;
+import soma.test.waggle.dto.CommandResponseDto;
 import soma.test.waggle.dto.MemberInfoRequestDto;
 import soma.test.waggle.dto.OnlineMemberResponseDto;
 import soma.test.waggle.entity.Following;
@@ -37,6 +39,12 @@ public class MemberServiceTest {
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
+    
+//    @AfterEach
+//    void memberCheck(){
+//        List<Member> members = memberRepository.findAll();
+//        System.out.println("members.size() = " + members.size());
+//    }
 
     @Test
     public void 온라인멤버() {
@@ -58,7 +66,7 @@ public class MemberServiceTest {
                 .build();
         em.persist(following);
 
-        securityContext("1");
+        securityContext(Long.toString(member1.getId()));
 
         OnlineMemberResponseDto dto = memberService.getOnlineMembers();
         System.out.println("dto = " + dto.toString());
@@ -75,26 +83,6 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void 팔로우(){
-
-        Member member1 = createMember("member1", "dfsdf");
-        em.persist(member1);
-
-        Member member2 = createMember("member2", "dfsdf");
-        em.persist(member2);
-
-        securityContext("1");
-
-        CreateResponseDto dto = memberService.createFollowing(2L);
-
-        Member findMember = memberRepository.findFollowingWho(1L).get(0);
-
-        assertThat(findMember).isEqualTo(member2);
-
-        assertThat(dto.getStatus()).isEqualTo("ok");
-    }
-
-    @Test(expected = Exception.class)
     public void 차단(){
 
         Member member1 = createMember("member1", "dfsdf");
@@ -103,26 +91,29 @@ public class MemberServiceTest {
         Member member2 = createMember("member2", "dfsdf");
         em.persist(member2);
 
-        securityContext("1");
+        securityContext(Long.toString(member1.getId()));
 
-        memberService.createFollowing(2L);
+        memberService.createFollowing(member2.getId());
 
-        Member findMember = memberRepository.findFollowingWho(1L).get(0);
-
-        assertThat(findMember).isEqualTo(member2);
-
-        memberService.createBlocking(2L);
-
-        findMember = memberRepository.findBlockMember(1L).get(0);
+        Member findMember = memberRepository.findFollowingWho(member1.getId()).get(0);
 
         assertThat(findMember).isEqualTo(member2);
 
-        fail("삭제 안됨");
+        memberService.createBlocking(member2.getId());
+
+        findMember = memberRepository.findBlockMember(member1.getId()).get(0);
+
+        assertThat(findMember).isEqualTo(member2);
+
+        List<Member> findMembers = memberRepository.findFollowingWho(member1.getId());
+        assertThat(findMembers.size()).isEqualTo(0);
+
+//        fail("삭제 안됨");
 
     }
 
     @Test
-    public void 팔로일팔로워(){
+    public void 팔로잉팔로워(){
 
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
@@ -130,21 +121,69 @@ public class MemberServiceTest {
         Member member2 = createMember("member2", "dfsdf");
         em.persist(member2);
 
-        securityContext("1");
+        securityContext(Long.toString(member1.getId()));
 
         memberService.createFollowing(2L);
 
-//        em.flush();
-//        em.clear();
+        em.flush();
+        em.clear();
 
-        List<MemberInfoRequestDto> follower = memberService.getFollower(2L).getMembers();
+        List<MemberInfoRequestDto> follower = memberService.getWhoIsFollower(2L).getMembers();
         System.out.println("follower = " + follower.toString());
         assertThat(follower.get(0).getId()).isEqualTo(1L);
 
-        List<MemberInfoRequestDto> following = memberService.getFollowing(1L).getMembers();
+        List<MemberInfoRequestDto> following = memberService.getFollowingWho(1L).getMembers();
 
         assertThat(following.get(0).getId()).isEqualTo(2L);
 
+
+    }
+
+    @Test
+    public void 팔로우취소(){
+        Member member1 = createMember("member1", "dfsdf");
+        em.persist(member1);
+
+        Member member2 = createMember("member2", "dfsdf");
+        em.persist(member2);
+
+        securityContext(Long.toString(member1.getId()));
+
+        memberService.createFollowing(member2.getId());
+
+        List<MemberInfoRequestDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
+
+        assertThat(following.get(0).getId()).isEqualTo(member2.getId());
+
+        memberService.deleteFollowing(member2.getId());
+
+        following = memberService.getFollowingWho(member1.getId()).getMembers();
+
+        assertThat(following.size()).isEqualTo(0);
+
+    }
+
+    @Test
+    public void 차단취소(){
+        Member member1 = createMember("member1", "dfsdf");
+        em.persist(member1);
+
+        Member member2 = createMember("member2", "dfsdf");
+        em.persist(member2);
+
+        securityContext(Long.toString(member1.getId()));
+
+        memberService.createBlocking(member2.getId());
+
+        List<MemberInfoRequestDto> blocking1 = memberService.getBlockingWho(member1.getId()).getMembers();
+
+        assertThat(blocking1.get(0).getId()).isEqualTo(member2.getId());
+
+        memberService.deleteBlocking(member2.getId());
+
+        List<MemberInfoRequestDto> blocking2 = memberService.getBlockingWho(member1.getId()).getMembers();
+
+        assertThat(blocking2.size()).isEqualTo(0);
 
     }
 

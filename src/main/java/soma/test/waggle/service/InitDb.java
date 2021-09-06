@@ -22,8 +22,8 @@ public class InitDb {
 
     private final InitService initService;
 
-    @PostConstruct
-    public void init() {initService.dbInit1();}
+//    @PostConstruct
+//    public void init() {initService.dbInit1();}
 
     @Transactional
     @Component
