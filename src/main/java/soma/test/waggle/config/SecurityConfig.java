@@ -1,6 +1,7 @@
 package soma.test.waggle.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -9,10 +10,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import soma.test.waggle.jwt.JwtAccessDeniedHandler;
 import soma.test.waggle.jwt.JwtAuthenticationEntryPoint;
 import soma.test.waggle.jwt.JwtSecurityConfig;
 import soma.test.waggle.jwt.TokenProvider;
+
+import java.util.Arrays;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -20,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @Value("${photon.AppId}")
+    private String photonAppId;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -66,8 +75,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
             .and()
-            .apply(new JwtSecurityConfig(tokenProvider));
+            .apply(new JwtSecurityConfig(tokenProvider, photonAppId))
 
+            .and()
+            .cors();
+
+//            .cors().configurationSource(corsConfigurationSource());
+
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8085/" ));
+        configuration.setAllowedMethods(Arrays.asList("GET"));
+//        configuration.setAllowedHeaders(Arrays.asList("사용할 Header 등록"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 

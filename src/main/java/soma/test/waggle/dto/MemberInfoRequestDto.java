@@ -1,17 +1,21 @@
 package soma.test.waggle.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.repository.MemberRepository;
+import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @Builder
+@RequiredArgsConstructor
 public class MemberInfoRequestDto {
+
+    private final MemberRepository memberRepository;
 
     private Long id;
     private String nickName;
@@ -22,6 +26,7 @@ public class MemberInfoRequestDto {
     private OnStatus onlineStatus;
     private OnStatus entranceStatus;
     private EntranceRoom entranceRoom;
+    private Friendship friendship;
 
     public static MemberInfoRequestDto of(Member member){
         return MemberInfoRequestDto.builder()

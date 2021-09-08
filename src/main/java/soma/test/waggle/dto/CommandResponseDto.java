@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CreateResponseDto {
+public class CommandResponseDto {
 //    private String result;
     private String status;
 

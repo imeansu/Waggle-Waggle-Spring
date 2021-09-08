@@ -32,6 +32,10 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
 
+    public MemberInfoRequestDto findMemberById(Long memberId) {
+        return this.setFriendship(memberRepository.find(memberId));
+    }
+
     @Transactional
     public MemberInfoRequestDto putMemberInfo(MemberInfoRequestDto memberInfoRequestDto) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
@@ -80,34 +84,54 @@ public class MemberService {
                 .build();
     }
 
-    public CreateResponseDto createFollowing(Long followedUserId) {
+    @Transactional
+    public CommandResponseDto createFollowing(Long followedMemberId) {
         Following following = Following.builder()
                 .followingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
-                .followedMember(memberRepository.find(followedUserId))
+                .followedMember(memberRepository.find(followedMemberId))
                 .dateTime(LocalDateTime.now())
                 .build();
         if(memberRepository.createFollowing(following)){
-            return new CreateResponseDto("ok");
+            return new CommandResponseDto("ok");
         } else {
-            return new CreateResponseDto("blocked");
+            return new CommandResponseDto("blocked");
         }
     }
 
-    public CreateResponseDto createBlocking(Long blockedUserId) {
+    @Transactional
+    public CommandResponseDto deleteFollowing(Long followedMemberId) {
+        if(memberRepository.deleteFollowing(followedMemberId)){
+            return new CommandResponseDto("ok");
+        } else {
+            return new CommandResponseDto("no following");
+        }
+    }
+
+    @Transactional
+    public CommandResponseDto createBlocking(Long blockedMemberId) {
         Blocking blocking = Blocking.builder()
                 .blockingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
-                .blockedMember(memberRepository.find(blockedUserId))
+                .blockedMember(memberRepository.find(blockedMemberId))
                 .dateTime(LocalDateTime.now())
                 .build();
         if(memberRepository.createBlocking(blocking)){
-            return new CreateResponseDto("ok");
+            return new CommandResponseDto("ok");
         } else {
-            return new CreateResponseDto("fail");
+            return new CommandResponseDto("fail");
         }
     }
 
-    public MemberListDto getFollowing(Long userId) {
-        List<MemberInfoRequestDto> members = memberRepository.findFollowingWho(userId).stream()
+    @Transactional
+    public CommandResponseDto deleteBlocking(Long blockedMemberId) {
+        if(memberRepository.deleteBlocking(blockedMemberId)){
+            return new CommandResponseDto("ok");
+        } else {
+            return new CommandResponseDto("no blocking");
+        }
+    }
+
+    public MemberListDto getBlockingWho(Long memberId){
+        List<MemberInfoRequestDto> members = memberRepository.findBlockingWho(memberId).stream()
                 .map(MemberInfoRequestDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
@@ -116,13 +140,55 @@ public class MemberService {
                 .build();
     }
 
-    public MemberListDto getFollower(Long userId) {
-        List<MemberInfoRequestDto> members = memberRepository.findWhoIsFollower(userId).stream()
+    public MemberListDto getFollowingWho(Long memberId) {
+        List<MemberInfoRequestDto> members = memberRepository.findFollowingWho(memberId).stream()
                 .map(MemberInfoRequestDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
                 .members(members)
                 .build();
+    }
+
+    public MemberListDto getWhoIsFollower(Long memberId) {
+        List<MemberInfoRequestDto> members = memberRepository.findWhoIsFollower(memberId).stream()
+                .map(MemberInfoRequestDto::of)
+                .collect(Collectors.toList());
+        return MemberListDto.builder()
+                .size(members.size())
+                .members(members)
+                .build();
+    }
+
+    public MemberInfoRequestDto setFriendship(Member member){
+        Friendship friendship;
+        Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
+        List<Member> followedMembers = reqMember.getFollowings().stream()
+                .map(f -> f.getFollowedMember())
+                .collect(Collectors.toList());
+        System.out.println("followedMembers = " + reqMember.getFollowings());
+        List<Member> blockedMembers = reqMember.getBlockings().stream()
+                .map(b -> b.getBlockedMember())
+                .collect(Collectors.toList());
+        if(followedMembers.contains(member)){
+            friendship = Friendship.FOLLOW;
+        } else if (blockedMembers.contains(member)) {
+            friendship = Friendship.BLOCK;
+        } else {
+            friendship = Friendship.NONE;
+        }
+        MemberInfoRequestDto dto = MemberInfoRequestDto.of(member);
+        dto.setFriendship(friendship);
+        return dto;
+    }
+
+    @Transactional
+    public CommandResponseDto logout() {
+        if(memberRepository.deleteRefreshToken()){
+            return new CommandResponseDto("ok");
+        }
+        else{
+            return new CommandResponseDto("no refresh token");
+        }
     }
 }
