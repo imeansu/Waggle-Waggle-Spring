@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,19 +15,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.CommandResponseDto;
-import soma.test.waggle.dto.MemberInfoRequestDto;
-import soma.test.waggle.dto.OnlineMemberResponseDto;
+import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.Following;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.OnStatus;
+import soma.test.waggle.entity.RefreshToken;
 import soma.test.waggle.repository.MemberRepository;
+import soma.test.waggle.repository.RefreshTokenRepository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,7 +42,7 @@ public class MemberServiceTest {
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
-    
+    @Autowired AuthService authService;
 //    @AfterEach
 //    void memberCheck(){
 //        List<Member> members = memberRepository.findAll();
@@ -123,18 +126,18 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
-        memberService.createFollowing(2L);
+        memberService.createFollowing(member2.getId());
 
         em.flush();
         em.clear();
 
-        List<MemberInfoRequestDto> follower = memberService.getWhoIsFollower(2L).getMembers();
+        List<MemberInfoRequestDto> follower = memberService.getWhoIsFollower(member2.getId()).getMembers();
         System.out.println("follower = " + follower.toString());
-        assertThat(follower.get(0).getId()).isEqualTo(1L);
+        assertThat(follower.get(0).getId()).isEqualTo(member1.getId());
 
-        List<MemberInfoRequestDto> following = memberService.getFollowingWho(1L).getMembers();
+        List<MemberInfoRequestDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
 
-        assertThat(following.get(0).getId()).isEqualTo(2L);
+        assertThat(following.get(0).getId()).isEqualTo(member2.getId());
 
 
     }
@@ -185,6 +188,73 @@ public class MemberServiceTest {
 
         assertThat(blocking2.size()).isEqualTo(0);
 
+    }
+
+    @Test
+    public void LAZY로딩(){
+        Member member1 = createMember("member1", "dfsdf");
+        em.persist(member1);
+
+        Member member2 = createMember("member2", "dfsdf");
+        em.persist(member2);
+
+        securityContext(Long.toString(member1.getId()));
+
+        memberService.createFollowing(member2.getId());
+        em.flush();
+        em.clear();
+        System.out.println("==========em.clear===========");
+        Member findMember = memberRepository.find(1L);
+        System.out.println("==========findMember===========");
+        Following following = findMember.getFollowings().get(0);
+        System.out.println("following = " + following.getFollowingMember());
+        assertThat(following.getFollowingMember().getId()).isEqualTo(member1.getId());
+
+    }
+
+    @Test
+    public void 관계정보포함Dto(){
+        Member member1 = createMember("member1", "dfsdf");
+        em.persist(member1);
+
+        Member member2 = createMember("member2", "dfsdf");
+        em.persist(member2);
+
+        securityContext(Long.toString(member1.getId()));
+
+        CommandResponseDto d = memberService.createFollowing(member2.getId());
+        System.out.println("d.getStatus() = " + d.getStatus());
+        List<MemberInfoRequestDto> members = memberService.getFollowingWho(member1.getId()).getMembers();
+        System.out.println("members.get(0).getId() = " + members.get(0).getId());
+
+        em.flush();
+        em.clear();
+
+        MemberInfoRequestDto following = memberService.findMemberById(member2.getId());
+
+        assertThat(following.getFriendship()).isEqualTo(Friendship.FOLLOW);
+    }
+
+    @Autowired private RefreshTokenRepository refreshTokenRepository;
+
+    @Test
+    public void deleteRefreshToken(){
+        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+                .email("gcnml0@gmail.com")
+                .name("minsu kim")
+                .firebaseId("dsfs3h28xyrh38ny87sghsunc93xhu")
+                .password("dsfs3h28xyrh38ny87sghsunc93xhu")
+                .date(LocalDate.now())
+                .build();
+        authService.signup(memberRequestDto);
+        TokenDto tokenDto = authService.login(memberRequestDto);
+        Member member = memberRepository.findByEmail(memberRequestDto.getEmail()).get();
+        Optional<RefreshToken> token = refreshTokenRepository.findByKey(Long.toString(member.getId()));
+        assertThat(token.isPresent()).isEqualTo(true);
+        securityContext(Long.toString(member.getId()));
+        memberService.logout();
+        token = refreshTokenRepository.findByKey(Long.toString(member.getId()));
+        assertThat(token.isEmpty()).isEqualTo(true);
     }
 
     private Member createMember(String name, String email) {

@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.CommandResponseDto;
-import soma.test.waggle.entity.Blocking;
-import soma.test.waggle.entity.Following;
-import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
+import soma.test.waggle.entity.*;
 import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
@@ -21,6 +18,7 @@ import java.util.Optional;
 public class MemberRepository {
 
     private final EntityManager em;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public Member save(Member member){
         em.persist(member);
@@ -239,4 +237,13 @@ public class MemberRepository {
                 .getResultList();
     }
 
+    public boolean deleteRefreshToken() {
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKey(Long.toString(SecurityUtil.getCurrentMemberId()));
+        if(refreshToken.isEmpty()){
+            return false;
+        } else{
+            refreshTokenRepository.delete(refreshToken.get());
+            return true;
+        }
+    }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class WorldCreateRequestDto {
 
+    private Long room_id;
     private String name;
     private String topic;
     private WorldMap map;
@@ -26,11 +27,12 @@ public class WorldCreateRequestDto {
 
     public static WorldCreateRequestDto of(WorldRoom worldRoom) {
         return WorldCreateRequestDto.builder()
+                .room_id(worldRoom.getId())
                 .name(worldRoom.getName())
                 .topic(worldRoom.getTopic())
                 .map(worldRoom.getMap())
                 .people(worldRoom.getPeople())
-                .dateTime(worldRoom.getDateTime())
+                .dateTime(LocalDateTime.now())
                 .photon_server(worldRoom.getPhoton_server())
                 .onStatus(worldRoom.getOnStatus())
                 .keywords(worldRoom.getKeywords())

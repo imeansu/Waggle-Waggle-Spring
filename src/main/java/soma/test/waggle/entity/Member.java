@@ -9,6 +9,8 @@ import soma.test.waggle.dto.InitMemberDto;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -50,6 +52,11 @@ public class Member {
     @JoinColumn(name = "entrance_id")
     private EntranceRoom entranceRoom;
 
+    @OneToMany(mappedBy = "followingMember", cascade = CascadeType.ALL)
+    private List<Following> followings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "blockingMember")
+    private List<Blocking> blockings = new ArrayList<>();
 
     private String password;
 

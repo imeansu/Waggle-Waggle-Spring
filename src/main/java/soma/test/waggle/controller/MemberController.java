@@ -66,4 +66,15 @@ public class MemberController {
     public ResponseEntity<CommandResponseDto> unBlock(@PathVariable Long blockedUserId){
         return ResponseEntity.ok(memberService.deleteBlocking(blockedUserId));
     }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<CommandResponseDto> logout(){
+        return ResponseEntity.ok(memberService.logout());
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        System.out.println("================sucess===============");
+        return "hello";
+    }
 }

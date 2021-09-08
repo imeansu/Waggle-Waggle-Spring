@@ -33,7 +33,7 @@ public class MemberService {
     }
 
     public MemberInfoRequestDto findMemberById(Long memberId) {
-        return MemberInfoRequestDto.of(memberRepository.find(memberId));
+        return this.setFriendship(memberRepository.find(memberId));
     }
 
     @Transactional
@@ -160,5 +160,35 @@ public class MemberService {
                 .build();
     }
 
+    public MemberInfoRequestDto setFriendship(Member member){
+        Friendship friendship;
+        Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
+        List<Member> followedMembers = reqMember.getFollowings().stream()
+                .map(f -> f.getFollowedMember())
+                .collect(Collectors.toList());
+        System.out.println("followedMembers = " + reqMember.getFollowings());
+        List<Member> blockedMembers = reqMember.getBlockings().stream()
+                .map(b -> b.getBlockedMember())
+                .collect(Collectors.toList());
+        if(followedMembers.contains(member)){
+            friendship = Friendship.FOLLOW;
+        } else if (blockedMembers.contains(member)) {
+            friendship = Friendship.BLOCK;
+        } else {
+            friendship = Friendship.NONE;
+        }
+        MemberInfoRequestDto dto = MemberInfoRequestDto.of(member);
+        dto.setFriendship(friendship);
+        return dto;
+    }
 
+    @Transactional
+    public CommandResponseDto logout() {
+        if(memberRepository.deleteRefreshToken()){
+            return new CommandResponseDto("ok");
+        }
+        else{
+            return new CommandResponseDto("no refresh token");
+        }
+    }
 }
