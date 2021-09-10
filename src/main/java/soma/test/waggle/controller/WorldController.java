@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.WorldCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomListResponseDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
+import soma.test.waggle.dto.photon.PhotonMemberDto;
+import soma.test.waggle.dto.photon.PhotonResponseDto;
+import soma.test.waggle.dto.photon.PhotonRoomIdDto;
+import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.service.WorldRoomService;
 import soma.test.waggle.service.WorldService;
 
@@ -28,5 +32,25 @@ public class WorldController {
     @PostMapping("/world-room/new")
     public ResponseEntity<WorldCreateRequestDto> CreateWorld(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
         return ResponseEntity.ok(worldRoomService.createWorld(worldCreateRequestDto));
+    }
+
+    @PostMapping("/world-room/path-create")
+    public ResponseEntity<PhotonResponseDto> pathCreate(@RequestBody PhotonRoomIdDto photonRoomIdDto){
+        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatus.Y));
+    }
+
+    @PostMapping("/world-room/path-close")
+    public ResponseEntity<PhotonResponseDto> pathClose(@RequestBody PhotonRoomIdDto photonRoomIdDto){
+        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatus.N));
+    }
+
+    @PostMapping("/world-room/path-join")
+    public ResponseEntity<PhotonResponseDto> pathJoin(@RequestBody PhotonMemberDto photonMemberDto){
+        return ResponseEntity.ok(worldRoomService.pathJoin(photonMemberDto));
+    }
+
+    @PostMapping("/world-room/path-leave")
+    public ResponseEntity<PhotonResponseDto> pathLeave(@RequestBody PhotonMemberDto photonMemberDto){
+        return ResponseEntity.ok(worldRoomService.pathLeave(photonMemberDto));
     }
 }
