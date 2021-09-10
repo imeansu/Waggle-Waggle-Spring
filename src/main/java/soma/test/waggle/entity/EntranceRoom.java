@@ -1,9 +1,16 @@
 package soma.test.waggle.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
+@Builder
+@Getter @Setter
 public class EntranceRoom {
 
     @Id @GeneratedValue
@@ -21,5 +28,9 @@ public class EntranceRoom {
     private Member member;
 
     @NotNull
-    private String isLast;
+    private OnStatus isLast;
+
+    private LocalDateTime joinTime;
+
+    private LocalDateTime leaveTime;
 }
