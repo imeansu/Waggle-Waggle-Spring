@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.WorldRoom;
+import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.EntranceRoomRepository;
+import soma.test.waggle.repository.SentenceRepository;
 import soma.test.waggle.repository.WorldRoomRepository;
 
 import javax.persistence.EntityManager;
@@ -28,6 +31,8 @@ public class WorldRoomServiceTest {
     @Autowired WorldRoomRepository worldRoomRepository;
     @Autowired EntranceRoomRepository entranceRoomRepository;
     @Autowired EntityManager em;
+    @Autowired ConversationRepositoty conversationRepositoty;
+    @Autowired SentenceRepository sentenceRepository;
 
     @Test
     public void pathCreate(){
@@ -74,6 +79,25 @@ public class WorldRoomServiceTest {
         assertThat(member.getEntranceStatus()).isEqualTo(OnStatus.N);
         assertThat(worldRoom.getPeople()).isEqualTo(0);
 
+
+    }
+
+    @Test
+    public void pathEvent(){
+        WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
+        em.persist(worldRoom);
+
+        Member member = createMember("minsu", "dgxc@vkdl.com");
+        em.persist(member);
+
+        worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
+
+        PhotonConversationDto photonConversationDto = new PhotonConversationDto(worldRoom.getId(), "1234", member.getId(), "안녕 나는 민수야");
+
+        worldRoomService.pathEvent(photonConversationDto);
+
+        Long conversationId = conversationRepositoty.findByVivoxId("1234").getId();
+        assertThat(sentenceRepository.findByConversationId(conversationId).getSentence()).isEqualTo("안녕 나는 민수야");
 
     }
 
