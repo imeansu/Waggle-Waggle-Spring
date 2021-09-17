@@ -1,32 +1,29 @@
-package soma.test.waggle.service;
+package soma.test.waggle.redis.repository;
 
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
-import soma.test.waggle.dto.photon.PhotonRoomIdDto;
+import soma.test.waggle.entity.Conversation;
 import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.WorldRoom;
-import soma.test.waggle.redis.repository.RedisSentenceRepository;
 import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.EntranceRoomRepository;
 import soma.test.waggle.repository.SentenceRepository;
 import soma.test.waggle.repository.WorldRoomRepository;
+import soma.test.waggle.service.WorldRoomService;
 
 import javax.persistence.EntityManager;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-//@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class WorldRoomServiceTest {
+class RedisSentenceRepositoryTest {
 
     @Autowired WorldRoomService worldRoomService;
     @Autowired WorldRoomRepository worldRoomRepository;
@@ -35,17 +32,7 @@ public class WorldRoomServiceTest {
     @Autowired ConversationRepositoty conversationRepositoty;
     @Autowired SentenceRepository sentenceRepository;
     @Autowired RedisSentenceRepository redisSentenceRepository;
-
-    @Test
-    public void pathCreate(){
-        WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
-        em.persist(worldRoom);
-
-        worldRoomService.pathCreateOrClose(new PhotonRoomIdDto(worldRoom.getId()), OnStatus.Y);
-
-        assertThat(worldRoomRepository.findById(worldRoom.getId()).get().getOnStatus())
-                .isEqualTo(OnStatus.Y);
-    }
+    @Autowired RedisTemplate redisTemplate;
 
     private WorldRoom createWorldRoom(String name) {
         WorldRoom worldRoom = new WorldRoom();
@@ -61,31 +48,7 @@ public class WorldRoomServiceTest {
     }
 
     @Test
-    public void pathJoinAndLeave(){
-
-        WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
-        em.persist(worldRoom);
-
-        Member member = createMember("minsu", "dgxc@vkdl.com");
-        em.persist(member);
-
-        worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
-
-        assertThat(entranceRoomRepository.findByMemberId(member.getId()).getWorldRoom()).isEqualTo(worldRoom);
-        assertThat(member.getEntranceStatus()).isEqualTo(OnStatus.Y);
-        assertThat(worldRoom.getPeople()).isEqualTo(1);
-
-        worldRoomService.pathLeave(new PhotonMemberDto(worldRoom.getId(), member.getId()));
-
-        assertThat(entranceRoomRepository.findByMemberId(member.getId()).getIsLast()).isEqualTo(OnStatus.N);
-        assertThat(member.getEntranceStatus()).isEqualTo(OnStatus.N);
-        assertThat(worldRoom.getPeople()).isEqualTo(0);
-
-
-    }
-
-    @Test
-    public void pathEvent(){
+    public void 마이그레이션(){
         WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
         em.persist(worldRoom);
 
@@ -98,16 +61,16 @@ public class WorldRoomServiceTest {
 
         worldRoomService.pathEvent(photonConversationDto1);
 
-        Long conversationId1 = conversationRepositoty.findByVivoxId("1234").get(0).getId();
-        assertThat(redisSentenceRepository.getSentenceFromRedis("1234").get(0).getSentence()).isEqualTo("안녕 나는 민수야");
-
         PhotonConversationDto photonConversationDto2 = new PhotonConversationDto(worldRoom.getId(), "1234", member.getId(), "너의 이름은 무엇이니?");
 
         worldRoomService.pathEvent(photonConversationDto2);
 
-        assertThat(redisSentenceRepository.getSentenceFromRedis("1234").get(1).getSentence()).isEqualTo("너의 이름은 무엇이니?");
+        redisSentenceRepository.migrationSentencetoDB("1234");
 
-
+        Conversation conversation = conversationRepositoty.findByVivoxId("1234").get(0);
+        assertThat(sentenceRepository.findByConversation(conversation).get(0).getSentence()).isEqualTo("안녕 나는 민수야");
+        assertThat(sentenceRepository.findByConversation(conversation).get(1).getSentence()).isEqualTo("너의 이름은 무엇이니?");
+        assertThat(redisTemplate.hasKey("1234")).isEqualTo(false);
     }
 
 }

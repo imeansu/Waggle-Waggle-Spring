@@ -2,16 +2,19 @@ package soma.test.waggle.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter
+@NoArgsConstructor
 @Table(indexes = @Index(name = "IDX_VIVOX", unique = true, columnList = "vivox_id"))
-public class Conversation {
+public class Conversation implements Serializable {
 
     @Id @GeneratedValue
     @Column(name = "conversation_id")
