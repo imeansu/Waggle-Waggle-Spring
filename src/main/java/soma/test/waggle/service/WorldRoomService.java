@@ -5,16 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.WorldCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
+import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonResponseDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
-import soma.test.waggle.entity.EntranceRoom;
-import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
-import soma.test.waggle.entity.WorldRoom;
-import soma.test.waggle.repository.EntranceRoomRepository;
-import soma.test.waggle.repository.MemberRepository;
-import soma.test.waggle.repository.WorldRoomRepository;
+import soma.test.waggle.entity.*;
+import soma.test.waggle.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +24,8 @@ public class WorldRoomService {
     private final WorldRoomRepository worldRoomRepository;
     private final EntranceRoomRepository entranceRoomRepository;
     private final MemberRepository memberRepository;
+    private final ConversationRepositoty conversationRepositoty;
+    private final SentenceRepository sentenceRepository;
 
 
     @Transactional(readOnly = true)
@@ -88,5 +86,24 @@ public class WorldRoomService {
         worldRoom.setPeople(worldRoom.getPeople()-1);
 
         return new PhotonResponseDto(0, "OK");
+    }
+
+    @Transactional
+    public PhotonResponseDto pathEvent(PhotonConversationDto photonConversationDto) {
+        Conversation conversation = Conversation.builder()
+                .vivoxId(photonConversationDto.getVivoxId())
+                .worldRoom(worldRoomRepository.findById(photonConversationDto.getRoomId()).get())
+                .dateTime(LocalDateTime.now())
+                .build();
+        conversationRepositoty.save(conversation);
+
+        Sentence sentence = Sentence.builder()
+                .conversation(conversation)
+                .sentence(photonConversationDto.getSentence())
+                .member(memberRepository.find(photonConversationDto.getMemberId()))
+                .dateTime(LocalDateTime.now())
+                .build();
+        sentenceRepository.save(sentence);
+        return new PhotonResponseDto(0,"ok");
     }
 }

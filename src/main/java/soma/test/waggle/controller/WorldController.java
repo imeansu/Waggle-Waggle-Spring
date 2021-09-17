@@ -3,6 +3,7 @@ package soma.test.waggle.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.WorldCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomListResponseDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
@@ -52,5 +53,10 @@ public class WorldController {
     @PostMapping("/world-room/path-leave")
     public ResponseEntity<PhotonResponseDto> pathLeave(@RequestBody PhotonMemberDto photonMemberDto){
         return ResponseEntity.ok(worldRoomService.pathLeave(photonMemberDto));
+    }
+
+    @PostMapping("/world-room/path-event")
+    public ResponseEntity<PhotonResponseDto> pathEvent(@RequestBody PhotonConversationDto photonConversationDto){
+        return ResponseEntity.ok(worldRoomService.pathEvent(photonConversationDto));
     }
 }

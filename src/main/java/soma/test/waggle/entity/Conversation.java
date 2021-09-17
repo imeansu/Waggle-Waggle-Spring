@@ -1,16 +1,24 @@
 package soma.test.waggle.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+import org.apache.tomcat.jni.Local;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity @Getter
+@Table(indexes = @Index(name = "IDX_VIVOX", unique = true, columnList = "vivox_id"))
 public class Conversation {
 
     @Id @GeneratedValue
     @Column(name = "conversation_id")
     private Long id;
+
+    @Column(name = "vivox_id")
+    private String vivoxId;
 
     private LocalDateTime dateTime;
 
@@ -19,5 +27,13 @@ public class Conversation {
     private WorldRoom worldRoom;
 
     @OneToMany(mappedBy = "conversation")
-    List<Sentance> sentances = new ArrayList<>();
+    List<Sentence> sentences = new ArrayList<>();
+
+    @Builder
+    public Conversation(String vivoxId, WorldRoom worldRoom, LocalDateTime dateTime) {
+        this.vivoxId = vivoxId;
+        this.worldRoom = worldRoom;
+        this.dateTime = dateTime;
+    }
+
 }
