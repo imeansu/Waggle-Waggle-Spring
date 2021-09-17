@@ -10,6 +10,7 @@ import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonResponseDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.redis.repository.RedisSentenceRepository;
 import soma.test.waggle.repository.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class WorldRoomService {
     private final MemberRepository memberRepository;
     private final ConversationRepositoty conversationRepositoty;
     private final SentenceRepository sentenceRepository;
+    private final RedisSentenceRepository redisSentenceRepository;
 
 
     @Transactional(readOnly = true)
@@ -90,12 +92,18 @@ public class WorldRoomService {
 
     @Transactional
     public PhotonResponseDto pathEvent(PhotonConversationDto photonConversationDto) {
-        Conversation conversation = Conversation.builder()
-                .vivoxId(photonConversationDto.getVivoxId())
-                .worldRoom(worldRoomRepository.findById(photonConversationDto.getRoomId()).get())
-                .dateTime(LocalDateTime.now())
-                .build();
-        conversationRepositoty.save(conversation);
+        Conversation conversation;
+        List<Conversation> findConversation = conversationRepositoty.findByVivoxId(photonConversationDto.getVivoxId());
+        if (findConversation.size() == 0){
+            conversation = Conversation.builder()
+                    .vivoxId(photonConversationDto.getVivoxId())
+                    .worldRoom(worldRoomRepository.findById(photonConversationDto.getRoomId()).get())
+                    .dateTime(LocalDateTime.now())
+                    .build();
+            conversationRepositoty.save(conversation);
+        } else {
+            conversation = findConversation.get(0);
+        }
 
         Sentence sentence = Sentence.builder()
                 .conversation(conversation)
@@ -103,7 +111,7 @@ public class WorldRoomService {
                 .member(memberRepository.find(photonConversationDto.getMemberId()))
                 .dateTime(LocalDateTime.now())
                 .build();
-        sentenceRepository.save(sentence);
+        redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
         return new PhotonResponseDto(0,"ok");
     }
 }

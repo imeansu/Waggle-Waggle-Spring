@@ -21,16 +21,22 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'junit:junit:4.13.1'
+//	implementation 'junit:junit:4.13.1'
     implementation 'org.projectlombok:lombok:1.18.18'
 	implementation 'org.projectlombok:lombok:1.18.18'
 	runtimeOnly 'com.h2database:h2'
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 //	compile('org.springframework.boot:spring-boot-starter-oauth2-client')
 
 	// security 관련 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// redis 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//	compileOnly group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'

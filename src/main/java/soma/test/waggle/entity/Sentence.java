@@ -2,12 +2,16 @@ package soma.test.waggle.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import soma.test.waggle.redis.repository.RedisSentenceDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity @Getter
-public class Sentence {
+@NoArgsConstructor
+public class Sentence implements Serializable {
 
     @Id @GeneratedValue
     @Column(name = "sentance_id")
@@ -32,4 +36,14 @@ public class Sentence {
         this.sentence = sentence;
         this.dateTime = dateTime;
     }
+
+    public static RedisSentenceDto toRedisDto(Sentence sentence) {
+        return RedisSentenceDto.builder()
+                .conversationId(sentence.getConversation().getVivoxId())
+                .memberId(sentence.getMember().getId())
+                .sentence(sentence.getSentence())
+                .dateTime(sentence.getDateTime())
+                .build();
+    }
+
 }
