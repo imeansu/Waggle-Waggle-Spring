@@ -36,6 +36,9 @@ public class MemberService {
         return this.setFriendship(memberRepository.find(memberId));
     }
 
+    /**
+     * 토큰 주인 ID의 멤버 정보 수정
+     * */
     @Transactional
     public MemberInfoRequestDto putMemberInfo(MemberInfoRequestDto memberInfoRequestDto) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
@@ -66,6 +69,7 @@ public class MemberService {
         return memberInfoRequestDto;
     }
 
+
     public OnlineMemberResponseDto getOnlineMembers() {
         List<MemberInfoRequestDto> followingMembers = memberRepository.getOnlineFollowingMembers().stream()
                 .map(MemberInfoRequestDto::of)
@@ -84,6 +88,9 @@ public class MemberService {
                 .build();
     }
 
+    /**
+    * 팔로잉할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 팔로우 등록
+    * */
     @Transactional
     public CommandResponseDto createFollowing(Long followedMemberId) {
         Following following = Following.builder()

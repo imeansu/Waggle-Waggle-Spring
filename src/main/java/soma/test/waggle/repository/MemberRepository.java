@@ -27,7 +27,7 @@ public class MemberRepository {
 
     public Optional<Member> findById(Long id){
         return Optional.ofNullable(em.find(Member.class, id));
-        
+
     }
 
     public Member find(Long id){
