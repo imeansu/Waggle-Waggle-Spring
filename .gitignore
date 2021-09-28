@@ -41,6 +41,8 @@ application-oauth.properties
 
 ### application ###
 application.yml
-speak-world-firebase-adminsdk-keggh-6022505276.json
 ### 예전꺼 ###
+speak-world-firebase-adminsdk-keggh-6022505276.json
 speak-world-firebase-adminsdk-keggh-5e2cf6bb13.json
+### 최신 ###
+speak-world-firebase-adminsdk-keggh-346661a91e.json

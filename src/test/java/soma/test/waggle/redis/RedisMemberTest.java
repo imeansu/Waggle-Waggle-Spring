@@ -4,15 +4,20 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import soma.test.waggle.redis.repository.RedisMemberDto;
 import soma.test.waggle.redis.repository.RedisMemberRepository;
+import soma.test.waggle.repository.EmitterRepository;
+import soma.test.waggle.service.NotificationService;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -28,6 +33,12 @@ public class RedisMemberTest {
 
     @Autowired RedisMemberRepository redisMemberRepository;
     @Autowired RedisTemplate redisTemplate;
+
+    @Autowired
+    @Qualifier("redisTemplateForSseEmitter")
+    RedisTemplate redisTemplateForSseEmitter;
+    @Autowired NotificationService notificationService;
+    @Autowired EmitterRepository emitterRepository;
 
     @AfterEach
     public void tearDownAfterClass(){
@@ -77,4 +88,18 @@ public class RedisMemberTest {
         assertThat(memberDtos.next().getMemberId()).isEqualTo(redisMemberDto2.getMemberId());
 
     }
+
+    @Test
+    public void sse_레디스_저장_후_복구_가능_테스트(){
+
+        SseEmitter sseEmitter1 = notificationService.subscribe("a","");
+        Class targetType = redisTemplateForSseEmitter.getValueSerializer().getTargetType();
+        System.out.println("targetType = " + targetType);
+        sseEmitter1 = notificationService.subscribe("b", "");
+        SseEmitter findSseEmitter = emitterRepository.findById("a");
+        notificationService.sendToClient(findSseEmitter, "a", "받아줘~~~~~~");
+
+
+    }
+
 }

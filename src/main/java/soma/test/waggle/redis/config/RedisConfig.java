@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Configuration
 public class RedisConfig {
@@ -24,7 +27,15 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {
-        RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<?, ?> redisTemplateForSseEmitter() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setValueSerializer(new GenericToStringSerializer<>(SseEmitter.class));
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }

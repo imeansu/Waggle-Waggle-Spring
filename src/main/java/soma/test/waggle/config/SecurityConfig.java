@@ -71,14 +71,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/auth/**").permitAll()
             .antMatchers("/test/**").permitAll()    // test permitAll
             .antMatchers("/world/**").permitAll()    // test permitAll
+            .antMatchers("/notification/**").permitAll()    // test permitAll
             .anyRequest().authenticated()       // 나머지 API 는 전부 인증 필요
 
             // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
             .and()
-            .apply(new JwtSecurityConfig(tokenProvider, photonAppId))
+            .apply(new JwtSecurityConfig(tokenProvider, photonAppId));
 
-            .and()
-            .cors();
+//            .and()
+//            .cors();
 
 //            .cors().configurationSource(corsConfigurationSource());
 
