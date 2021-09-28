@@ -4,14 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import soma.test.waggle.service.NotificationService;
+import soma.test.waggle.entity.CustomSseEmitter;
+import soma.test.waggle.service.NotificationServiceImp;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/notification")
 public class NotificationController {
 
-    private final NotificationService notificationService;
+    private final NotificationServiceImp notificationServiceImp;
 
     /**
     * 유저가 worldRoom 입장 시,
@@ -21,14 +22,14 @@ public class NotificationController {
     @GetMapping(value = "/subscribe/{memberId}", produces = "text/event-stream")
     public SseEmitter subscribe(@PathVariable String memberId,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId ){
-        return notificationService.subscribe(memberId, lastEventId);
+        return notificationServiceImp.subscribe(memberId, lastEventId);
     }
 
     @GetMapping("/subscribe/test/{memberId}")
     public ResponseEntity<Object> publish(@PathVariable String memberId){
-        SseEmitter findSseEmitter = notificationService.findById(memberId);
+        CustomSseEmitter findSseEmitter = notificationServiceImp.findById(memberId);
         System.out.println("findSseEmitter = " + findSseEmitter);
-        notificationService.sendToClient(findSseEmitter, memberId, "이게 된다고???");
+        notificationServiceImp.sendToClient(findSseEmitter, memberId, "이게 된다고???");
         return ResponseEntity.ok("ok");
     }
 

@@ -1,6 +1,5 @@
 package soma.test.waggle.redis;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +10,16 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import soma.test.waggle.entity.CustomSseEmitter;
 import soma.test.waggle.redis.repository.RedisMemberDto;
 import soma.test.waggle.redis.repository.RedisMemberRepository;
-import soma.test.waggle.repository.EmitterRepository;
-import soma.test.waggle.service.NotificationService;
+import soma.test.waggle.repository.EmitterRepositoryRedisImp;
+import soma.test.waggle.service.NotificationServiceImp;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -37,8 +33,10 @@ public class RedisMemberTest {
     @Autowired
     @Qualifier("redisTemplateForSseEmitter")
     RedisTemplate redisTemplateForSseEmitter;
-    @Autowired NotificationService notificationService;
-    @Autowired EmitterRepository emitterRepository;
+    @Autowired
+    NotificationServiceImp notificationServiceImp;
+    @Autowired
+    EmitterRepositoryRedisImp emitterRepositoryRedisImp;
 
     @AfterEach
     public void tearDownAfterClass(){
@@ -92,12 +90,12 @@ public class RedisMemberTest {
     @Test
     public void sse_레디스_저장_후_복구_가능_테스트(){
 
-        SseEmitter sseEmitter1 = notificationService.subscribe("a","");
+        SseEmitter sseEmitter1 = notificationServiceImp.subscribe("a","");
         Class targetType = redisTemplateForSseEmitter.getValueSerializer().getTargetType();
         System.out.println("targetType = " + targetType);
-        sseEmitter1 = notificationService.subscribe("b", "");
-        SseEmitter findSseEmitter = emitterRepository.findById("a");
-        notificationService.sendToClient(findSseEmitter, "a", "받아줘~~~~~~");
+        sseEmitter1 = notificationServiceImp.subscribe("b", "");
+        CustomSseEmitter findSseEmitter = emitterRepositoryRedisImp.findById("a");
+        notificationServiceImp.sendToClient(findSseEmitter, "a", "받아줘~~~~~~");
 
 
     }

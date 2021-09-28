@@ -11,11 +11,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@RequiredArgsConstructor
 public class MemberInfoRequestDto {
-
-    private final MemberRepository memberRepository;
 
     private Long id;
     private String nickName;
