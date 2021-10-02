@@ -1,12 +1,13 @@
 package soma.test.waggle.repository;
 
-import soma.test.waggle.entity.CustomSseEmitter;
+
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface EmitterRepository {
 
-    public CustomSseEmitter save(String id, CustomSseEmitter emitter);
+    public SseEmitter save(String id, SseEmitter emitter);
 
-    public CustomSseEmitter findById(String id);
+    public SseEmitter findById(String id);
 
     public void deleteById(String id);
 }

@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
-import soma.test.waggle.entity.CustomSseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 
 import javax.annotation.Resource;
 
@@ -15,9 +16,9 @@ import javax.annotation.Resource;
  * 추후 패키지 리팩토링 필요
  */
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
-public class EmitterRepositoryRedisImp implements EmitterRepository{
+public class EmitterRepositoryRedisImpl implements EmitterRepository{
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 10;
 
@@ -26,16 +27,16 @@ public class EmitterRepositoryRedisImp implements EmitterRepository{
     private final RedisTemplate redisTemplateForSseEmitter;
 
     @Resource(name="redisTemplateForSseEmitter")
-    private ValueOperations<String, CustomSseEmitter> valueOperations;
+    private ValueOperations<String, SseEmitter> valueOperations;
 
 
-    public CustomSseEmitter save(String id, CustomSseEmitter emitter) {
+    public SseEmitter save(String id, SseEmitter emitter) {
         valueOperations.set(id, emitter, DEFAULT_TIMEOUT);
         return emitter;
     }
 
-    public CustomSseEmitter findById(String id){
-        return (CustomSseEmitter) valueOperations.get(id);
+    public SseEmitter findById(String id){
+        return (SseEmitter) valueOperations.get(id);
     }
 
     public void deleteById(String id) {

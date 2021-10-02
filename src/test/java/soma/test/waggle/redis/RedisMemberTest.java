@@ -10,12 +10,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import soma.test.waggle.entity.CustomSseEmitter;
 import soma.test.waggle.redis.repository.RedisMemberDto;
 import soma.test.waggle.redis.repository.RedisMemberRepository;
-import soma.test.waggle.repository.EmitterRepositoryRedisImp;
-import soma.test.waggle.service.NotificationServiceImp;
+import soma.test.waggle.repository.EmitterRepositoryRedisImpl;
+import soma.test.waggle.service.NotificationServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -34,9 +33,9 @@ public class RedisMemberTest {
     @Qualifier("redisTemplateForSseEmitter")
     RedisTemplate redisTemplateForSseEmitter;
     @Autowired
-    NotificationServiceImp notificationServiceImp;
+    NotificationServiceImpl notificationServiceImpl;
     @Autowired
-    EmitterRepositoryRedisImp emitterRepositoryRedisImp;
+    EmitterRepositoryRedisImpl emitterRepositoryRedisImpl;
 
     @AfterEach
     public void tearDownAfterClass(){
@@ -70,7 +69,7 @@ public class RedisMemberTest {
     }
 
     private RedisMemberDto createRedisMemberDto(Long memberId) {
-        return new RedisMemberDto(memberId, LocalDateTime.now());
+        return new RedisMemberDto(Long.toString(memberId));
     }
 
     @Test
@@ -87,17 +86,15 @@ public class RedisMemberTest {
 
     }
 
-    @Test
-    public void sse_레디스_저장_후_복구_가능_테스트(){
-
-        SseEmitter sseEmitter1 = notificationServiceImp.subscribe("a","");
-        Class targetType = redisTemplateForSseEmitter.getValueSerializer().getTargetType();
-        System.out.println("targetType = " + targetType);
-        sseEmitter1 = notificationServiceImp.subscribe("b", "");
-        CustomSseEmitter findSseEmitter = emitterRepositoryRedisImp.findById("a");
-        notificationServiceImp.sendToClient(findSseEmitter, "a", "받아줘~~~~~~");
-
-
-    }
+//    @Test
+//    public void sse_레디스_저장_후_복구_가능_테스트(){
+//
+//        org.springframework.web.servlet.mvc.method.annotation.SseEmitter sseEmitter1 = notificationServiceImpl.subscribe("a","");
+//        Class targetType = redisTemplateForSseEmitter.getValueSerializer().getTargetType();
+//        System.out.println("targetType = " + targetType);
+//        sseEmitter1 = notificationServiceImpl.subscribe("b", "");
+//        CustomSseEmitter findCustomSseEmitter = emitterRepositoryRedisImpl.findById("a");
+//        notificationServiceImpl.sendToClient(findCustomSseEmitter, "a", "받아줘~~~~~~");
+//    }
 
 }
