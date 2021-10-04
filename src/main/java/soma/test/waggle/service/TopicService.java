@@ -8,12 +8,12 @@ import soma.test.waggle.redis.entity.TopicMessage;
 @RequiredArgsConstructor
 public class TopicService {
 
-    // 캐시와 관련된 서비스를 이용한다
-    private final CacheService cacheService;
+    // Publish와 관련된 서비스를 이용한다
+    private final PubService pubService;
 
     // 토픽 발행
     public void publishTopic(TopicMessage topicMessage){
-        cacheService.publishTopic(topicMessage);
+        pubService.publishTopic(topicMessage);
     }
 
 }

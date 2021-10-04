@@ -5,11 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import soma.test.waggle.redis.entity.TopicMessage;
-import soma.test.waggle.service.CacheService;
 import soma.test.waggle.service.NotificationService;
 
 @Service

@@ -8,18 +8,18 @@ import soma.test.waggle.redis.entity.TopicMessage;
 import soma.test.waggle.redis.pubsub.RedisPublisher;
 import soma.test.waggle.redis.pubsub.RedisSubscriber;
 import soma.test.waggle.repository.CacheMemberRepository;
-import soma.test.waggle.service.CacheService;
+import soma.test.waggle.service.PubService;
 import soma.test.waggle.service.NotificationService;
+import soma.test.waggle.service.SubService;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RedisCacheServiceImpl implements CacheService {
+public class RedisPubSubServiceImpl implements PubService, SubService {
 
     // topic에 발행되는 액션을 처리할 Listner
     private final RedisMessageListenerContainer redisMessageListener;
@@ -45,7 +45,7 @@ public class RedisCacheServiceImpl implements CacheService {
 //    }
 
     @PostConstruct
-    public void initSubscriber(){
+    public void initSubscribe(){
         redisMessageListener.addMessageListener(redisSubscriber, topicChannel);
     }
 

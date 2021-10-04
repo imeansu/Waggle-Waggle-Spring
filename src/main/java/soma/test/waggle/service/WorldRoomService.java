@@ -38,7 +38,7 @@ public class WorldRoomService {
     }
 
     @Transactional
-    public WorldCreateRequestDto createWorld(WorldCreateRequestDto worldCreateRequestDto) {
+    public WorldCreateRequestDto createWorldRoom(WorldCreateRequestDto worldCreateRequestDto) {
         return WorldCreateRequestDto.of(worldRoomRepository.save(worldCreateRequestDto.toWorldRoom()));
     }
 

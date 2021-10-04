@@ -80,12 +80,13 @@ public class NotificationServiceImpl implements NotificationService{
     public void sendTopic(TopicMessage topicMessage) {
         System.out.println("subscriber에 도착한 topicMessage = " + topicMessage);
         // 왜 안되는지 질문하기 위해
-        Set<RedisMemberDto> members =  redisMemberRepository.findByConversationId(topicMessage.getConversationId());
-        System.out.println("subscriber에 도착했을 때 get members = " + members);
-//        List<String> members = topicMessage.getMembers();
+//        Set<RedisMemberDto> members =  redisMemberRepository.findByConversationId(topicMessage.getConversationId());
+//        System.out.println("subscriber에 도착했을 때 get members = " + members);
+
+        List<String> members = topicMessage.getMembers();
         members.stream().forEach((member) -> {
-//                String id = member;
-                String id = member.getMemberId();
+                String id = member;
+//                String id = member.getMemberId();
                 System.out.println("SseEmitter 객체를 찾아서 보내기");
                 System.out.println("memberId = " + id);
                 SseEmitter emitter = emitterRepository.findById(id);

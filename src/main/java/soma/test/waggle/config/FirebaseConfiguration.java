@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfiguration {
@@ -25,7 +26,8 @@ public class FirebaseConfiguration {
     @PostConstruct
     public FirebaseApp initializeFCM() throws IOException{
         Resource resource = new ClassPathResource(jsonPath);
-        FileInputStream fis = new FileInputStream(resource.getFile());
+        //        FileInputStream fis = new FileInputStream(resource.getFile());
+        InputStream fis = resource.getInputStream();
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(fis))
 //                .setDatabaseUrl("https://speak-world-default-rtdb.asia-southeast1.firebasedatabase.app")

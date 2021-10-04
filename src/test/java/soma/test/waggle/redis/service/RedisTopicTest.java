@@ -1,26 +1,16 @@
 package soma.test.waggle.redis.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.photon.PhotonConversationDto;
-import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.WorldRoom;
-import soma.test.waggle.redis.config.CustomLocalDateTimeSerializer;
 import soma.test.waggle.redis.entity.TopicMessage;
 import soma.test.waggle.redis.pubsub.RedisPublisher;
 import soma.test.waggle.redis.repository.RedisMemberDto;
@@ -28,7 +18,6 @@ import soma.test.waggle.repository.CacheMemberRepository;
 import soma.test.waggle.service.*;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -42,7 +31,7 @@ public class RedisTopicTest {
     @Autowired private NotificationService notificationService;
     @Autowired private RedisPublisher redisPublisher;
     @Autowired private TopicService topicService;
-    @Autowired private CacheService cacheService;
+    @Autowired private PubService pubService;
     @Autowired private CacheMemberRepository cacheMemberRepository;
     @Autowired private WorldRoomService worldRoomService;
     @Autowired private RedisMemberService redisMemberService;
@@ -85,6 +74,7 @@ public class RedisTopicTest {
         // redis에서 꺼내와보기
         Set<RedisMemberDto> set = cacheMemberRepository.findByConversationId("con1");
         System.out.println("저장 직후의 get members = " + set);
+
         // when
         // topic을 publish 한다
         topicService.publishTopic(TopicMessage.builder()
@@ -100,6 +90,7 @@ public class RedisTopicTest {
         } catch (Exception e){
             e.printStackTrace();
         }
+
         // then
         // redisSubscriber가 topic을 받아서 성공했다고 말한다
     }
