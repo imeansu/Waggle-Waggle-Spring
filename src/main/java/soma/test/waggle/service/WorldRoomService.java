@@ -3,6 +3,7 @@ package soma.test.waggle.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import soma.test.waggle.dto.VivoxMemberInOutDto;
 import soma.test.waggle.dto.WorldCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
@@ -28,6 +29,7 @@ public class WorldRoomService {
     private final ConversationRepositoty conversationRepositoty;
     private final SentenceRepository sentenceRepository;
     private final RedisSentenceRepository redisSentenceRepository;
+    private final ConversationService conversationService;
 
 
     @Transactional(readOnly = true)
@@ -52,6 +54,7 @@ public class WorldRoomService {
             worldRoom.setOnStatus(onStatus);
             return new PhotonResponseDto(0, "OK");
         }
+
     }
 
     @Transactional
@@ -72,6 +75,9 @@ public class WorldRoomService {
         worldRoom.setPeople(worldRoom.getPeople()+1);
         member.setEntranceStatus(OnStatus.Y);
 
+        // member가 방에 입장하였으므로 대화 관리(내 대화를 듣고 있는 사람, 토픽 추출을 위한 대화set 모음) 시작
+        conversationService.joinRoom(photonMemberDto.getMemberId());
+
         return new PhotonResponseDto(0, "OK");
     }
 
@@ -86,6 +92,9 @@ public class WorldRoomService {
         entranceRoom.setLeaveTime(LocalDateTime.now());
         member.setEntranceStatus(OnStatus.N);
         worldRoom.setPeople(worldRoom.getPeople()-1);
+
+        // member가 방을 나갔으므로 대화 관리 제거
+        conversationService.leaveRoom(photonMemberDto.getMemberId());
 
         return new PhotonResponseDto(0, "OK");
     }
@@ -112,6 +121,19 @@ public class WorldRoomService {
                 .dateTime(LocalDateTime.now())
                 .build();
         redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
+
+        // 발화 문장이 들어오면 대화 관리를 위해 전달
+        conversationService.sentence(photonConversationDto);
+
         return new PhotonResponseDto(0,"ok");
+    }
+
+    // 대화 그래프 관리를 위한 vivox in, out 처리
+    public void vivoxMemberIn(VivoxMemberInOutDto vivoxMemberInOutDto){
+        conversationService.vivoxMemberIn(vivoxMemberInOutDto);
+    }
+
+    public void vivoxMemberOut(VivoxMemberInOutDto vivoxMemberInOutDto){
+        conversationService.vivoxMemberOut(vivoxMemberInOutDto);
     }
 }

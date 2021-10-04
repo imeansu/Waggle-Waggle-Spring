@@ -30,7 +30,7 @@ public class RedisTopicTest {
     @Autowired private RedisTemplate redisTemplate;
     @Autowired private NotificationService notificationService;
     @Autowired private RedisPublisher redisPublisher;
-    @Autowired private TopicService topicService;
+    @Autowired private TopicServiceImpl topicServiceImpl;
     @Autowired private PubService pubService;
     @Autowired private CacheMemberRepository cacheMemberRepository;
     @Autowired private WorldRoomService worldRoomService;
@@ -77,7 +77,7 @@ public class RedisTopicTest {
 
         // when
         // topic을 publish 한다
-        topicService.publishTopic(TopicMessage.builder()
+        topicServiceImpl.publishTopic(TopicMessage.builder()
                 .conversationId("con1")
                 .topics(new ArrayList<String>(Arrays.asList("김치", "BTS")))
                 .build());
