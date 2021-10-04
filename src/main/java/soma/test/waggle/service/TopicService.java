@@ -1,19 +1,12 @@
 package soma.test.waggle.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import soma.test.waggle.redis.entity.TopicMessage;
 
-@Service
-@RequiredArgsConstructor
-public class TopicService {
+import java.util.List;
 
-    // Publish와 관련된 서비스를 이용한다
-    private final PubService pubService;
+public interface TopicService {
 
-    // 토픽 발행
-    public void publishTopic(TopicMessage topicMessage){
-        pubService.publishTopic(topicMessage);
-    }
+    public void publishTopic(TopicMessage topicMessage);
 
+    void recommendTopic(Long memberId, List<String> sentences);
 }
