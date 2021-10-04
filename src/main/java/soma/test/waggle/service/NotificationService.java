@@ -1,11 +1,13 @@
 package soma.test.waggle.service;
 
-import soma.test.waggle.entity.CustomSseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import soma.test.waggle.redis.entity.TopicMessage;
 
 public interface NotificationService {
 
-    public CustomSseEmitter subscribe(String memberId, String lastEventId);
-    public void sendToClient(CustomSseEmitter emitter, String id, Object data);
-    public CustomSseEmitter findById(String id);
-    
+    public SseEmitter subscribe(String memberId, String lastEventId);
+    public void sendToClient(SseEmitter emitter, String id, Object data);
+    public SseEmitter findById(String id);
+
+    public void sendTopic(TopicMessage topicMessage);
 }

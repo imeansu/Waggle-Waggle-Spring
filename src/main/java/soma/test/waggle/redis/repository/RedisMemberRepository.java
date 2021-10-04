@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import soma.test.waggle.repository.CacheMemberRepository;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisMemberRepository {
+public class RedisMemberRepository implements CacheMemberRepository {
 
     private final RedisTemplate redisTemplate;
 
@@ -39,8 +40,9 @@ public class RedisMemberRepository {
         }
     }
 
-    public Set<RedisMemberDto> findByConversationId(String conversaionId){
-        return setOperations.members(KEY_CONVERSATION_MEMBER+conversaionId);
+    public Set<RedisMemberDto> findByConversationId(String conversationId){
+        Set<RedisMemberDto> members = setOperations.members(KEY_CONVERSATION_MEMBER+conversationId);
+        return members;
     }
 
     public boolean removeConversationMemberInRedis(String conversationId) {

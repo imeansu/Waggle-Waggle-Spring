@@ -1,19 +1,17 @@
 package soma.test.waggle.redis.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter @Setter
+@Builder
 @AllArgsConstructor
 public class RedisMemberDto implements Serializable {
 
-    private Long memberId;
+    private String memberId;
 
-    private LocalDateTime createdAt;
+//    private LocalDateTime createdAt;
 }
