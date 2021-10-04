@@ -4,7 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.*;
+import soma.test.waggle.entity.Country;
+import soma.test.waggle.entity.Language;
 import soma.test.waggle.service.MemberService;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,5 +81,21 @@ public class MemberController {
     public String test(){
         System.out.println("================sucess===============");
         return "hello";
+    }
+
+    @GetMapping("/country-list")
+    public ResponseEntity<CountryListResponseDto> country(){
+        List<Country> countries = Arrays.asList(Country.class.getEnumConstants());
+        return ResponseEntity.ok(CountryListResponseDto.builder()
+                .countries(countries)
+                .build());
+    }
+
+    @GetMapping("/language-list")
+    public ResponseEntity<LanguageListResponseDto> language(){
+        List<Language> languages = Arrays.asList(Language.class.getEnumConstants());
+        return ResponseEntity.ok(LanguageListResponseDto.builder()
+                .languages(languages)
+                .build());
     }
 }

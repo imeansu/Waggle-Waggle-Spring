@@ -13,7 +13,7 @@ import soma.test.waggle.redis.repository.RedisMemberRepository;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class NotificationServiceImpTest {
+class NotificationServiceImplTest {
 
     @Autowired
     RedisMemberRepository redisMemberRepository;

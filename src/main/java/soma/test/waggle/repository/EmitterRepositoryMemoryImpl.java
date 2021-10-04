@@ -2,6 +2,7 @@ package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import soma.test.waggle.entity.CustomSseEmitter;
 
 import java.util.HashMap;
@@ -9,18 +10,18 @@ import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
-public class EmitterRepositoryMemoryImp implements EmitterRepository{
+public class EmitterRepositoryMemoryImpl implements EmitterRepository{
 
-    Map<String, CustomSseEmitter> sseEmitterMap = new HashMap<>();
+    Map<String, SseEmitter> sseEmitterMap = new HashMap<>();
 
     @Override
-    public CustomSseEmitter save(String id, CustomSseEmitter emitter) {
+    public SseEmitter save(String id, SseEmitter emitter) {
         sseEmitterMap.put(id, emitter);
         return emitter;
     }
 
     @Override
-    public CustomSseEmitter findById(String id) {
+    public SseEmitter findById(String id) {
         return sseEmitterMap.get(id);
     }
 

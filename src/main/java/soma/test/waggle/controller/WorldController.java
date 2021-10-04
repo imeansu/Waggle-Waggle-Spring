@@ -32,7 +32,7 @@ public class WorldController {
 
     @PostMapping("/world-room/new")
     public ResponseEntity<WorldCreateRequestDto> CreateWorld(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
-        return ResponseEntity.ok(worldRoomService.createWorld(worldCreateRequestDto));
+        return ResponseEntity.ok(worldRoomService.createWorldRoom(worldCreateRequestDto));
     }
 
     @PostMapping("/world-room/path-create")
