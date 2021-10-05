@@ -22,8 +22,8 @@ public class ConversationServiceImpl implements ConversationService{
     // room에 처음 입장했을시, graph와 sentence list 생성
     @Override
     public void joinRoom(Long memberId) {
-        conversationCacheRepository.createGraph(memberId);
-        conversationCacheRepository.createSentence(memberId);
+        conversationCacheRepository.createGraphSet(memberId);
+        conversationCacheRepository.createSentenceList(memberId);
     }
 
     // room에서 퇴장시, graph와 sentence list 삭제
@@ -47,6 +47,7 @@ public class ConversationServiceImpl implements ConversationService{
         // 인접 노드 조회
         Set<Long> adjacentNodes = conversationCacheRepository.getAdjacentNode(photonConversationDto.getMemberId());
 
+
         // 문장 추가
         // 문장 추가 후 SENTENCE_AMOUNT 개 문장이 넘어가면 추천 토픽 생성 로직 실행
         for (Long memberId : adjacentNodes) {
@@ -68,13 +69,21 @@ public class ConversationServiceImpl implements ConversationService{
 //                        .map((adjacentNode) -> {
 //
 //                        });
-                topicService.recommendTopic(memberId, conversationCacheRepository.getSentences(memberId));
+                sendSentenceSetToRecommendation(memberId);
 
             }
         }
 
+
         // total sentence에 저장
         conversationCacheRepository.addSentenceToTotal(photonConversationDto, adjacentNodes);
+    }
+
+    // 대화 set을 보내기
+    @Override
+    public void sendSentenceSetToRecommendation(Long memberId) {
+        topicService.recommendTopic(memberId, conversationCacheRepository.getSentences(memberId));
+        conversationCacheRepository.clearSentenceList(memberId);
     }
 
     // 자신의 영역에 사람이 들어옴

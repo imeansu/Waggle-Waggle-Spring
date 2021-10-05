@@ -9,6 +9,7 @@ import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.repository.ConversationCacheRepository;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -26,15 +27,35 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
     private SetOperations<String, Long> setOperations;
     private static final String KEY_CONVERSATION_GRAPH_MEMBERID = "conversation:graph:memberId";
 
+    // graph set 과 sentence list 의 캐시 유효시간
+    private static final Long DURATION_OF_SECONDS = 600L;
+
 
     @Override
-    public boolean createGraph(Long memberId) {
-        return setOperations.add(KEY_CONVERSATION_GRAPH_MEMBERID+memberId, memberId) == 0 ? true : false;
+    public boolean setTimeoutOfKey(Long memberId, long seconds) {
+        redisTemplate.expire(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, Duration.ofSeconds(seconds));
+        redisTemplate.expire(KEY_CONVERSATION_GRAPH_MEMBERID+memberId, Duration.ofSeconds(seconds));
+        return true;
     }
 
     @Override
-    public boolean createSentence(Long memberId) {
-        return listOperations.rightPush(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, null) == 0 ? true : false;
+    public boolean createGraphSet(Long memberId) {
+        if (setOperations.add(KEY_CONVERSATION_GRAPH_MEMBERID+memberId, memberId) == 0) {
+            setTimeoutOfKey(memberId, DURATION_OF_SECONDS);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean createSentenceList(Long memberId) {
+        if (listOperations.rightPush(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, null) == 0) {
+            setTimeoutOfKey(memberId, DURATION_OF_SECONDS);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -49,7 +70,15 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
 
     @Override
     public Long addSentence(Long memberId, String sentence) {
-        return listOperations.rightPush(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, sentence);
+        Long rtn = listOperations.rightPush(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, sentence);
+        setTimeoutOfKey(memberId, DURATION_OF_SECONDS);
+        return rtn;
+    }
+
+    @Override
+    public boolean clearSentenceList(Long memberId) {
+        listOperations.trim(KEY_CONVERSATION_SENTENCE_MEMBERID+memberId, -1, 0);
+        return true;
     }
 
     @Override
@@ -67,6 +96,11 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
     @Override
     public boolean addSentenceToTotal(PhotonConversationDto photonConversationDto, Set<Long> adjacentNodes) {
         return listOperations.rightPush(KEY_CONVERSATION_SENTENCE_TOTAL_ROOMID+photonConversationDto.getRoomId(), photonConversationDto.getSentence()) > 0 ? true : false;
+    }
+
+    @Override
+    public List<String> getTotalSentence(Long roomId) {
+        return listOperations.range(KEY_CONVERSATION_SENTENCE_TOTAL_ROOMID+roomId, 0, -1);
     }
 
     @Override
