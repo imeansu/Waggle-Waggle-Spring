@@ -12,6 +12,8 @@ public interface ConversationService {
 
     void sentence(PhotonConversationDto photonConversationDto);
 
+    void sendSentenceSetToRecommendation(Long memberId);
+
     void vivoxMemberIn(VivoxMemberInOutDto vivoxMemberInOutDto);
 
     void vivoxMemberOut(VivoxMemberInOutDto vivoxMemberInOutDto);

@@ -59,6 +59,11 @@ public class RedisPubSubServiceImpl implements PubService, SubService {
         redisPublisher.publish(topicChannel, topicMessage);
     }
 
+    @Override
+    public void publishTopic(TopicMessage topicMessage, Long memberId){
+        redisPublisher.publish(topicChannel, topicMessage);
+    }
+
     // 순환 참조로 삭제
 //    // Subscriber의 onMessage에서 NotificationService로 이어줌
 //    @Override
