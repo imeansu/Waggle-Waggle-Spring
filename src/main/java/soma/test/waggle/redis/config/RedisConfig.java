@@ -13,11 +13,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import soma.test.waggle.entity.CustomSseEmitter;
-import soma.test.waggle.redis.entity.TopicMessage;
 
 @Configuration
 public class RedisConfig {
@@ -62,6 +59,18 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(new StringRedisSerializer());
 //        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
 //        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplateForProduce() {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
+//        redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+//        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//        redisTemplate.setValueSerializer(new SseEmitterConverter());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
 

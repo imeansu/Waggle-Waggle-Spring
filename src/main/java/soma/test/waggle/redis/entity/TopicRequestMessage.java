@@ -10,8 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TopicMessage implements Serializable {
+public class TopicRequestMessage implements Serializable {
     private String conversationId;
-    private List<String> topics;
+    private List<String> sentences;
     private List<String> members;
 }

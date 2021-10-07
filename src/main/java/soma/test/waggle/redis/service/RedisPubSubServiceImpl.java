@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
-import soma.test.waggle.redis.entity.TopicMessage;
+import soma.test.waggle.redis.entity.TopicRequestMessage;
 import soma.test.waggle.redis.pubsub.RedisPublisher;
 import soma.test.waggle.redis.pubsub.RedisSubscriber;
 import soma.test.waggle.repository.CacheMemberRepository;
@@ -50,18 +50,18 @@ public class RedisPubSubServiceImpl implements PubService, SubService {
     }
 
     @Override
-    public void publishTopic(TopicMessage topicMessage) {
+    public void publishTopic(TopicRequestMessage topicRequestMessage) {
         // 대화 채널이 없다면 새로 생성
-        List<String> members = cacheMemberRepository.findByConversationId(topicMessage.getConversationId()).stream()
+        List<String> members = cacheMemberRepository.findByConversationId(topicRequestMessage.getConversationId()).stream()
                 .map((member) -> member.getMemberId())
                 .collect(Collectors.toList());
-        topicMessage.setMembers(members);
-        redisPublisher.publish(topicChannel, topicMessage);
+        topicRequestMessage.setMembers(members);
+        redisPublisher.publish(topicChannel, topicRequestMessage);
     }
 
     @Override
-    public void publishTopic(TopicMessage topicMessage, Long memberId){
-        redisPublisher.publish(topicChannel, topicMessage);
+    public void publishTopic(TopicRequestMessage topicRequestMessage, Long memberId){
+        redisPublisher.publish(topicChannel, topicRequestMessage);
     }
 
     // 순환 참조로 삭제

@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.WorldRoom;
-import soma.test.waggle.redis.entity.TopicMessage;
+import soma.test.waggle.redis.entity.TopicRequestMessage;
 import soma.test.waggle.redis.pubsub.RedisPublisher;
 import soma.test.waggle.redis.repository.RedisMemberDto;
 import soma.test.waggle.repository.CacheMemberRepository;
@@ -77,9 +77,9 @@ public class RedisTopicTest {
 
         // when
         // topic을 publish 한다
-        topicServiceImpl.publishTopic(TopicMessage.builder()
+        topicServiceImpl.publishTopic(TopicRequestMessage.builder()
                 .conversationId("con1")
-                .topics(new ArrayList<String>(Arrays.asList("김치", "BTS")))
+                .sentences(new ArrayList<String>(Arrays.asList("김치", "BTS")))
                 .build());
 //        topicService.publishTopic(TopicMessage.builder()
 //                .conversationId("con1")
