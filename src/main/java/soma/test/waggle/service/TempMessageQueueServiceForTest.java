@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class TempMessageQueueServiceForTest implements MessageQueueService{
 

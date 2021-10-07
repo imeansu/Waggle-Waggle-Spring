@@ -5,16 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import soma.test.waggle.redis.entity.TopicMessage;
-import soma.test.waggle.redis.repository.RedisMemberDto;
+import soma.test.waggle.redis.entity.TopicRequestMessage;
+import soma.test.waggle.redis.entity.TopicResponseMessage;
 import soma.test.waggle.redis.repository.RedisMemberRepository;
 import soma.test.waggle.redis.service.RedisMemberService;
-import soma.test.waggle.repository.CacheMemberRepository;
 import soma.test.waggle.repository.EmitterRepository;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -77,13 +75,13 @@ public class NotificationServiceImpl implements NotificationService{
 
     // topicMessage에 담긴 conversationId를 가지고
 //    @Override
-    public void sendTopic(TopicMessage topicMessage) {
-        System.out.println("subscriber에 도착한 topicMessage = " + topicMessage);
+    public void sendTopic(TopicResponseMessage topicResponseMessage) {
+        System.out.println("subscriber에 도착한 topicMessage = " + topicResponseMessage);
         // 왜 안되는지 질문하기 위해
 //        Set<RedisMemberDto> members =  redisMemberRepository.findByConversationId(topicMessage.getConversationId());
 //        System.out.println("subscriber에 도착했을 때 get members = " + members);
 
-        List<String> members = topicMessage.getMembers();
+        List<String> members = topicResponseMessage.getMembers();
         members.stream().forEach((member) -> {
                 String id = member;
 //                String id = member.getMemberId();
@@ -92,8 +90,8 @@ public class NotificationServiceImpl implements NotificationService{
                 SseEmitter emitter = emitterRepository.findById(id);
                 System.out.println("emitter = " + emitter);
                 if (emitter != null){
-                    sendToClient(emitter, id, topicMessage.getTopics());
-                    System.out.println("topicMessage = " + topicMessage);
+                    sendToClient(emitter, id, topicResponseMessage.getTopics());
+                    System.out.println("topicMessage = " + topicResponseMessage);
                     System.out.println("redis - sse 성공!");
             }
         });

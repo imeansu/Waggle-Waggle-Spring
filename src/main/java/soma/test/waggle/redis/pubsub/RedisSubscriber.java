@@ -6,7 +6,8 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import soma.test.waggle.redis.entity.TopicMessage;
+import soma.test.waggle.redis.entity.TopicRequestMessage;
+import soma.test.waggle.redis.entity.TopicResponseMessage;
 import soma.test.waggle.service.NotificationService;
 
 @Service
@@ -27,9 +28,9 @@ public class RedisSubscriber implements MessageListener {
             // String으로 변환
             String body = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             // TopicMessage로 변환
-            TopicMessage topicMessage = objectMapper.readValue(body, TopicMessage.class);
+            TopicResponseMessage topicResponseMessage = objectMapper.readValue(body, TopicResponseMessage.class);
             // TopicMessage 보내기
-            notificationService.sendTopic(topicMessage);
+            notificationService.sendTopic(topicResponseMessage);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
