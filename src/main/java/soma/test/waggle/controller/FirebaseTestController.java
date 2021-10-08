@@ -30,8 +30,6 @@ public class FirebaseTestController {
     private final FirebaseService firebaseService;
     private final AuthService authService;
 
-    // temp를 위한 주입
-    private final MemberService memberService;
 
     @PostMapping("/auth/firebase")
     public ResponseEntity<Object> loginOrJoin(@RequestBody FirebaseTokenDto firebaseTokenDto){
@@ -57,8 +55,11 @@ public class FirebaseTestController {
         return ResponseEntity.ok(new ReissueAccessTokenReponseDto(result.getAccessToken()));
     }
 
+    private final EntityManager em;
+    private final PasswordEncoder passwordEncoder;
     @GetMapping("/auth/temp")
-    public TokenDto temp(){
+    @Transactional
+    public void temp(){
         MemberRequestDto memberRequestDto = MemberRequestDto.builder()
                 .email("gcnml0@gmail.com")
                 .name("minsu kim")
@@ -66,14 +67,23 @@ public class FirebaseTestController {
                 .password("dsfs3h28xyrh38ny87sghsunc93xhu")
                 .date(LocalDate.now())
                 .build();
-        try {
-            memberService.getMemberInfo("gcnml0@gmail.com");
-        }
-        catch (Exception e){
-            authService.signup(memberRequestDto);
-        }
+        authService.signup(memberRequestDto);
         TokenDto tokenDto = authService.login(memberRequestDto);
         System.out.println("========AccessToken = " + tokenDto.getAccessToken());
-        return tokenDto;
+
+        Member member1 = em.find(Member.class, 1L);
+
+        Member member2 = new Member();
+        member2.setEmail("dfsf");
+        member2.setName("member1");
+        member2.setOnlineStatus(OnStatus.Y);
+        em.persist(member2);
+
+        Following following = Following.builder()
+                .followingMember(member1)
+                .followedMember(member2)
+                .dateTime(LocalDateTime.now())
+                .build();
+        em.persist(following);
     }
 }
