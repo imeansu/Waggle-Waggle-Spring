@@ -66,7 +66,6 @@ public class FirebaseTestController {
                 .password("dsfs3h28xyrh38ny87sghsunc93xhu")
                 .date(LocalDate.now())
                 .build();
-        authService.signup(memberRequestDto);
         try {
             memberService.getMemberInfo("gcnml0@gmail.com");
         }
