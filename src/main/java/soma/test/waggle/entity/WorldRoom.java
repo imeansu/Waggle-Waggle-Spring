@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorldRoom {
+public class
+WorldRoom {
 
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "world_room_id")
     private Long id;
 
