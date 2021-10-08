@@ -48,7 +48,7 @@ public class RedisMemberTest {
         });
     }
 
-    @Test
+//    @Test
     public void 멤버대화에참여(){
         RedisMemberDto redisMemberDto = createRedisMemberDto(1L);
         redisMemberRepository.addMemberInRedis(redisMemberDto, "conversation1");
@@ -57,7 +57,7 @@ public class RedisMemberTest {
 
     }
 
-    @Test
+//    @Test
     public void 키워드전달을위한대화별참여멤버조회(){
         RedisMemberDto redisMemberDto1 = createRedisMemberDto(1L);
         RedisMemberDto redisMemberDto2 = createRedisMemberDto(2L);
@@ -72,7 +72,7 @@ public class RedisMemberTest {
         return new RedisMemberDto(Long.toString(memberId));
     }
 
-    @Test
+//    @Test
     public void 멤버대화에서나감(){
         RedisMemberDto redisMemberDto1 = createRedisMemberDto(1L);
         RedisMemberDto redisMemberDto2 = createRedisMemberDto(2L);

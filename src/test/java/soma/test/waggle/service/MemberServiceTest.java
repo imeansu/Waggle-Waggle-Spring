@@ -191,7 +191,7 @@ public class MemberServiceTest {
 
     }
 
-    @Test
+//    @Test
     public void LAZY로딩(){
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
