@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class InterestListResponseDto {
-    private List<Interest> interests;
+    private List<String> interests;
 }

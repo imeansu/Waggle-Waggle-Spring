@@ -232,9 +232,9 @@ public class MemberService {
 
     public InterestListResponseDto getInterestList() {
         Interest root = interestRepository.findBySubject("root");
-        List interests = interestRepository.findByParent(root);
+        List<Interest> interests = interestRepository.findByParent(root);
         return InterestListResponseDto.builder()
-                .interests(interests)
+                .interests(interests.stream().map(interest -> interest.getSubject()).collect(Collectors.toList()))
                 .build();
     }
 }

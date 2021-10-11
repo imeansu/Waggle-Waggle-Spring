@@ -1,9 +1,6 @@
 package soma.test.waggle.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.List;
  * Interest를 부모 - 자식 계층 관계로 구성
  * Category 처럼 사용할 수 있음
  * */
-@Entity
+@Entity @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
