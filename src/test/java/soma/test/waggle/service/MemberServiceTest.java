@@ -288,7 +288,7 @@ public class MemberServiceTest {
     public void 기본_관심사_리스트(){
         // given
         // when
-        List<Interest> basicInterests = memberService.getInterestList().getInterests();
+        List<String> basicInterests = memberService.getInterestList().getInterests();
         // then
         assertThat(basicInterests.size()).isEqualTo(6);
         System.out.println("basicInterests = " + basicInterests);
