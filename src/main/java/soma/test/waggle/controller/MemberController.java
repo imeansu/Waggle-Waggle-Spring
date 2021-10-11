@@ -37,6 +37,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.putMemberInfo(memberInfoRequestDto));
     }
 
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<CommandResponseDto> deleteMember(@PathVariable Long memberId){
+        return ResponseEntity.ok(memberService.deleteMember());
+    }
+
     @GetMapping("/online")
     public ResponseEntity<OnlineMemberResponseDto> onlineMemberList(){
         return ResponseEntity.ok(memberService.getOnlineMembers());
@@ -97,5 +102,10 @@ public class MemberController {
         return ResponseEntity.ok(LanguageListResponseDto.builder()
                 .languages(languages)
                 .build());
+    }
+
+    @GetMapping("/interest-list")
+    public ResponseEntity<InterestListResponseDto> interest(){
+        return ResponseEntity.ok(memberService.getInterestList());
     }
 }

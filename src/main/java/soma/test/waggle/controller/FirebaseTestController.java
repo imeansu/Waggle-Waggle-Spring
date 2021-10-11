@@ -20,6 +20,7 @@ import soma.test.waggle.service.MemberService;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/test")
@@ -54,7 +55,7 @@ public class FirebaseTestController {
     @PostMapping("/auth/refresh")
     public ResponseEntity<Object> reissueAccessToken(@RequestBody TokenRequestDto tokenRequestDto){
         TokenDto result = authService.reissueAccessToken(tokenRequestDto);
-        return ResponseEntity.ok(new ReissueAccessTokenReponseDto(result.getAccessToken()));
+        return ResponseEntity.ok(new ReissueAccessTokenReponseDto(result.getAccessToken(), result.getAccessTokenExpiresIn()));
     }
 
     @GetMapping("/auth/temp")

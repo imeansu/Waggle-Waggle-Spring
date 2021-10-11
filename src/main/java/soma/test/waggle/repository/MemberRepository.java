@@ -247,4 +247,15 @@ public class MemberRepository {
             return true;
         }
     }
+
+    public boolean deleteMember() {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        try{
+            em.remove(find(memberId));
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

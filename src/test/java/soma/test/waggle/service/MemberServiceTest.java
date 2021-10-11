@@ -3,9 +3,11 @@ package soma.test.waggle.service;
 //import org.junit.Test;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,10 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
-import soma.test.waggle.entity.Following;
-import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
-import soma.test.waggle.entity.RefreshToken;
+import soma.test.waggle.entity.*;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.repository.RefreshTokenRepository;
 
@@ -263,6 +262,36 @@ public class MemberServiceTest {
         member1.setEmail(email);
         member1.setName(name);
         return member1;
+    }
+
+    @Test
+    public void 멤버_탈퇴(){
+        // given
+        Member member = createMember("member1", "abc@gmail.com");
+        memberRepository.save(member);
+        em.flush();
+        em.clear();
+        Member findMember = memberRepository.findByEmail("abc@gmail.com").get();
+        assertThat(findMember.getName()).isEqualTo("member1");
+        securityContext(Long.toString(findMember.getId()));
+
+        // when
+        // then
+        memberRepository.deleteMember();
+        Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
+            memberRepository.findByEmail("abc@gmail.com");
+        });
+
+    }
+
+    @Test
+    public void 기본_관심사_리스트(){
+        // given
+        // when
+        List<Interest> basicInterests = memberService.getInterestList().getInterests();
+        // then
+        assertThat(basicInterests.size()).isEqualTo(6);
+        System.out.println("basicInterests = " + basicInterests);
     }
 
 }

@@ -38,6 +38,9 @@ public class Member implements Serializable {
 
     private String introduction;
 
+    @OneToMany(mappedBy = "member")
+    private List<InterestMember> interests = new ArrayList<>();
+
 //    @NotNull
     private LocalDate date;
 

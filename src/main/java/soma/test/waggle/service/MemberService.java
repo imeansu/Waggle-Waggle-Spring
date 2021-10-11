@@ -5,10 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final InterestRepository interestRepository;
 
     @Transactional(readOnly = true)
     public MemberResponseDto getMemberInfo(String email) {
@@ -197,5 +203,38 @@ public class MemberService {
         else{
             return new CommandResponseDto("no refresh token");
         }
+    }
+
+    @Transactional
+    public CommandResponseDto deleteMember() {
+        if (memberRepository.deleteMember()){
+            return new CommandResponseDto("ok");
+        } else {
+            return new CommandResponseDto("no refresh token");
+        }
+    }
+
+    @Transactional
+    @PostConstruct
+    public void basicInterestInsert(){
+        Interest root = Interest.builder()
+                .subject("root")
+                .build();
+        interestRepository.save(root);
+        List<String> interests = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "축구", "BTS", "한국어", "IT"));
+        interests.stream()
+                .forEach((string) -> interestRepository.save(Interest.builder()
+                        .parent(root)
+                        .subject(string)
+                        .build()));
+
+    }
+
+    public InterestListResponseDto getInterestList() {
+        Interest root = interestRepository.findBySubject("root");
+        List interests = interestRepository.findByParent(root);
+        return InterestListResponseDto.builder()
+                .interests(interests)
+                .build();
     }
 }
