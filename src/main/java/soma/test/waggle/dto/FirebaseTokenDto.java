@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+@Getter
 public class FirebaseTokenDto {
-//    @JsonProperty(value = "firebase_token")
+    @NotEmpty
     private String firebaseToken;
 }

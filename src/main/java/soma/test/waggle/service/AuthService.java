@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.MemberRequestDto;
+import soma.test.waggle.dto.MemberInfoDtoBasedOnFirebase;
 import soma.test.waggle.dto.MemberResponseDto;
 
 import soma.test.waggle.dto.TokenDto;
@@ -28,19 +28,19 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public MemberResponseDto signup(MemberRequestDto memberRequestDto){
+    public MemberResponseDto signup(MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase){
 //        if(memberRepository.existsByEmail(memberRequestDto.getEmail())){
 //            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
 //        }
 
-        Member member = memberRequestDto.toMember(passwordEncoder);
+        Member member = memberInfoDtoBasedOnFirebase.toMember(passwordEncoder);
         return MemberResponseDto.of(memberRepository.save(member));
     }
 
     @Transactional
-    public TokenDto login(MemberRequestDto memberRequestDto){
+    public TokenDto login(MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase){
         // 1. Login ID/W 를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken = memberRequestDto.toAuthentication();
+        UsernamePasswordAuthenticationToken authenticationToken = memberInfoDtoBasedOnFirebase.toAuthentication();
 
         // 2. 실제로 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailService 에서 만들었던 loadUserByUsername 메서드가 실행됨

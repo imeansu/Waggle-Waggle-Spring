@@ -6,9 +6,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FirebaseTokenResponseDto {
+public class FirebaseResponseDto {
 
     private String isNewMember;
+    private Long memberId;
     private String accessToken;
     private String refreshToken;
     private String grantType;

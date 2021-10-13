@@ -1,4 +1,4 @@
-package soma.test.waggle.service;
+package soma.test.waggle.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

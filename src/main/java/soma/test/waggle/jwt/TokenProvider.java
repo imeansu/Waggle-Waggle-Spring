@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import soma.test.waggle.dto.TokenDto;
 
+import javax.validation.Valid;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;

@@ -34,15 +34,15 @@ public class MemberRepository {
         return  em.find(Member.class, id);
     }
 
-    public boolean findByFirebaseId(String id){
+    public Long getMemberIdByFirebaseId(String id){
         String jpql = "select m from Member m where m.firebaseId = :firebaseId";
         List<Member> findMember = em.createQuery(jpql, Member.class)
                 .setParameter("firebaseId", id)
                 .getResultList();
         if (findMember.size() == 0){
-            return false;
+            return -1L;
         }else{
-            return true;
+            return findMember.get(0).getId();
         }
     }
 
@@ -255,6 +255,22 @@ public class MemberRepository {
             return true;
         } catch (Exception e){
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Member> findByNickname(String nickname){
+        return em.createQuery(
+                "select m from Member m" +
+                        " where m.nickname = :nickname", Member.class)
+                .setParameter("nickname", nickname)
+                .getResultList();
+    }
+
+    public boolean duplicationCheck(String nickname) {
+        if (findByNickname(nickname).size() == 0){
+            return true;
+        } else {
             return false;
         }
     }

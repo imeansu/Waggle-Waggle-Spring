@@ -28,7 +28,7 @@ public class Member implements Serializable {
     private String name;
     @NotNull
     private String email;
-    private String nickName;
+    private String nickname;
 
     @Enumerated(value = EnumType.STRING)
     private Country country;

@@ -9,11 +9,7 @@ import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,7 +45,7 @@ public class MemberService {
     public MemberInfoRequestDto putMemberInfo(MemberInfoRequestDto memberInfoRequestDto) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
         if( memberInfoRequestDto.getNickName() != null){
-            member.setNickName(memberInfoRequestDto.getNickName());
+            member.setNickname(memberInfoRequestDto.getNickName());
         }
         if( memberInfoRequestDto.getCountry() != null){
             member.setCountry(memberInfoRequestDto.getCountry());
@@ -214,27 +210,15 @@ public class MemberService {
         }
     }
 
-    @Transactional
-    @PostConstruct
-    public void basicInterestInsert(){
-        Interest root = Interest.builder()
-                .subject("root")
-                .build();
-        interestRepository.save(root);
-        List<String> interests = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "축구", "BTS", "한국어", "IT"));
-        interests.stream()
-                .forEach((string) -> interestRepository.save(Interest.builder()
-                        .parent(root)
-                        .subject(string)
-                        .build()));
-
-    }
-
     public InterestListResponseDto getInterestList() {
         Interest root = interestRepository.findBySubject("root");
         List<Interest> interests = interestRepository.findByParent(root);
         return InterestListResponseDto.builder()
                 .interests(interests.stream().map(interest -> interest.getSubject()).collect(Collectors.toList()))
                 .build();
+    }
+
+    public boolean nicknameCheck(String nickname) {
+        return memberRepository.duplicationCheck(nickname);
     }
 }

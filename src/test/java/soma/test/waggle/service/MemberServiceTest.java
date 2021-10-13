@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
@@ -239,16 +237,16 @@ public class MemberServiceTest {
 
     @Test
     public void deleteRefreshToken(){
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder()
+        MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase = MemberInfoDtoBasedOnFirebase.builder()
                 .email("gcnml0@gmail.com")
                 .name("minsu kim")
                 .firebaseId("dsfs3h28xyrh38ny87sghsunc93xhu")
                 .password("dsfs3h28xyrh38ny87sghsunc93xhu")
                 .date(LocalDate.now())
                 .build();
-        authService.signup(memberRequestDto);
-        TokenDto tokenDto = authService.login(memberRequestDto);
-        Member member = memberRepository.findByEmail(memberRequestDto.getEmail()).get();
+        authService.signup(memberInfoDtoBasedOnFirebase);
+        TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
+        Member member = memberRepository.findByEmail(memberInfoDtoBasedOnFirebase.getEmail()).get();
         Optional<RefreshToken> token = refreshTokenRepository.findByKey(Long.toString(member.getId()));
         assertThat(token.isPresent()).isEqualTo(true);
         securityContext(Long.toString(member.getId()));
@@ -294,4 +292,12 @@ public class MemberServiceTest {
         System.out.println("basicInterests = " + basicInterests);
     }
 
+    // 닉네임 중복 체크
+    @Test
+    public void 닉네임_중목_체크(){
+        boolean check1 = memberService.nicknameCheck("imeansu");
+        boolean check2 = memberService.nicknameCheck("minsu");
+        assertThat(check1).isEqualTo(false);
+        assertThat(check2).isEqualTo(true);
+    }
 }

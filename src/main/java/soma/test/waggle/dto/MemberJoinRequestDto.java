@@ -4,6 +4,7 @@ import lombok.*;
 import soma.test.waggle.entity.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -11,14 +12,17 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberInfoRequestDto {
+public class MemberJoinRequestDto {
 
+    @NotEmpty
+    private String firebaseToken;
     private Long id;
+
     @Size(max=10)
     private String nickName;
-    @NotEmpty
+    @NotNull
     private Country country;
-    @NotEmpty
+    @NotNull
     private Language language;
     private String introduction;
     private Avatar avatar;
@@ -27,8 +31,8 @@ public class MemberInfoRequestDto {
     private EntranceRoom entranceRoom;
     private Friendship friendship;
 
-    public static MemberInfoRequestDto of(Member member){
-        return MemberInfoRequestDto.builder()
+    public static MemberJoinRequestDto of(Member member){
+        return MemberJoinRequestDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())
                 .country(member.getCountry())
@@ -41,4 +45,17 @@ public class MemberInfoRequestDto {
                 .build();
     }
 
+    public MemberInfoRequestDto toMemberInfoRequestDto() {
+        return MemberInfoRequestDto.builder()
+                .id(this.getId())
+                .nickName(this.getNickName())
+                .country(this.getCountry())
+                .language(this.getLanguage())
+                .introduction(this.getIntroduction())
+                .avatar(this.getAvatar())
+                .onlineStatus(this.getOnlineStatus())
+                .entranceStatus(this.getEntranceStatus())
+                .entranceRoom(this.getEntranceRoom())
+                .build();
+    }
 }

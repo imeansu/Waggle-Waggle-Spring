@@ -8,8 +8,11 @@ import soma.test.waggle.entity.Country;
 import soma.test.waggle.entity.Language;
 import soma.test.waggle.service.MemberService;
 
+import javax.validation.Valid;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,7 +91,7 @@ public class MemberController {
         return "hello";
     }
 
-    @GetMapping("/country-list")
+    @GetMapping("/basics/country-list")
     public ResponseEntity<CountryListResponseDto> country(){
         List<Country> countries = Arrays.asList(Country.class.getEnumConstants());
         return ResponseEntity.ok(CountryListResponseDto.builder()
@@ -96,7 +99,7 @@ public class MemberController {
                 .build());
     }
 
-    @GetMapping("/language-list")
+    @GetMapping("/basics/language-list")
     public ResponseEntity<LanguageListResponseDto> language(){
         List<Language> languages = Arrays.asList(Language.class.getEnumConstants());
         return ResponseEntity.ok(LanguageListResponseDto.builder()
@@ -104,8 +107,17 @@ public class MemberController {
                 .build());
     }
 
-    @GetMapping("/interest-list")
+    @GetMapping("/basics/interest-list")
     public ResponseEntity<InterestListResponseDto> interest(){
         return ResponseEntity.ok(memberService.getInterestList());
     }
+
+    @GetMapping("/basics/nickname-check")
+    public ResponseEntity<Map> nicknameDuplicationCheck(@RequestParam("nickname") String nickname){
+        boolean result = memberService.nicknameCheck(nickname);
+        Map<String, Boolean> res = new HashMap();
+        res.put("result", result);
+        return ResponseEntity.ok(res);
+    }
+
 }

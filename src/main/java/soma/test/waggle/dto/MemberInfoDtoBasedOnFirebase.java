@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberRequestDto {
+public class MemberInfoDtoBasedOnFirebase {
 
     private String email;
     private String password;

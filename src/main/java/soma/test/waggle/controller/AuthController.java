@@ -3,7 +3,7 @@ package soma.test.waggle.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import soma.test.waggle.dto.MemberRequestDto;
+import soma.test.waggle.dto.MemberInfoDtoBasedOnFirebase;
 import soma.test.waggle.dto.MemberResponseDto;
 import soma.test.waggle.dto.TokenDto;
 import soma.test.waggle.dto.TokenRequestDto;
@@ -16,13 +16,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberRequestDto memberRequestDto){
-        return ResponseEntity.ok(authService.signup(memberRequestDto));
+    public ResponseEntity<MemberResponseDto> signup(@RequestBody MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase){
+        return ResponseEntity.ok(authService.signup(memberInfoDtoBasedOnFirebase));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto) {
-        return ResponseEntity.ok(authService.login(memberRequestDto));
+    public ResponseEntity<TokenDto> login(@RequestBody MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase) {
+        return ResponseEntity.ok(authService.login(memberInfoDtoBasedOnFirebase));
     }
 
     @PostMapping("/reissue")

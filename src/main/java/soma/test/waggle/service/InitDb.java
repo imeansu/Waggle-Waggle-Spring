@@ -3,21 +3,20 @@ package soma.test.waggle.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.MemberRequestDto;
-import soma.test.waggle.dto.TokenDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
-import soma.test.waggle.entity.Following;
+import soma.test.waggle.entity.Interest;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.WorldRoom;
 import soma.test.waggle.repository.ConversationRepositoty;
+import soma.test.waggle.repository.InterestRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +27,8 @@ public class InitDb {
     @PostConstruct
     public void init() {
         initService.dbInit1();
-//        initService.dbInit2();
+        initService.basicInterestInsert();
+        initService.dbInit2();
     }
 
     @Transactional
@@ -40,6 +40,7 @@ public class InitDb {
         private final AuthService authService;
         private final ConversationRepositoty conversationRepositoty;
         private final WorldRoomService worldRoomService;
+        private final InterestRepository interestRepository;
 
         public void dbInit1(){
 
@@ -57,6 +58,7 @@ public class InitDb {
             em.persist(worldRoom);
 
             Member member = createMember("minsu", "dgxc@vkdl.com");
+            member.setNickname("imeansu");
             em.persist(member);
 
             worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
@@ -64,6 +66,20 @@ public class InitDb {
             PhotonConversationDto photonConversationDto1 = new PhotonConversationDto(worldRoom.getId(), "1234", member.getId(), "안녕 나는 민수야");
 
             worldRoomService.pathEvent(photonConversationDto1);
+        }
+
+        public void basicInterestInsert(){
+            Interest root = Interest.builder()
+                    .subject("root")
+                    .build();
+            interestRepository.save(root);
+            List<String> interests = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "축구", "BTS", "한국어", "IT"));
+            interests.stream()
+                    .forEach((string) -> interestRepository.save(Interest.builder()
+                            .parent(root)
+                            .subject(string)
+                            .build()));
+
         }
 
         private WorldRoom createWorldRoom(String name) {
