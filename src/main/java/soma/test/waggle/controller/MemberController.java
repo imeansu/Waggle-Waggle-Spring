@@ -116,7 +116,7 @@ public class MemberController {
     public ResponseEntity<Map> nicknameDuplicationCheck(@RequestParam("nickname") String nickname){
         boolean result = memberService.nicknameCheck(nickname);
         Map<String, Boolean> res = new HashMap();
-        res.put("result", result);
+        res.put("isValid", result);
         return ResponseEntity.ok(res);
     }
 
