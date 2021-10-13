@@ -1,4 +1,4 @@
-package soma.test.waggle.exception;
+package soma.test.waggle.error.exception;
 
 public class NoConversationException extends RuntimeException{
 

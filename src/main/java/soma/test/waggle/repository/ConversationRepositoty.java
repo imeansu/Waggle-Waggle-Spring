@@ -3,10 +3,8 @@ package soma.test.waggle.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import soma.test.waggle.entity.Conversation;
-import soma.test.waggle.exception.NoConversationException;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
