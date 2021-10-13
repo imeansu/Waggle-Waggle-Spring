@@ -30,10 +30,8 @@ public class Interest {
     @OneToMany(mappedBy = "parent")
     private List<Interest> child = new ArrayList<>();
 
-    //==연관관계 메서드==//
-    public void addChildInterest(Interest child){
-        this.child.add(child);
-        child.setParent(this);
+    public Interest returnThis(){
+        return this;
     }
 
 }

@@ -1,8 +1,12 @@
 package soma.test.waggle.redis.repository;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
@@ -45,6 +49,17 @@ class RedisSentenceRepositoryTest {
         member1.setEmail(email);
         member1.setName(name);
         return member1;
+    }
+
+    @AfterEach
+    public void tearDownAfterClass(){
+        redisTemplate.execute(new RedisCallback() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.flushAll();
+                return null;
+            }
+        });
     }
 
     @Test

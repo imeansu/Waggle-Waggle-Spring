@@ -25,9 +25,9 @@ public class FirebaseController {
     private final MemberService memberService;
 
     /**
-     * join or verify member
+     * login or verify member
      * params: firebase token
-     * returns:
+     * returns: isNewMember = y or n and TokenDto when isNewMember is n
      * */
     @PostMapping("/firebase-token")
     public ResponseEntity<FirebaseResponseDto> loginOrVerify(@RequestBody @Valid FirebaseTokenDto firebaseTokenDto) throws FirebaseAuthException {
@@ -35,6 +35,11 @@ public class FirebaseController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * sign up
+     * params: "firebaseToken", "nickName", "country", "language", "introduction"
+     * returns: isNewMember = y or n and TokenDto when isNewMember is n
+     * */
     @PostMapping("/sign-up")
     public ResponseEntity<Object> signup(@RequestBody @Valid MemberJoinRequestDto memberJoinRequestDto) throws FirebaseAuthException {
         return ResponseEntity.ok(firebaseService.signup(memberJoinRequestDto));

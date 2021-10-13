@@ -1,12 +1,16 @@
 package soma.test.waggle.entity;
 
+import lombok.Builder;
+import lombok.Getter;
+
 import javax.persistence.*;
 
 /**
  * Interest - member 연결 중간 테이블
  * ManyToMany 를 피하기 위해
  * */
-@Entity
+@Entity @Getter
+@Builder
 public class InterestMember {
 
     @Id @GeneratedValue

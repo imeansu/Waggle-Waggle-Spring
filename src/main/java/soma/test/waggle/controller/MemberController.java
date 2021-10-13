@@ -8,7 +8,6 @@ import soma.test.waggle.entity.Country;
 import soma.test.waggle.entity.Language;
 import soma.test.waggle.service.MemberService;
 
-import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,7 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberInfoRequestDto> findMemberById(@PathVariable Long memberId){
-        return ResponseEntity.ok(memberService.findMemberById(memberId));
+        return ResponseEntity.ok(memberService.getMemberInfo(memberId));
     }
 
     @PutMapping("/edit-member")

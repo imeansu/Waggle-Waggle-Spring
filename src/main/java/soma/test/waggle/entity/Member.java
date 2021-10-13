@@ -67,6 +67,10 @@ public class Member implements Serializable {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    public void addInterestMember(InterestMember interestMember){
+        this.interests.add(interestMember);
+    }
+
     @Builder
     public Member(String email, String name, String password, String firebaseId, Authority authority, LocalDate date) {
         this.email = email;

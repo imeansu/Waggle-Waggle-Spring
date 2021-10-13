@@ -44,6 +44,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	// mock test final possible
+	testImplementation 'org.mockito:mockito-inline'
 
 	// Could not write JSON: Java 8 date/time type `java.time.LocalDateTime`
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'

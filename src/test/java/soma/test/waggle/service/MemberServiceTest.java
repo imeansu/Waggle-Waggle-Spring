@@ -3,8 +3,17 @@ package soma.test.waggle.service;
 //import org.junit.Test;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.runner.RunWith;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
@@ -24,18 +35,24 @@ import soma.test.waggle.repository.RefreshTokenRepository;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 
 //@RunWith(SpringRunner.class)
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @Transactional
 public class MemberServiceTest {
+
+    // FirebaseToken은 final, default 생성자라서 실패...
+    // 외부 api 통합 함수 테스트를 위해 Mock 객체 생성
+//    @InjectMocks FirebaseService firebaseService;
+//    @Mock FirebaseAuth firebaseAuth;
+
 
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
@@ -228,7 +245,7 @@ public class MemberServiceTest {
         em.flush();
         em.clear();
 
-        MemberInfoRequestDto following = memberService.findMemberById(member2.getId());
+        MemberInfoRequestDto following = memberService.getMemberInfo(member2.getId());
 
         assertThat(following.getFriendship()).isEqualTo(Friendship.FOLLOW);
     }
@@ -299,5 +316,68 @@ public class MemberServiceTest {
         boolean check2 = memberService.nicknameCheck("minsu");
         assertThat(check1).isEqualTo(false);
         assertThat(check2).isEqualTo(true);
+    }
+
+    @Test
+    public void 회원가입() throws FirebaseAuthException {
+        Map<String, String> claims = new HashMap<>() {{
+            put("sub", "sdfdsf");
+            put("name", "minsu");
+            put("email", "gdkfsi@fhid.com");
+        }};
+        @Getter
+        class MockDecodedToken{
+            String uid;
+            String name;
+            String email;
+            MockDecodedToken(Map<String, String> claims) {
+                this.uid =  claims.get("sub");
+                this.email = claims.get("name");
+                this.name = claims.get("name");
+            }
+        }
+//        doReturn(new MockDecodedToken(claims)).when(firebaseAuth).verifyIdToken(any(String.class));
+        MemberJoinRequestDto memberJoinRequestDto = MemberJoinRequestDto.builder()
+                .firebaseToken("eyJhbGciOiJSUzI1NiIsImtpZCI6ImYwNTM4MmFlMTgxYWJlNjFiOTYwYjA1Yzk3ZmE0MDljNDdhNDQ0ZTciLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoibWluc3Uga2ltIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdqdUpZdURzRWFmT3ZEZWFiTGlGeV9VZExJWV9zSTVVb2FkTlVXUUdnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL3NwZWFrLXdvcmxkIiwiYXVkIjoic3BlYWstd29ybGQiLCJhdXRoX3RpbWUiOjE2MzQxMjM2ODIsInVzZXJfaWQiOiJCSzVnQWFMR1N4ZzZLY2dRb3JwQ01RY2ZjQ0EyIiwic3ViIjoiQks1Z0FhTEdTeGc2S2NnUW9ycENNUWNmY0NBMiIsImlhdCI6MTYzNDEyMzY4MiwiZXhwIjoxNjM0MTI3MjgyLCJlbWFpbCI6Imdjbm1sMEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExNzM2NjcxOTAwMTM1NjM1NjQ3MSJdLCJlbWFpbCI6WyJnY25tbDBAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.R9c1kiHaoBQ7f1Bn2vGV9vip0HJCaa6N21cjnc9Dq-gurX0FwpYLolHSAQQJJ9BQnboJ_S9Ol6mN8ueVW0DM7WGncv0_jmW4ut3belfDJgr2WR1fvWsfCgGDs0A7f9RTQ3fVZy4qiOsvFZv8z94WPo14nie52Rd0nqhprrHR1yY_GpCFQdn-O5ToL2rMV6Hj2wQtccUKvs1njqbOZ4sszuoShB2o-EIBisz5i6bdDNAsqU-7cfT2gLJ1nvMHVTfvsxz8O3hUz8jmSN9rom4xpXRM-RTJ4mrZVvuXDsu0uYAImiQd8EFaEy-UBtNQvADu67pcHlzreYvFEL8ZRT-LwA")
+                .nickname("imeansu")
+                .country(Country.KOREA)
+                .language(Language.KOREAN)
+                .introduction("dfsdfsd")
+                .interests(new ArrayList<>(Arrays.asList("K-POP","축구")))
+                .build();
+        MockDecodedToken decodedToken = new MockDecodedToken(claims);
+        MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase = MemberInfoDtoBasedOnFirebase.builder()
+                                                                    .email(decodedToken.getEmail())
+                                                                    .name(decodedToken.getName())
+                                                                    .firebaseId(decodedToken.getUid())
+                                                                    .password(decodedToken.getUid())
+                                                                    .date(LocalDate.now())
+                                                                    .build();
+
+        // 일단 가입 시키고, 추가 정보 입력 (security context에 저장 해야 함)
+        authService.signup(memberInfoDtoBasedOnFirebase);
+
+        // jwt 반환을 위한 dto
+        FirebaseResponseDto firebaseResponseDto = new FirebaseResponseDto();
+        // member Id 가져오기
+        Long memberId = memberRepository.getMemberIdByFirebaseId(memberInfoDtoBasedOnFirebase.getFirebaseId());
+        firebaseResponseDto.setMemberId(memberId);
+
+        // security Context에 memberId 저장
+        securityContext(Long.toString(memberId));
+
+        firebaseResponseDto.setIsNewMember("n");
+        // token 생성하기
+        TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
+        firebaseResponseDto.setToken(tokenDto);
+
+        // 추가 정보 입력
+        memberService.putMemberInfo(memberJoinRequestDto.toMemberInfoRequestDto());
+
+        MemberInfoRequestDto memberInfo = memberService.getMemberInfo(firebaseResponseDto.getMemberId());
+        System.out.println("memberInfo = " + memberInfo.getInterests());
+        assertThat(memberInfo.getInterests().contains("K-POP")).isEqualTo(true);
+
+
     }
 }

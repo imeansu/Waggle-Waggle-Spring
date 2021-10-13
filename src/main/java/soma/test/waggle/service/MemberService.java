@@ -5,12 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.repository.InterestMemberRepository;
 import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final InterestRepository interestRepository;
+    private final InterestMemberRepository interestMemberRepository;
 
     @Transactional(readOnly = true)
     public MemberResponseDto getMemberInfo(String email) {
@@ -34,8 +38,9 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
 
-    public MemberInfoRequestDto findMemberById(Long memberId) {
-        return this.setFriendship(memberRepository.find(memberId));
+
+    public MemberInfoRequestDto getMemberInfo(Long memberId) {
+        return this.getMemberInfo(memberRepository.find(memberId));
     }
 
     /**
@@ -68,7 +73,28 @@ public class MemberService {
         if( memberInfoRequestDto.getEntranceRoom() != null){
             member.setEntranceRoom(memberInfoRequestDto.getEntranceRoom());
         }
+        if( memberInfoRequestDto.getInterests() != null){
+            List<InterestMember> interestMemberList = toInterestMemberEntityList(memberInfoRequestDto.getInterests());
+            member.setInterests(interestMemberList);
+            interestMemberRepository.saveAll(interestMemberList);
+        }
         return memberInfoRequestDto;
+    }
+
+    /**
+     * string list 로 받은 관심사를 InterestMember 엔티티 리스트로 변경해서 반환
+     * */
+    public List<InterestMember> toInterestMemberEntityList(List<String> interests){
+        Member member = memberRepository.find(SecurityUtil.getCurrentMemberId());
+        Map<String, Interest> interestMap = interestRepository.findInterestMap(interests);
+        return interests.stream()
+                .map(interest ->
+                    InterestMember.builder()
+                            .member(member)
+                            .interest(interestMap.get(interest))
+                            .build()
+                )
+                .collect(Collectors.toList());
     }
 
 
@@ -169,7 +195,7 @@ public class MemberService {
                 .build();
     }
 
-    public MemberInfoRequestDto setFriendship(Member member){
+    public MemberInfoRequestDto getMemberInfo(Member member){
         Friendship friendship;
         Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
         List<Member> followedMembers = reqMember.getFollowings().stream()

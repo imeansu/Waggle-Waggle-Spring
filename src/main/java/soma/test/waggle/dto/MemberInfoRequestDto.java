@@ -5,6 +5,8 @@ import soma.test.waggle.entity.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -26,6 +28,7 @@ public class MemberInfoRequestDto {
     private OnStatus entranceStatus;
     private EntranceRoom entranceRoom;
     private Friendship friendship;
+    private List<String> interests;
 
     public static MemberInfoRequestDto of(Member member){
         return MemberInfoRequestDto.builder()
@@ -38,6 +41,9 @@ public class MemberInfoRequestDto {
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .entranceRoom(member.getEntranceRoom())
+                .interests(member.getInterests().stream()
+                        .map(interestMember -> interestMember.getInterest().getSubject())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
