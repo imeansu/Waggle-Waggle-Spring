@@ -65,6 +65,11 @@ public class MemberServiceTest {
 //    }
 
     @Test
+    public void 다른사람_정보_조회(){
+
+    }
+
+    @Test
     public void 온라인멤버() {
 
         Member member1 = createMember("member1", "dsfsdfsd");

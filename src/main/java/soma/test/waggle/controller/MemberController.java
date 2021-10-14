@@ -24,10 +24,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMyInfo());
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String email) {
-        return ResponseEntity.ok(memberService.getMemberInfo(email));
-    }
+    // ambiguous uri and anti pattern
+//    @GetMapping("/{email}")
+//    public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String email) {
+//        return ResponseEntity.ok(memberService.getMemberInfo(email));
+//    }
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberInfoRequestDto> findMemberById(@PathVariable Long memberId){
