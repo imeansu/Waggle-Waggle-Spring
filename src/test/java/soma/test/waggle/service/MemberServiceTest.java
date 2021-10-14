@@ -1,8 +1,5 @@
 package soma.test.waggle.service;
 
-//import org.junit.Test;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.runner.RunWith;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -323,6 +320,18 @@ public class MemberServiceTest {
         assertThat(check2).isEqualTo(true);
     }
 
+    @Getter
+    class MockDecodedToken{
+        String uid;
+        String name;
+        String email;
+        MockDecodedToken(Map<String, String> claims) {
+            this.uid =  claims.get("sub");
+            this.email = claims.get("name");
+            this.name = claims.get("name");
+        }
+    }
+
     @Test
     public void 회원가입() throws FirebaseAuthException {
         Map<String, String> claims = new HashMap<>() {{
@@ -330,17 +339,7 @@ public class MemberServiceTest {
             put("name", "minsu");
             put("email", "gdkfsi@fhid.com");
         }};
-        @Getter
-        class MockDecodedToken{
-            String uid;
-            String name;
-            String email;
-            MockDecodedToken(Map<String, String> claims) {
-                this.uid =  claims.get("sub");
-                this.email = claims.get("name");
-                this.name = claims.get("name");
-            }
-        }
+
 //        doReturn(new MockDecodedToken(claims)).when(firebaseAuth).verifyIdToken(any(String.class));
         MemberJoinRequestDto memberJoinRequestDto = MemberJoinRequestDto.builder()
                 .firebaseToken("eyJhbGciOiJSUzI1NiIsImtpZCI6ImYwNTM4MmFlMTgxYWJlNjFiOTYwYjA1Yzk3ZmE0MDljNDdhNDQ0ZTciLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoibWluc3Uga2ltIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdqdUpZdURzRWFmT3ZEZWFiTGlGeV9VZExJWV9zSTVVb2FkTlVXUUdnPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL3NwZWFrLXdvcmxkIiwiYXVkIjoic3BlYWstd29ybGQiLCJhdXRoX3RpbWUiOjE2MzQxMjM2ODIsInVzZXJfaWQiOiJCSzVnQWFMR1N4ZzZLY2dRb3JwQ01RY2ZjQ0EyIiwic3ViIjoiQks1Z0FhTEdTeGc2S2NnUW9ycENNUWNmY0NBMiIsImlhdCI6MTYzNDEyMzY4MiwiZXhwIjoxNjM0MTI3MjgyLCJlbWFpbCI6Imdjbm1sMEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExNzM2NjcxOTAwMTM1NjM1NjQ3MSJdLCJlbWFpbCI6WyJnY25tbDBAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.R9c1kiHaoBQ7f1Bn2vGV9vip0HJCaa6N21cjnc9Dq-gurX0FwpYLolHSAQQJJ9BQnboJ_S9Ol6mN8ueVW0DM7WGncv0_jmW4ut3belfDJgr2WR1fvWsfCgGDs0A7f9RTQ3fVZy4qiOsvFZv8z94WPo14nie52Rd0nqhprrHR1yY_GpCFQdn-O5ToL2rMV6Hj2wQtccUKvs1njqbOZ4sszuoShB2o-EIBisz5i6bdDNAsqU-7cfT2gLJ1nvMHVTfvsxz8O3hUz8jmSN9rom4xpXRM-RTJ4mrZVvuXDsu0uYAImiQd8EFaEy-UBtNQvADu67pcHlzreYvFEL8ZRT-LwA")
