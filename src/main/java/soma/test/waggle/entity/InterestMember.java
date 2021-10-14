@@ -2,6 +2,7 @@ package soma.test.waggle.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
  * */
 @Entity @Getter
 @Builder
+@NoArgsConstructor
 public class InterestMember {
 
     @Id @GeneratedValue
