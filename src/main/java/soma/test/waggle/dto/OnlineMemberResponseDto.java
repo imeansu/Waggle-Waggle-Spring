@@ -7,6 +7,7 @@ import java.util.List;
 @Getter @Setter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class OnlineMemberResponseDto {
 
     private int onlineFollowingMemberSize;

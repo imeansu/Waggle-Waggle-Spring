@@ -50,6 +50,9 @@ dependencies {
 	// Could not write JSON: Java 8 date/time type `java.time.LocalDateTime`
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
+	// logging을 위한 AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop';
+
 	// jwt 관련 의존성
 	compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'

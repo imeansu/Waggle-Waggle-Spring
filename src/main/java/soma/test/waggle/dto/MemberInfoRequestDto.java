@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class MemberInfoRequestDto {
 
     private Long id;

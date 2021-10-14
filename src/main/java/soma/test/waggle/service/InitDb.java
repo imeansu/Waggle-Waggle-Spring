@@ -46,19 +46,19 @@ public class InitDb {
 
             for (int i = 1; i <= 10; i++){
                 WorldRoom worldRoom = new WorldRoom();
-                worldRoom.setName("world_"+i);
+                worldRoom.setName("TEST:world_"+i);
                 worldRoom.setOnStatus(i%2==0? OnStatus.Y : OnStatus.N);
-                worldRoom.setKeywords(Arrays.asList("1","2","3"));
+                worldRoom.setKeywords(Arrays.asList("K-POP","enum말고","저놈!"));
                 em.persist(worldRoom);
             }
         }
 
         public void dbInit2(){
-            WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
+            WorldRoom worldRoom = createWorldRoom("TEST:Hi! Let's talk!");
             em.persist(worldRoom);
 
-            Member member = createMember("minsu", "dgxc@vkdl.com");
-            member.setNickname("imeansu");
+            Member member = createMember("TEST:minsu", "TEST:dgxc@vkdl.com");
+            member.setNickname("TEST:imeansu");
             em.persist(member);
 
             worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
