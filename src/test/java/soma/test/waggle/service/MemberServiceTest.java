@@ -1,15 +1,10 @@
 package soma.test.waggle.service;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,9 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
@@ -35,9 +27,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.assertj.core.api.Assertions.assertThat;
 
 //@RunWith(SpringRunner.class)
 @SpringBootTest
@@ -320,7 +310,7 @@ public class MemberServiceTest {
         assertThat(check2).isEqualTo(true);
     }
 
-    @Getter
+//    @Getter
     class MockDecodedToken{
         String uid;
         String name;
@@ -329,6 +319,15 @@ public class MemberServiceTest {
             this.uid =  claims.get("sub");
             this.email = claims.get("name");
             this.name = claims.get("name");
+        }
+        public String getUid() {
+            return uid;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getEmail() {
+            return email;
         }
     }
 
