@@ -15,11 +15,20 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * logging을 위한 AOP
+ * */
 @Component
 @Aspect
 @Slf4j
 public class LogAspect {
 
+    /**
+     * 모든 controller에 적용
+     * log 내역
+     *      REQUEST | MemberId: {memberId} |URI: {request uri} | Method: {HTTP Method} | {} = {Args based on params}
+     *      RESPONSE | URI: {request uri} | Method: {HTTP Method} | {Controller.method} = {return result} ({걸린 시간}ms)
+     * */
 //    @Around("execution(* soma.test.waggle.controller..*.*(..)")
     @Around("within(soma.test.waggle.controller..*)")
     public Object logging(ProceedingJoinPoint pjp) throws Throwable {
@@ -28,20 +37,29 @@ public class LogAspect {
         long startAt = System.currentTimeMillis();
 
         //params.get("params")
-        log.info("----------> REQUEST | MemberId: {} |URI: {} | Method: {} | {} = {} ", SecurityUtil.getCurrentMemberId() , params.get("URI"), params.get("Method"), pjp.getSignature().toShortString(),
-                 pjp.getArgs());
+        log.info("----------> REQUEST | MemberId: {} |URI: {} | Method: {} | {} = {} ",
+                SecurityUtil.getCurrentMemberId() ,
+                params.get("URI"),
+                params.get("Method"),
+                pjp.getSignature().toShortString(),
+                pjp.getArgs());
 
         Object result = pjp.proceed();
 
         long endAt = System.currentTimeMillis();
         // pjp.getSignature().getDeclaringTypeName(), pjp.getSignature().getName()
-        log.info("----------> RESPONSE | URI: {} | Method: {} | {} = {} ({}ms)", params.get("URI"), params.get("Method"), pjp.getSignature().toShortString(), result, endAt-startAt);
+        log.info("----------> RESPONSE | URI: {} | Method: {} | {} = {} ({}ms)",
+                params.get("URI"),
+                params.get("Method"),
+                pjp.getSignature().toShortString(),
+                result,
+                endAt-startAt);
 
         return result;
 
     }
 
-    // get requset value
+    // get request value
     private Map<String, String> getRequestParams() {
 
         String params = "";
