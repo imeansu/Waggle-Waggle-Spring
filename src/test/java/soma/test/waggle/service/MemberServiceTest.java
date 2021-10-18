@@ -20,6 +20,7 @@ import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.repository.RefreshTokenRepository;
+import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -380,6 +381,40 @@ public class MemberServiceTest {
         MemberInfoRequestDto memberInfo = memberService.getMemberInfo(firebaseResponseDto.getMemberId());
         System.out.println("memberInfo = " + memberInfo.getInterests());
         assertThat(memberInfo.getInterests().contains("K-POP")).isEqualTo(true);
+
+    }
+
+    @Test
+    public void 관심사_추가_삭제_중복방지(){
+        // given
+        Member member = createMember("minsu", "dsfd@fdljkdf.com");
+        memberRepository.save(member);
+        Member findMemberM = memberRepository.findByEmail("dsfd@fdljkdf.com").get();
+        Long memberId = findMemberM.getId();
+        System.out.println("memberId = " + memberId);
+        securityContext(Long.toString(memberId));
+        MemberInfoRequestDto findMember = memberService.getMemberInfo(memberId);
+
+        // when
+        List<String> interestString = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "IT"));
+        findMember.setInterests(interestString);
+        memberService.putMemberInfo(findMember);
+        interestString = new ArrayList<>(Arrays.asList("K-POP", "스포츠"));
+        findMember.setInterests(interestString);
+        memberService.putMemberInfo(findMember);
+        interestString = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "한국어"));
+        findMember.setInterests(interestString);
+        memberService.putMemberInfo(findMember);
+        em.flush();
+        em.clear();
+
+        // then
+        MemberInfoRequestDto dto = memberService.getMemberInfo(memberId);
+        System.out.println(dto.toString());
+        for (String interest: dto.getInterests()) {
+            System.out.println("interest " + interest);
+        }
+        assertThat(dto.getInterests().size()).isEqualTo(3);
 
 
     }

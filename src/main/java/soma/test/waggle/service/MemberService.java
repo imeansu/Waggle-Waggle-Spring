@@ -11,9 +11,7 @@ import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.util.SecurityUtil;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,9 +72,24 @@ public class MemberService {
             member.setEntranceRoom(memberInfoRequestDto.getEntranceRoom());
         }
         if( memberInfoRequestDto.getInterests() != null){
-            List<InterestMember> interestMemberList = toInterestMemberEntityList(memberInfoRequestDto.getInterests());
-            member.setInterests(interestMemberList);
+            // 새로운 관심사
+            List<InterestMember> newInterestMemberList = toInterestMemberEntityList(memberInfoRequestDto.getInterests());
+            Set<InterestMember> interestMemberList = new HashSet<>(newInterestMemberList);
+            // 이전 관심사
+            Set<InterestMember> preInterestList = new HashSet<>(member.getInterests());
+            // 새로운 관심사 멤버에게 적용
+            member.setInterests(newInterestMemberList);
+            // temp
+            Set<InterestMember> tempInterestList = new HashSet<>();
+            tempInterestList.addAll(interestMemberList);
+            // insert 할 관심사
+            interestMemberList.removeAll(preInterestList);
+            // delete 할 관심사
+            preInterestList.removeAll(tempInterestList);
+            // 이전에 없던 관심사 저장
             interestMemberRepository.saveAll(interestMemberList);
+            // 없어진 관심사 삭제
+            interestMemberRepository.deleteAll(preInterestList);
         }
         return memberInfoRequestDto;
     }
@@ -198,6 +211,7 @@ public class MemberService {
     public MemberInfoRequestDto getMemberInfo(Member member){
         Friendship friendship;
         Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
+        System.out.println("reqMember.getId() = " + reqMember.getId());
         List<Member> followedMembers = reqMember.getFollowings().stream()
                 .map(f -> f.getFollowedMember())
                 .collect(Collectors.toList());
