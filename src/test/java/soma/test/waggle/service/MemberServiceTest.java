@@ -307,7 +307,7 @@ public class MemberServiceTest {
     public void 닉네임_중목_체크(){
         boolean check1 = memberService.nicknameCheck("imeansu");
         boolean check2 = memberService.nicknameCheck("minsu");
-        assertThat(check1).isEqualTo(false);
+        assertThat(check1).isEqualTo(true);
         assertThat(check2).isEqualTo(true);
     }
 
