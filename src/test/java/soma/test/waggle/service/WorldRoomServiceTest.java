@@ -77,7 +77,8 @@ public class WorldRoomServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
-    @Test
+    // conversation DB에 저장 안하므로 폐기
+//    @Test
     public void pathJoinAndLeave(){
 
         WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
@@ -104,7 +105,8 @@ public class WorldRoomServiceTest {
 
     }
 
-    @Test
+    // conversation DB에 저장 안하므로 폐기
+//    @Test
     public void pathEvent(){
         WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
         em.persist(worldRoom);

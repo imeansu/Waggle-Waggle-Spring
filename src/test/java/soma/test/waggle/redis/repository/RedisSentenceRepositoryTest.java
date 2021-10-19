@@ -62,7 +62,8 @@ class RedisSentenceRepositoryTest {
         });
     }
 
-    @Test
+    // conversation DB에 저장 안하므로 폐기
+//    @Test
     public void 마이그레이션(){
         WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
         em.persist(worldRoom);
