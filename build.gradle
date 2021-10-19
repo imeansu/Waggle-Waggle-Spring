@@ -60,6 +60,10 @@ dependencies {
 
 	// firebase 관련 의존성
 	implementation 'com.google.firebase:firebase-admin:8.0.0'
+
+	// logstash 관련
+	implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
+
 }
 
 test {

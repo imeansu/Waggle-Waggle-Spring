@@ -1,13 +1,13 @@
 package soma.test.waggle.dto.photon;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class PhotonConversationDto {
 
     private Long roomId;

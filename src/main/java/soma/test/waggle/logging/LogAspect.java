@@ -2,9 +2,11 @@ package soma.test.waggle.logging;
 
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -31,7 +33,7 @@ public class LogAspect {
      * */
 //    @Around("execution(* soma.test.waggle.controller..*.*(..)")
     @Around("within(soma.test.waggle.controller..*)")
-    public Object logging(ProceedingJoinPoint pjp) throws Throwable {
+    public Object controllerLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 
         long startAt = System.currentTimeMillis();
@@ -89,5 +91,21 @@ public class LogAspect {
                 .map(entry -> String.format("%s : (%s)",
                         entry.getKey(), Joiner.on(",").join(entry.getValue())))
                 .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * 대화 문장 관련 로그
+     * 해당 로그는 elk로 보내지도록 설정
+     *  log 내역
+     *      ConversationLog | MemberId: {memberId} | Method: {} | {} = {Args based on params}
+     * */
+    @Before("execution(* soma.test.waggle.service.ConversationService.*(..))")
+    public void conversationLogging(JoinPoint jp){
+
+        log.info("----------> CONVERSATIONLOG | MemberId: {} | Method: {} | Args: {} ",
+                SecurityUtil.getCurrentMemberId() ,
+                jp.getSignature().toShortString(),
+                jp.getArgs());
+
     }
 }

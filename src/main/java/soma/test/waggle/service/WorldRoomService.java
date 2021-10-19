@@ -101,26 +101,28 @@ public class WorldRoomService {
 
     @Transactional
     public PhotonResponseDto pathEvent(PhotonConversationDto photonConversationDto) {
-        Conversation conversation;
-        List<Conversation> findConversation = conversationRepositoty.findByVivoxId(photonConversationDto.getVivoxId());
-        if (findConversation.size() == 0){
-            conversation = Conversation.builder()
-                    .vivoxId(photonConversationDto.getVivoxId())
-                    .worldRoom(worldRoomRepository.findById(photonConversationDto.getRoomId()).get())
-                    .dateTime(LocalDateTime.now())
-                    .build();
-            conversationRepositoty.save(conversation);
-        } else {
-            conversation = findConversation.get(0);
-        }
+        // 대화 DB 저장 안함
+//        Conversation conversation;
+//        List<Conversation> findConversation = conversationRepositoty.findByVivoxId(photonConversationDto.getVivoxId());
+//        if (findConversation.size() == 0){
+//            conversation = Conversation.builder()
+//                    .vivoxId(photonConversationDto.getVivoxId())
+//                    .worldRoom(worldRoomRepository.findById(photonConversationDto.getRoomId()).get())
+//                    .dateTime(LocalDateTime.now())
+//                    .build();
+//            conversationRepositoty.save(conversation);
+//        } else {
+//            conversation = findConversation.get(0);
+//        }
 
-        Sentence sentence = Sentence.builder()
-                .conversation(conversation)
-                .sentence(photonConversationDto.getSentence())
-                .member(memberRepository.find(photonConversationDto.getMemberId()))
-                .dateTime(LocalDateTime.now())
-                .build();
-        redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
+        // sentence DB 저장 안함
+//        Sentence sentence = Sentence.builder()
+//                .conversation(conversation)
+//                .sentence(photonConversationDto.getSentence())
+//                .member(memberRepository.find(photonConversationDto.getMemberId()))
+//                .dateTime(LocalDateTime.now())
+//                .build();
+//        redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
 
         // 발화 문장이 들어오면 대화 관리를 위해 전달
         conversationService.sentence(photonConversationDto);

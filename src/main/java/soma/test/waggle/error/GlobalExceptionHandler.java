@@ -75,6 +75,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 추가 요망
+     * HttpMessageNotReadableException (body에 dto에 없는 필드 있을 경우)
+     * */
+
     // 테스트 환경에서는 보류
 //    @ExceptionHandler(Exception.class)
 //    protected ResponseEntity<ErrorResponse> handleException(Exception e) {
