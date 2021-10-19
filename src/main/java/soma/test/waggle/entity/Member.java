@@ -1,9 +1,6 @@
 package soma.test.waggle.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import soma.test.waggle.dto.InitMemberDto;
 
 import javax.persistence.*;
@@ -79,6 +76,25 @@ public class Member implements Serializable {
         this.firebaseId = firebaseId;
         this.authority = authority;
         this.date = date;
+    }
+
+
+    public Member(String email, String name, Avatar avatar,String password, String firebaseId, Authority authority, LocalDate date, String nickname
+                    , OnStatus onlineStatus, OnStatus entranceStatus, String introduction, List<InterestMember> interests
+    ) {
+        this.email = email;
+        this.name = name;
+        this.avatar = avatar;
+        this.introduction = introduction;
+        this.password = password;
+        this.firebaseId = firebaseId;
+        this.authority = authority;
+        this.date = date;
+        this.nickname = nickname;
+        this.onlineStatus = onlineStatus;
+        this.entranceStatus = entranceStatus;
+        this.interests = interests;
+
     }
 
     public Member(InitMemberDto dto) {

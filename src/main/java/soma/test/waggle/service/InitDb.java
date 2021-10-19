@@ -11,15 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
-import soma.test.waggle.entity.Interest;
-import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
-import soma.test.waggle.entity.WorldRoom;
+import soma.test.waggle.entity.*;
 import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.InterestRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,6 +67,15 @@ public class InitDb {
                 worldRoom.setOnStatus(i%2==0? OnStatus.Y : OnStatus.N);
                 worldRoom.setKeywords(Arrays.asList("K-POP","enum말고","저놈!"));
                 em.persist(worldRoom);
+            }
+            List<InterestMember> interestMembers = new ArrayList<>();
+            for (int i = 0; i <= 10; i++){
+                String j = Integer.toString(i);
+
+                Member member = new Member("Test|email|"+j, "Test|name|"+j, i%2 == 0? Avatar.MALE1 : Avatar.FEMALE1,"Test|password|"+j, "Test|firebaseId|"+j, Authority.ROLE_USER, LocalDate.now(), "Test|nickname|"+j
+                        , i%2 == 0? OnStatus.Y : OnStatus.N, OnStatus.N, "Test|introduction|"+j, interestMembers);
+
+                em.persist(member);
             }
         }
 
