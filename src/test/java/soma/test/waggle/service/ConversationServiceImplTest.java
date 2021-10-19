@@ -9,11 +9,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
 import soma.test.waggle.dto.VivoxMemberInOutDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.repository.CacheMemberRepository;
 import soma.test.waggle.repository.ConversationCacheRepository;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,11 +47,21 @@ class ConversationServiceImplTest {
         });
     }
 
+    private void securityContext(String id) {
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream("ROLE_USER".split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        UserDetails principal = new User(id, "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
     @Test
     public void 멤버_그래프_문장_리스트_테스트(){
 
         // given
-
+        // test용 security context
+        securityContext("1");
         // memberId 1로 SseEmitter 객체 등록
         notificationService.subscribe("3", "");
 

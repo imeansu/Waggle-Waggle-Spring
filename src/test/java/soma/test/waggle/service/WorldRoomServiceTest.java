@@ -6,6 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
@@ -14,12 +20,13 @@ import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.WorldRoom;
 import soma.test.waggle.redis.repository.RedisSentenceRepository;
-import soma.test.waggle.repository.ConversationRepositoty;
-import soma.test.waggle.repository.EntranceRoomRepository;
-import soma.test.waggle.repository.SentenceRepository;
-import soma.test.waggle.repository.WorldRoomRepository;
+import soma.test.waggle.repository.*;
 
 import javax.persistence.EntityManager;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -30,6 +37,7 @@ public class WorldRoomServiceTest {
 
     @Autowired WorldRoomService worldRoomService;
     @Autowired WorldRoomRepository worldRoomRepository;
+    @Autowired MemberRepository memberRepository;
     @Autowired EntranceRoomRepository entranceRoomRepository;
     @Autowired EntityManager em;
     @Autowired ConversationRepositoty conversationRepositoty;
@@ -60,6 +68,15 @@ public class WorldRoomServiceTest {
         return member1;
     }
 
+    private void securityContext(String id) {
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream("ROLE_USER".split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        UserDetails principal = new User(id, "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
     @Test
     public void pathJoinAndLeave(){
 
@@ -68,6 +85,9 @@ public class WorldRoomServiceTest {
 
         Member member = createMember("minsu", "dgxc@vkdl.com");
         em.persist(member);
+
+        member = memberRepository.findByEmail("dgxc@vkdl.com").get();
+        securityContext(Long.toString(member.getId()));
 
         worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
 
@@ -91,6 +111,9 @@ public class WorldRoomServiceTest {
 
         Member member = createMember("minsu", "dgxc@vkdl.com");
         em.persist(member);
+
+        member = memberRepository.findByEmail("dgxc@vkdl.com").get();
+        securityContext(Long.toString(member.getId()));
 
         worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
 

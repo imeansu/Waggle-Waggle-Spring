@@ -7,9 +7,9 @@
         </encoder>
     </appender>
 
-    <!-- Logstash -->
+<!--     Logstash 13.125.187.55-->
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>13.125.187.55:5000</destination>
+        <destination>localhost:5000</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"appname":"appname","profile":"local"}</customFields>
         </encoder>
