@@ -23,7 +23,12 @@ class RedisMessageQueueServiceImplTest {
         notificationService.subscribe("1", "");
         List<String> sentences = new ArrayList<>(Arrays.asList("dd", "ㄹㄹ", "spring에서 배달왔습니다~"));
         messageQueueService.generateMessageQueue(1L, sentences);
-        Thread.sleep(1000);
+        messageQueueService.generateMessageQueue(1L, sentences);
+        messageQueueService.generateMessageQueue(1L, sentences);
+        messageQueueService.generateMessageQueue(1L, sentences);
+        messageQueueService.generateMessageQueue(1L, sentences);
+        messageQueueService.generateMessageQueue(1L, sentences);
+        Thread.sleep(5000);
 
     }
 

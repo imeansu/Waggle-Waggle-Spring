@@ -14,7 +14,7 @@ import soma.test.waggle.service.ProduceService;
 
 import javax.annotation.Resource;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class RedisProduceService implements ProduceService{
 

@@ -64,6 +64,10 @@ dependencies {
 	// logstash 관련
 	implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
 
+	// rabbitMQ 관련
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
 }
 
 test {
