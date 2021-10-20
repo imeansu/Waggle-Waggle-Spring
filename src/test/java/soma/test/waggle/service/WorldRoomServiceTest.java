@@ -17,7 +17,7 @@ import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.Member;
-import soma.test.waggle.entity.OnStatus;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.entity.WorldRoom;
 import soma.test.waggle.redis.repository.RedisSentenceRepository;
 import soma.test.waggle.repository.*;
@@ -49,10 +49,10 @@ public class WorldRoomServiceTest {
         WorldRoom worldRoom = createWorldRoom("Hi! Let's talk!");
         em.persist(worldRoom);
 
-        worldRoomService.pathCreateOrClose(new PhotonRoomIdDto(worldRoom.getId()), OnStatus.Y);
+        worldRoomService.pathCreateOrClose(new PhotonRoomIdDto(worldRoom.getId()), OnStatusType.Y);
 
-        assertThat(worldRoomRepository.findById(worldRoom.getId()).get().getOnStatus())
-                .isEqualTo(OnStatus.Y);
+        assertThat(worldRoomRepository.findById(worldRoom.getId()).get().getOnStatusType())
+                .isEqualTo(OnStatusType.Y);
     }
 
     private WorldRoom createWorldRoom(String name) {
@@ -93,13 +93,13 @@ public class WorldRoomServiceTest {
         worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()));
 
         assertThat(entranceRoomRepository.findByMemberId(member.getId()).getWorldRoom()).isEqualTo(worldRoom);
-        assertThat(member.getEntranceStatus()).isEqualTo(OnStatus.Y);
+        assertThat(member.getEntranceStatus()).isEqualTo(OnStatusType.Y);
         assertThat(worldRoom.getPeople()).isEqualTo(1);
 
         worldRoomService.pathLeave(new PhotonMemberDto(worldRoom.getId(), member.getId()));
 
-        assertThat(entranceRoomRepository.findByMemberId(member.getId()).getIsLast()).isEqualTo(OnStatus.N);
-        assertThat(member.getEntranceStatus()).isEqualTo(OnStatus.N);
+        assertThat(entranceRoomRepository.findByMemberId(member.getId()).getIsLast()).isEqualTo(OnStatusType.N);
+        assertThat(member.getEntranceStatus()).isEqualTo(OnStatusType.N);
         assertThat(worldRoom.getPeople()).isEqualTo(0);
 
 

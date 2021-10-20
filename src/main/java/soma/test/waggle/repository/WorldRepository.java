@@ -2,11 +2,8 @@ package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import soma.test.waggle.entity.OnStatus;
 import soma.test.waggle.entity.World;
-import soma.test.waggle.entity.WorldRoom;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 

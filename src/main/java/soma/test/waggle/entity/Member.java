@@ -2,6 +2,7 @@ package soma.test.waggle.entity;
 
 import lombok.*;
 import soma.test.waggle.dto.InitMemberDto;
+import soma.test.waggle.type.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,10 +29,10 @@ public class Member implements Serializable {
     private String nickname;
 
     @Enumerated(value = EnumType.STRING)
-    private Country country;
+    private CountryType countryType;
 
     @Enumerated(value = EnumType.STRING)
-    private Language language;
+    private LanguageType languageType;
 
     private String introduction;
 
@@ -42,12 +43,12 @@ public class Member implements Serializable {
     private LocalDate date;
 
     @Enumerated(value = EnumType.STRING)
-    private Avatar avatar;
+    private AvatarType avatarType;
 
     @Enumerated(value = EnumType.STRING)
-    private OnStatus onlineStatus;
+    private OnStatusType onlineStatus;
     @Enumerated(value = EnumType.STRING)
-    private OnStatus entranceStatus;
+    private OnStatusType entranceStatus;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entrance_id")
@@ -62,33 +63,33 @@ public class Member implements Serializable {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Authority authority;
+    private AuthorityType authorityType;
 
     public void addInterestMember(InterestMember interestMember){
         this.interests.add(interestMember);
     }
 
     @Builder
-    public Member(String email, String name, String password, String firebaseId, Authority authority, LocalDate date) {
+    public Member(String email, String name, String password, String firebaseId, AuthorityType authorityType, LocalDate date) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.firebaseId = firebaseId;
-        this.authority = authority;
+        this.authorityType = authorityType;
         this.date = date;
     }
 
 
-    public Member(String email, String name, Avatar avatar,String password, String firebaseId, Authority authority, LocalDate date, String nickname
-                    , OnStatus onlineStatus, OnStatus entranceStatus, String introduction, List<InterestMember> interests
+    public Member(String email, String name, AvatarType avatarType, String password, String firebaseId, AuthorityType authorityType, LocalDate date, String nickname
+                    , OnStatusType onlineStatus, OnStatusType entranceStatus, String introduction, List<InterestMember> interests
     ) {
         this.email = email;
         this.name = name;
-        this.avatar = avatar;
+        this.avatarType = avatarType;
         this.introduction = introduction;
         this.password = password;
         this.firebaseId = firebaseId;
-        this.authority = authority;
+        this.authorityType = authorityType;
         this.date = date;
         this.nickname = nickname;
         this.onlineStatus = onlineStatus;

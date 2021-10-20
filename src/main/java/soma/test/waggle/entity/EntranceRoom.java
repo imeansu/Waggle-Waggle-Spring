@@ -3,6 +3,7 @@ package soma.test.waggle.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import soma.test.waggle.type.OnStatusType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ public class EntranceRoom {
     private Member member;
 
     @NotNull
-    private OnStatus isLast;
+    private OnStatusType isLast;
 
     private LocalDateTime joinTime;
 

@@ -10,7 +10,7 @@ import soma.test.waggle.dto.WorldRoomResponseDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonResponseDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
-import soma.test.waggle.entity.OnStatus;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.service.WorldRoomService;
 import soma.test.waggle.service.WorldService;
 
@@ -37,12 +37,12 @@ public class WorldController {
 
     @PostMapping("/world-room/path-create")
     public ResponseEntity<PhotonResponseDto> pathCreate(@RequestBody PhotonRoomIdDto photonRoomIdDto){
-        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatus.Y));
+        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatusType.Y));
     }
 
     @PostMapping("/world-room/path-close")
     public ResponseEntity<PhotonResponseDto> pathClose(@RequestBody PhotonRoomIdDto photonRoomIdDto){
-        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatus.N));
+        return ResponseEntity.ok(worldRoomService.pathCreateOrClose(photonRoomIdDto, OnStatusType.N));
     }
 
     @PostMapping("/world-room/path-join")

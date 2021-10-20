@@ -1,9 +1,10 @@
 package soma.test.waggle.entity;
 
 import lombok.*;
+import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.type.WorldMapType;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ WorldRoom {
     private String topic;
 
     @Enumerated(value = EnumType.STRING)
-    private WorldMap map;
+    private WorldMapType map;
 
 //    @NotNull
     private int people;
@@ -36,7 +37,7 @@ WorldRoom {
 //    @NotNull
     private String photon_server;
 
-    private OnStatus onStatus;
+    private OnStatusType onStatusType;
 
     @ManyToOne(fetch = FetchType.LAZY)
 //    @NotNull

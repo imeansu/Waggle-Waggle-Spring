@@ -2,6 +2,10 @@ package soma.test.waggle.dto;
 
 import lombok.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.AvatarType;
+import soma.test.waggle.type.CountryType;
+import soma.test.waggle.type.LanguageType;
+import soma.test.waggle.type.OnStatusType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -20,13 +24,13 @@ public class MemberInfoRequestDto {
     @Size(max=10)
     private String nickName;
     @NotEmpty
-    private Country country;
+    private CountryType countryType;
     @NotEmpty
-    private Language language;
+    private LanguageType languageType;
     private String introduction;
-    private Avatar avatar;
-    private OnStatus onlineStatus;
-    private OnStatus entranceStatus;
+    private AvatarType avatarType;
+    private OnStatusType onlineStatus;
+    private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
     private Friendship friendship;
     private List<String> interests;
@@ -35,10 +39,10 @@ public class MemberInfoRequestDto {
         return MemberInfoRequestDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())
-                .country(member.getCountry())
-                .language(member.getLanguage())
+                .countryType(member.getCountryType())
+                .languageType(member.getLanguageType())
                 .introduction(member.getIntroduction())
-                .avatar(member.getAvatar())
+                .avatarType(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .entranceRoom(member.getEntranceRoom())

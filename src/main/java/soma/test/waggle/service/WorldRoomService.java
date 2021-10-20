@@ -11,6 +11,7 @@ import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonResponseDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.redis.repository.RedisSentenceRepository;
 import soma.test.waggle.repository.*;
 
@@ -34,7 +35,7 @@ public class WorldRoomService {
 
     @Transactional(readOnly = true)
     public List<WorldRoomResponseDto> openWorldRoomList(){
-        return worldRoomRepository.findAllByCriteria(OnStatus.Y).stream()
+        return worldRoomRepository.findAllByCriteria(OnStatusType.Y).stream()
                 .map(WorldRoomResponseDto::of)
                 .collect(Collectors.toList());
     }
@@ -45,13 +46,13 @@ public class WorldRoomService {
     }
 
     @Transactional
-    public PhotonResponseDto pathCreateOrClose(PhotonRoomIdDto photonRoomIdDto, OnStatus onStatus) {
+    public PhotonResponseDto pathCreateOrClose(PhotonRoomIdDto photonRoomIdDto, OnStatusType onStatusType) {
         Optional<WorldRoom> findRoom = worldRoomRepository.findById(photonRoomIdDto.getRoomId());
         if (findRoom.isEmpty()) {
             return new PhotonResponseDto(1, "No Room");
         } else {
             WorldRoom worldRoom = findRoom.get();
-            worldRoom.setOnStatus(onStatus);
+            worldRoom.setOnStatusType(onStatusType);
             return new PhotonResponseDto(0, "OK");
         }
 
@@ -67,13 +68,13 @@ public class WorldRoomService {
                 .builder()
                 .worldRoom(worldRoom)
                 .member(member)
-                .isLast(OnStatus.Y)
+                .isLast(OnStatusType.Y)
                 .joinTime(LocalDateTime.now())
                 .build();
         entranceRoomRepository.save(entranceRoom);
 
         worldRoom.setPeople(worldRoom.getPeople()+1);
-        member.setEntranceStatus(OnStatus.Y);
+        member.setEntranceStatus(OnStatusType.Y);
 
         // member가 방에 입장하였으므로 대화 관리(내 대화를 듣고 있는 사람, 토픽 추출을 위한 대화set 모음) 시작
         conversationService.joinRoom(photonMemberDto.getMemberId());
@@ -88,9 +89,9 @@ public class WorldRoomService {
         WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getRoomId());
         EntranceRoom entranceRoom = entranceRoomRepository.findByMemberId(photonMemberDto.getMemberId());
 
-        entranceRoom.setIsLast(OnStatus.N);
+        entranceRoom.setIsLast(OnStatusType.N);
         entranceRoom.setLeaveTime(LocalDateTime.now());
-        member.setEntranceStatus(OnStatus.N);
+        member.setEntranceStatus(OnStatusType.N);
         worldRoom.setPeople(worldRoom.getPeople()-1);
 
         // member가 방을 나갔으므로 대화 관리 제거

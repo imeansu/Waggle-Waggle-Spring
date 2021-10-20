@@ -2,10 +2,10 @@ package soma.test.waggle.dto;
 
 import lombok.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.type.WorldMapType;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
@@ -17,11 +17,11 @@ public class WorldCreateRequestDto {
     private Long room_id;
     private String name;
     private String topic;
-    private WorldMap map;
+    private WorldMapType map;
     private int people;
     private LocalDateTime dateTime;
     private String photon_server;
-    private OnStatus onStatus;
+    private OnStatusType onStatusType;
     private List<String> keywords;
     private World world;
 
@@ -34,7 +34,7 @@ public class WorldCreateRequestDto {
                 .people(worldRoom.getPeople())
                 .dateTime(LocalDateTime.now())
                 .photon_server(worldRoom.getPhoton_server())
-                .onStatus(worldRoom.getOnStatus())
+                .onStatusType(worldRoom.getOnStatusType())
                 .keywords(worldRoom.getKeywords())
                 .world(worldRoom.getWorld())
                 .build();
@@ -48,7 +48,7 @@ public class WorldCreateRequestDto {
                 .people(people)
                 .dateTime(LocalDateTime.now())
                 .photon_server(photon_server)
-                .onStatus(onStatus)
+                .onStatusType(onStatusType)
                 .keywords(WorldRoom.keywordListToString(keywords))
                 .world(world)
                 .build();

@@ -2,15 +2,10 @@ package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.photon.PhotonRoomIdDto;
-import soma.test.waggle.entity.OnStatus;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.entity.WorldRoom;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +26,9 @@ public class WorldRoomRepository {
 
     public WorldRoom find(Long id){ return em.find(WorldRoom.class, id);}
 
-    public List<WorldRoom> findAllByCriteria(OnStatus onStatus){
+    public List<WorldRoom> findAllByCriteria(OnStatusType onStatusType){
         return em.createQuery("select r from WorldRoom r where r.onStatus = :status", WorldRoom.class)
-                .setParameter("status", onStatus)
+                .setParameter("status", onStatusType)
                 .getResultList();
     }
 }

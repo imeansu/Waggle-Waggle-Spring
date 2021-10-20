@@ -3,7 +3,7 @@ package soma.test.waggle.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import soma.test.waggle.entity.Country;
+import soma.test.waggle.type.CountryType;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class CountryListResponseDto {
-    private List<Country> countries;
+    private List<CountryType> countries;
 }

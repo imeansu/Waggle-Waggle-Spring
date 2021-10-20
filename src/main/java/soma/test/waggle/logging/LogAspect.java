@@ -32,7 +32,7 @@ public class LogAspect {
      *      RESPONSE | URI: {request uri} | Method: {HTTP Method} | {Controller.method} = {return result} ({걸린 시간}ms)
      * */
 //    @Around("execution(* soma.test.waggle.controller..*.*(..)")
-    @Around("within(soma.test.waggle.controller..*)")
+    @Around("within(soma.test.waggle.controller..*) && !bean(firebaseController)")
     public Object controllerLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 
@@ -95,17 +95,49 @@ public class LogAspect {
 
     /**
      * 대화 문장 관련 로그
-     * 해당 로그는 elk로 보내지도록 설정
+     * 해당 로그는 elk로 보내지도록 설정 -> [ELK LOG] 추가
      *  log 내역
-     *      ConversationLog | MemberId: {memberId} | Method: {} | {} = {Args based on params}
+     *      CONVERSATIONLOG | MemberId: {memberId} | Method: {} | {} = {Args based on params}
      * */
     @Before("execution(* soma.test.waggle.service.ConversationService.*(..))")
     public void conversationLogging(JoinPoint jp){
 
-        log.info("----------> CONVERSATIONLOG | MemberId: {} | Method: {} | Args: {} ",
+        log.info("----------> [ELK LOG] | CONVERSATIONLOG | MemberId: {} | Method: {} | Args: {} ",
                 SecurityUtil.getCurrentMemberId() ,
                 jp.getSignature().toShortString(),
                 jp.getArgs());
 
+    }
+
+    /**
+     * 회원가입, 로그인 등 관련 로그
+     * 해당 로그는 elk로 보내지도록 설정 -> [ELK LOG] 추가
+     *  log 내역
+     *      MEMBERLOG | REQUEST | URI: {uri} | Method: {} | {} = {Args based on params}
+     * */
+    @Around("execution(* soma.test.waggle.controller.FirebaseController.*(..))")
+    public Object memberLogging(ProceedingJoinPoint pjp) throws Throwable {
+        Map<String, String> params = getRequestParams();
+
+        long startAt = System.currentTimeMillis();
+
+        log.info("----------> [ELK LOG] | MEMBERLOG | REQUEST | URI: {} | Method: {} | {} = {} ",
+                params.get("URI"),
+                params.get("Method"),
+                pjp.getSignature().toShortString(),
+                pjp.getArgs());
+
+        Object result = pjp.proceed();
+
+        long endAt = System.currentTimeMillis();
+
+        log.info("----------> [ELK LOG] | MEMBERLOG | RESPONSE | URI: {} | Method: {} | {} = {} ({}ms)",
+                params.get("URI"),
+                params.get("Method"),
+                pjp.getSignature().toShortString(),
+                result,
+                endAt - startAt);
+
+        return result;
     }
 }

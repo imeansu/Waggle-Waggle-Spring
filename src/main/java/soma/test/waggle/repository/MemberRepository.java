@@ -1,15 +1,12 @@
 package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.CommandResponseDto;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +62,7 @@ public class MemberRepository {
 //        System.out.println("SecurityUtil.getCurrentMemberId() = " + SecurityUtil.getCurrentMemberId());
         return em.createQuery("select m from Following f join f.followedMember m where f.followingMember = :member and m.onlineStatus = :status", Member.class)
                 .setParameter("member", member)
-                .setParameter("status", OnStatus.Y)
+                .setParameter("status", OnStatusType.Y)
                 .getResultList();
     }
 
@@ -75,7 +72,7 @@ public class MemberRepository {
     public List<Member> getOnlineMembers(Long memberId) {
         Member member = em.find(Member.class, memberId);
         return em.createQuery("select m from Member m where m.onlineStatus = :status", Member.class)
-                .setParameter("status", OnStatus.Y)
+                .setParameter("status", OnStatusType.Y)
                 .getResultList();
     }
 

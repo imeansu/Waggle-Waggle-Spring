@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.*;
-import soma.test.waggle.entity.Country;
-import soma.test.waggle.entity.Language;
+import soma.test.waggle.type.CountryType;
+import soma.test.waggle.type.LanguageType;
 import soma.test.waggle.service.MemberService;
 
 import java.util.Arrays;
@@ -93,7 +93,7 @@ public class MemberController {
 
     @GetMapping("/basics/country-list")
     public ResponseEntity<CountryListResponseDto> country(){
-        List<Country> countries = Arrays.asList(Country.class.getEnumConstants());
+        List<CountryType> countries = Arrays.asList(CountryType.class.getEnumConstants());
         return ResponseEntity.ok(CountryListResponseDto.builder()
                 .countries(countries)
                 .build());
@@ -101,9 +101,9 @@ public class MemberController {
 
     @GetMapping("/basics/language-list")
     public ResponseEntity<LanguageListResponseDto> language(){
-        List<Language> languages = Arrays.asList(Language.class.getEnumConstants());
+        List<LanguageType> languageTypes = Arrays.asList(LanguageType.class.getEnumConstants());
         return ResponseEntity.ok(LanguageListResponseDto.builder()
-                .languages(languages)
+                .languageTypes(languageTypes)
                 .build());
     }
 

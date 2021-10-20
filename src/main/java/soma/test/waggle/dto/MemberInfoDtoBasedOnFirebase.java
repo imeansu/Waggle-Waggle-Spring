@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import soma.test.waggle.entity.Authority;
+import soma.test.waggle.type.AuthorityType;
 import soma.test.waggle.entity.Member;
 
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ public class MemberInfoDtoBasedOnFirebase {
                 .name(name)
                 .firebaseId(firebaseId)
                 .password(passwordEncoder.encode(password))
-                .authority(Authority.ROLE_USER)
+                .authorityType(AuthorityType.ROLE_USER)
                 .date(date)
                 .build();
     }

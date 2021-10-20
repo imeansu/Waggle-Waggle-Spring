@@ -12,13 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.AuthorityType;
+import soma.test.waggle.type.AvatarType;
+import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.InterestRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,7 +66,7 @@ public class InitDb {
             for (int i = 1; i <= 10; i++){
                 WorldRoom worldRoom = new WorldRoom();
                 worldRoom.setName("TEST:world_"+i);
-                worldRoom.setOnStatus(i%2==0? OnStatus.Y : OnStatus.N);
+                worldRoom.setOnStatusType(i%2==0? OnStatusType.Y : OnStatusType.N);
                 worldRoom.setKeywords(Arrays.asList("K-POP","enum말고","저놈!"));
                 em.persist(worldRoom);
             }
@@ -72,8 +74,8 @@ public class InitDb {
             for (int i = 0; i <= 10; i++){
                 String j = Integer.toString(i);
 
-                Member member = new Member("Test|email|"+j, "Test|name|"+j, i%2 == 0? Avatar.MALE1 : Avatar.FEMALE1,"Test|password|"+j, "Test|firebaseId|"+j, Authority.ROLE_USER, LocalDate.now(), "Test|nickname|"+j
-                        , i%2 == 0? OnStatus.Y : OnStatus.N, OnStatus.N, "Test|introduction|"+j, interestMembers);
+                Member member = new Member("Test|email|"+j, "Test|name|"+j, i%2 == 0? AvatarType.MALE1 : AvatarType.FEMALE1,"Test|password|"+j, "Test|firebaseId|"+j, AuthorityType.ROLE_USER, LocalDate.now(), "Test|nickname|"+j
+                        , i%2 == 0? OnStatusType.Y : OnStatusType.N, OnStatusType.N, "Test|introduction|"+j, interestMembers);
 
                 em.persist(member);
             }

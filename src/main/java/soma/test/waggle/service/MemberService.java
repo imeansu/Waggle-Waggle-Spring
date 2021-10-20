@@ -50,17 +50,17 @@ public class MemberService {
         if( memberInfoRequestDto.getNickName() != null){
             member.setNickname(memberInfoRequestDto.getNickName());
         }
-        if( memberInfoRequestDto.getCountry() != null){
-            member.setCountry(memberInfoRequestDto.getCountry());
+        if( memberInfoRequestDto.getCountryType() != null){
+            member.setCountryType(memberInfoRequestDto.getCountryType());
         }
-        if( memberInfoRequestDto.getLanguage() != null){
-            member.setLanguage(memberInfoRequestDto.getLanguage());
+        if( memberInfoRequestDto.getLanguageType() != null){
+            member.setLanguageType(memberInfoRequestDto.getLanguageType());
         }
         if( memberInfoRequestDto.getIntroduction() != null){
             member.setIntroduction(memberInfoRequestDto.getIntroduction());
         }
-        if( memberInfoRequestDto.getAvatar() != null){
-            member.setAvatar(memberInfoRequestDto.getAvatar());
+        if( memberInfoRequestDto.getAvatarType() != null){
+            member.setAvatarType(memberInfoRequestDto.getAvatarType());
         }
         if( memberInfoRequestDto.getOnlineStatus() != null){
             member.setOnlineStatus(memberInfoRequestDto.getOnlineStatus());

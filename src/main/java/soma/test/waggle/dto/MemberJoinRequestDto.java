@@ -2,6 +2,10 @@ package soma.test.waggle.dto;
 
 import lombok.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.type.AvatarType;
+import soma.test.waggle.type.CountryType;
+import soma.test.waggle.type.LanguageType;
+import soma.test.waggle.type.OnStatusType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,13 +26,13 @@ public class MemberJoinRequestDto {
     @Size(max=10)
     private String nickname;
     @NotNull
-    private Country country;
+    private CountryType countryType;
     @NotNull
-    private Language language;
+    private LanguageType languageType;
     private String introduction;
-    private Avatar avatar;
-    private OnStatus onlineStatus;
-    private OnStatus entranceStatus;
+    private AvatarType avatarType;
+    private OnStatusType onlineStatus;
+    private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
     private Friendship friendship;
 
@@ -38,10 +42,10 @@ public class MemberJoinRequestDto {
         return MemberJoinRequestDto.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
-                .country(member.getCountry())
-                .language(member.getLanguage())
+                .countryType(member.getCountryType())
+                .languageType(member.getLanguageType())
                 .introduction(member.getIntroduction())
-                .avatar(member.getAvatar())
+                .avatarType(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .entranceRoom(member.getEntranceRoom())
@@ -52,10 +56,10 @@ public class MemberJoinRequestDto {
         return MemberInfoRequestDto.builder()
                 .id(this.getId())
                 .nickName(this.getNickname())
-                .country(this.getCountry())
-                .language(this.getLanguage())
+                .countryType(this.getCountryType())
+                .languageType(this.getLanguageType())
                 .introduction(this.getIntroduction())
-                .avatar(this.getAvatar())
+                .avatarType(this.getAvatarType())
                 .onlineStatus(this.getOnlineStatus())
                 .entranceStatus(this.getEntranceStatus())
                 .entranceRoom(this.getEntranceRoom())

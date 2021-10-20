@@ -1,11 +1,9 @@
 package soma.test.waggle.dto;
 
 import lombok.*;
-import soma.test.waggle.entity.WorldMap;
+import soma.test.waggle.type.WorldMapType;
 import soma.test.waggle.entity.WorldRoom;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +16,7 @@ public class WorldRoomResponseDto {
     private Long id;
     private String name;
     private String topic;
-    private WorldMap map;
+    private WorldMapType map;
     private int people;
     private LocalDateTime dateTime;
     private List<String> keywords;
