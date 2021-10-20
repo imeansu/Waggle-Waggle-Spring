@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.error.exception.MemberNotFoundException;
 import soma.test.waggle.repository.InterestMemberRepository;
 import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
@@ -38,7 +39,11 @@ public class MemberService {
 
 
     public MemberInfoRequestDto getMemberInfo(Long memberId) {
-        return this.getMemberInfo(memberRepository.find(memberId));
+        try{
+            return this.getMemberInfo(memberRepository.find(memberId));
+        } catch (Exception e){
+            throw new MemberNotFoundException(e.getMessage());
+        }
     }
 
     /**
@@ -208,7 +213,7 @@ public class MemberService {
                 .build();
     }
 
-    public MemberInfoRequestDto getMemberInfo(Member member){
+    public MemberInfoRequestDto getMemberInfo(Member member) throws NullPointerException{
         Friendship friendship;
         Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
         System.out.println("reqMember.getId() = " + reqMember.getId());

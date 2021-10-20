@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import soma.test.waggle.error.exception.WaggleWaggleException;
 
 import java.net.BindException;
 import java.nio.file.AccessDeniedException;
@@ -79,6 +80,20 @@ public class GlobalExceptionHandler {
      * 추가 요망
      * HttpMessageNotReadableException (body에 dto에 없는 필드 있을 경우)
      * */
+
+    /**
+     * BusinessException 개념의 서비스 Exception
+     * 자식 Exceptions
+     *      1. MemberNotFoundException
+     *      2.
+     * */
+    @ExceptionHandler(WaggleWaggleException.class)
+    protected ResponseEntity<ErrorResponse> handleWaggleWaggleException(WaggleWaggleException e){
+        log.error("handleWaggleWaggleException", e);
+        final ErrorCode errorCode = e.getErrorCode();
+        final ErrorResponse response = ErrorResponse.of(errorCode);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
+    }
 
     // 테스트 환경에서는 보류
 //    @ExceptionHandler(Exception.class)

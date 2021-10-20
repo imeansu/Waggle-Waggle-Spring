@@ -113,7 +113,7 @@ public class LogAspect {
      * 회원가입, 로그인 등 관련 로그
      * 해당 로그는 elk로 보내지도록 설정 -> [ELK LOG] 추가
      *  log 내역
-     *      MEMBERLOG | REQUEST | URI: {uri} | Method: {} | {} = {Args based on params}
+     *      [ELK LOG] |MEMBERLOG | REQUEST | URI: {uri} | Method: {} | {} = {Args based on params}
      * */
     @Around("execution(* soma.test.waggle.controller.FirebaseController.*(..))")
     public Object memberLogging(ProceedingJoinPoint pjp) throws Throwable {

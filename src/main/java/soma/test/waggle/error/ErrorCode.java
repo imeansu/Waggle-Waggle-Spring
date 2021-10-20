@@ -13,8 +13,9 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(400, "C005", " Invalid Type Value"),
     HANDLE_ACCESS_DENIED(403, "C006", "Access is Denied"),
     // Auth
-    INVALID_FIREBASE_TOKEN(400, "F001", " Invalid Firebase Token")
+    INVALID_FIREBASE_TOKEN(400, "F001", " Invalid Firebase Token"),
     // Member
+    MEMBER_NOT_FOUND(400, "M001", "Member Not Found")
 
     ;
 

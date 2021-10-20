@@ -35,7 +35,7 @@ public class MemberInfoRequestDto {
     private Friendship friendship;
     private List<String> interests;
 
-    public static MemberInfoRequestDto of(Member member){
+    public static MemberInfoRequestDto of(Member member) throws NullPointerException{
         return MemberInfoRequestDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())

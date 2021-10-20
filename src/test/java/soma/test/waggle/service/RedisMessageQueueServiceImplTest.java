@@ -28,7 +28,7 @@ class RedisMessageQueueServiceImplTest {
         messageQueueService.generateMessageQueue(1L, sentences);
         messageQueueService.generateMessageQueue(1L, sentences);
         messageQueueService.generateMessageQueue(1L, sentences);
-        Thread.sleep(5000);
+        Thread.sleep(3000);
 
     }
 
