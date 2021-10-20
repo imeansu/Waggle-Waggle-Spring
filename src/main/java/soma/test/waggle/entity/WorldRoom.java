@@ -37,7 +37,7 @@ WorldRoom {
 //    @NotNull
     private String photon_server;
 
-    private OnStatusType onStatusType;
+    private OnStatusType onStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
 //    @NotNull
