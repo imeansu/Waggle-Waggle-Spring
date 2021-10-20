@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.DS_Store
 
 ### STS ###
 .apt_generated
@@ -41,8 +42,13 @@ application-oauth.properties
 
 ### application ###
 application.yml
-### 예전꺼 ###
-speak-world-firebase-adminsdk-keggh-6022505276.json
-speak-world-firebase-adminsdk-keggh-5e2cf6bb13.json
-### 최신 ###
+application-prod.yml
+application-dev.yml
+application-local.yml
+
+### logback yml ###
+logback-spring.xml
+logback-spring-local.xml
+
+### firebase 키 ###
 speak-world-firebase-adminsdk-keggh-346661a91e.json
