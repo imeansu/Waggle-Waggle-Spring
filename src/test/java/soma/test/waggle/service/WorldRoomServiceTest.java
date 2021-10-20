@@ -51,7 +51,7 @@ public class WorldRoomServiceTest {
 
         worldRoomService.pathCreateOrClose(new PhotonRoomIdDto(worldRoom.getId()), OnStatusType.Y);
 
-        assertThat(worldRoomRepository.findById(worldRoom.getId()).get().getOnStatusType())
+        assertThat(worldRoomRepository.findById(worldRoom.getId()).get().getOnStatus())
                 .isEqualTo(OnStatusType.Y);
     }
 
