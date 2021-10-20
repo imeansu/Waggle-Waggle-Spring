@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/wagglewaggle
-    username: sa
-    password:
+    url: jdbc:h2:tcp://localhost/~/{db name}
+    username: {username}
+    password: {password}
     driver-class-name: org.h2.Driver
 
   jpa:
@@ -19,32 +19,25 @@ spring:
 
   # rabbitMQ 관련
   rabbitmq:
-    host: 13.125.231.62
+    host: {rabbitmq ip}
     port: 5672
-    username: guest
-    password: guest
-    virtual-host: waggle
-
-# 로컬 환경에서는 logback-spring-local.xml, 운영 환경에서는 logback-spring-dev.xml
-#logging:
-#  config: classpath:logback-spring-local.xml
-#  level:
-#    org.hibernate.SQL: debug
-#    org.hibernate.type: debug
+    username: {username}
+    password: {password}
+    virtual-host: {vhost}
 
 # HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
 # Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용 (아래 명령어를 터미널에 쳐보면 그대로 나옴)
-# $ echo 'spring-boot-soma-test-waggle-imeansu-spring-boot-soma-test-waggle' | base64
+# $ echo '{특정 문자열}' | base64
 jwt:
-  secret: c3ByaW5nLWJvb3Qtc29tYS10ZXN0LXdhZ2dsZS1pbWVhbnN1LXNwcmluZy1ib290LXNvbWEtdGVzdC13YWdnbGUK
+  secret:
 
 # firebase json path
 firebaseJsonPath:
-  path: speak-world-firebase-adminsdk-keggh-346661a91e.json
+  path:
 
 # Photon AppId
 photon:
-  AppId: 411922b1-13cf-4a9b-8fe2-6e999e6b452d
+  AppId:
 
 
 
@@ -65,3 +58,7 @@ spring:
 spring:
   profiles:
     active: local
+
+# 로컬 환경에서는 logback-spring-local.xml, 운영 환경에서는 logback-spring-dev.xml
+logging:
+  config: classpath:logback-spring-local.xml
