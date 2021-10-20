@@ -52,7 +52,7 @@ public class WorldRoomService {
             return new PhotonResponseDto(1, "No Room");
         } else {
             WorldRoom worldRoom = findRoom.get();
-            worldRoom.setOnStatusType(onStatusType);
+            worldRoom.setOnStatus(onStatusType);
             return new PhotonResponseDto(0, "OK");
         }
 

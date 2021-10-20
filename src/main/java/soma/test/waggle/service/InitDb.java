@@ -66,7 +66,7 @@ public class InitDb {
             for (int i = 1; i <= 10; i++){
                 WorldRoom worldRoom = new WorldRoom();
                 worldRoom.setName("TEST:world_"+i);
-                worldRoom.setOnStatusType(i%2==0? OnStatusType.Y : OnStatusType.N);
+                worldRoom.setOnStatus(i%2==0? OnStatusType.Y : OnStatusType.N);
                 worldRoom.setKeywords(Arrays.asList("K-POP","enum말고","저놈!"));
                 em.persist(worldRoom);
             }

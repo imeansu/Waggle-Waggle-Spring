@@ -34,7 +34,7 @@ public class WorldCreateRequestDto {
                 .people(worldRoom.getPeople())
                 .dateTime(LocalDateTime.now())
                 .photon_server(worldRoom.getPhoton_server())
-                .onStatus(worldRoom.getOnStatusType())
+                .onStatus(worldRoom.getOnStatus())
                 .keywords(worldRoom.getKeywords())
                 .world(worldRoom.getWorld())
                 .build();
@@ -48,7 +48,7 @@ public class WorldCreateRequestDto {
                 .people(people)
                 .dateTime(LocalDateTime.now())
                 .photon_server(photon_server)
-                .onStatusType(onStatus)
+                .onStatus(onStatus)
                 .keywords(WorldRoom.keywordListToString(keywords))
                 .world(world)
                 .build();
