@@ -101,9 +101,9 @@ public class MemberController {
 
     @GetMapping("/basics/language-list")
     public ResponseEntity<LanguageListResponseDto> language(){
-        List<LanguageType> languageTypes = Arrays.asList(LanguageType.class.getEnumConstants());
+        List<LanguageType> languages = Arrays.asList(LanguageType.class.getEnumConstants());
         return ResponseEntity.ok(LanguageListResponseDto.builder()
-                .languageTypes(languageTypes)
+                .languages(languages)
                 .build());
     }
 

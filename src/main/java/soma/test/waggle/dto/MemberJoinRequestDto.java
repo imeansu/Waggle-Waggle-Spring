@@ -26,11 +26,11 @@ public class MemberJoinRequestDto {
     @Size(max=10)
     private String nickname;
     @NotNull
-    private CountryType countryType;
+    private CountryType country;
     @NotNull
-    private LanguageType languageType;
+    private LanguageType language;
     private String introduction;
-    private AvatarType avatarType;
+    private AvatarType avatar;
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
@@ -42,10 +42,10 @@ public class MemberJoinRequestDto {
         return MemberJoinRequestDto.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
-                .countryType(member.getCountryType())
-                .languageType(member.getLanguageType())
+                .country(member.getCountryType())
+                .language(member.getLanguageType())
                 .introduction(member.getIntroduction())
-                .avatarType(member.getAvatarType())
+                .avatar(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .entranceRoom(member.getEntranceRoom())
@@ -56,10 +56,10 @@ public class MemberJoinRequestDto {
         return MemberInfoRequestDto.builder()
                 .id(this.getId())
                 .nickName(this.getNickname())
-                .countryType(this.getCountryType())
-                .languageType(this.getLanguageType())
+                .country(this.getCountry())
+                .language(this.getLanguage())
                 .introduction(this.getIntroduction())
-                .avatarType(this.getAvatarType())
+                .avatar(this.getAvatar())
                 .onlineStatus(this.getOnlineStatus())
                 .entranceStatus(this.getEntranceStatus())
                 .entranceRoom(this.getEntranceRoom())

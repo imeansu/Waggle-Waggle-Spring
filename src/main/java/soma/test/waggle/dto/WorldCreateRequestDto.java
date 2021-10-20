@@ -21,7 +21,7 @@ public class WorldCreateRequestDto {
     private int people;
     private LocalDateTime dateTime;
     private String photon_server;
-    private OnStatusType onStatusType;
+    private OnStatusType onStatus;
     private List<String> keywords;
     private World world;
 
@@ -34,7 +34,7 @@ public class WorldCreateRequestDto {
                 .people(worldRoom.getPeople())
                 .dateTime(LocalDateTime.now())
                 .photon_server(worldRoom.getPhoton_server())
-                .onStatusType(worldRoom.getOnStatusType())
+                .onStatus(worldRoom.getOnStatusType())
                 .keywords(worldRoom.getKeywords())
                 .world(worldRoom.getWorld())
                 .build();
@@ -48,7 +48,7 @@ public class WorldCreateRequestDto {
                 .people(people)
                 .dateTime(LocalDateTime.now())
                 .photon_server(photon_server)
-                .onStatusType(onStatusType)
+                .onStatusType(onStatus)
                 .keywords(WorldRoom.keywordListToString(keywords))
                 .world(world)
                 .build();

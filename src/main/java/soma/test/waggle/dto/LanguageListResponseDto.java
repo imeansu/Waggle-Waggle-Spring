@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class LanguageListResponseDto {
-    private List<LanguageType> languageTypes;
+    private List<LanguageType> languages;
 }

@@ -24,11 +24,11 @@ public class MemberInfoRequestDto {
     @Size(max=10)
     private String nickName;
     @NotEmpty
-    private CountryType countryType;
+    private CountryType country;
     @NotEmpty
-    private LanguageType languageType;
+    private LanguageType language;
     private String introduction;
-    private AvatarType avatarType;
+    private AvatarType avatar;
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
@@ -39,10 +39,10 @@ public class MemberInfoRequestDto {
         return MemberInfoRequestDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())
-                .countryType(member.getCountryType())
-                .languageType(member.getLanguageType())
+                .country(member.getCountryType())
+                .language(member.getLanguageType())
                 .introduction(member.getIntroduction())
-                .avatarType(member.getAvatarType())
+                .avatar(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .entranceRoom(member.getEntranceRoom())
