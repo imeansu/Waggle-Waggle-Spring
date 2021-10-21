@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @Builder
 @AllArgsConstructor
-public class RedisMemberDto implements Serializable {
+public class CacheMemberDto implements Serializable {
 
     private String memberId;
 

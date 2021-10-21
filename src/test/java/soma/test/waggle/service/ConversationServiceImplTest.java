@@ -1,8 +1,10 @@
 package soma.test.waggle.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -15,18 +17,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.client.RestTemplate;
 import soma.test.waggle.dto.VivoxMemberInOutDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
-import soma.test.waggle.repository.CacheMemberRepository;
 import soma.test.waggle.repository.ConversationCacheRepository;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class ConversationServiceImplTest {
@@ -35,6 +34,7 @@ class ConversationServiceImplTest {
     @Autowired ConversationCacheRepository conversationCacheRepository;
     @Autowired NotificationService notificationService;
     @Autowired RedisTemplate redisTemplate;
+    @Autowired RabbitAdmin rabbitAdmin;
 
     @AfterEach
     public void tearDownAfterClass(){
@@ -45,6 +45,8 @@ class ConversationServiceImplTest {
                 return null;
             }
         });
+
+        rabbitAdmin.purgeQueue("waggle-waggle");
     }
 
     private void securityContext(String id) {
@@ -56,22 +58,22 @@ class ConversationServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
-    @Test
-    public void 멤버_그래프_문장_리스트_테스트(){
+    // room과 5명의 멤버
+    Long roomId = 1224L;
+    Long memberA = 1L;
+    Long memberB = 2L;
+    Long memberC = 3L;
+    Long memberD = 4L;
+    Long memberE = 5L;
 
+
+    @Test
+    public void redis_삭제_테스트(){
         // given
         // test용 security context
         securityContext("1");
         // memberId 1로 SseEmitter 객체 등록
         notificationService.subscribe("3", "");
-
-        // room과 5명의 멤버
-        Long roomId = 1224L;
-        Long memberA = 1L;
-        Long memberB = 2L;
-        Long memberC = 3L;
-        Long memberD = 4L;
-        Long memberE = 5L;
 
         // when
         // 멤버들이 room에 들어오서 만났다 떨어졌다 반복 그리고 대화 진행
@@ -117,8 +119,8 @@ class ConversationServiceImplTest {
         assertThat(conversationCacheRepository.getSentences(memberE).size()).isEqualTo(9);
         assertThat(conversationCacheRepository.getAdjacentNode(memberC).contains(memberA)).isEqualTo(false);
 
-
-
     }
+
+
 
 }

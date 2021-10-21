@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    // h2 database 테스트가 원활하도록 과련 API 들은 전부 무시
+    // h2 database 테스트가 원활하도록 관련 API 들은 전부 무시
     @Override
     public void configure(WebSecurity web){
         web.ignoring()
@@ -69,7 +69,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .antMatchers("/auth/**").permitAll()
-            .antMatchers("/test/**").permitAll()    // test permitAll
             .antMatchers("/world/**").permitAll()    // test permitAll
             .antMatchers("/notification/**").permitAll()    // test permitAll
             .antMatchers("/member/basics/**").permitAll()   // 회원가입 관련 기본 정보 permitAll
@@ -79,23 +78,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .apply(new JwtSecurityConfig(tokenProvider, photonAppId));
 
-//            .and()
-//            .cors();
-
-//            .cors().configurationSource(corsConfigurationSource());
-
     }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8085/" ));
-        configuration.setAllowedMethods(Arrays.asList("GET"));
-//        configuration.setAllowedHeaders(Arrays.asList("사용할 Header 등록"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
 }

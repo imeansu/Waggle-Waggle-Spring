@@ -11,10 +11,10 @@ import java.util.List;
 public class OnlineMemberResponseDto {
 
     private int onlineFollowingMemberSize;
-    private List<MemberInfoRequestDto> onlineFollowingMembers;
+    private List<MemberInfoDto> onlineFollowingMembers;
 
     private int onlineMemberSize;
-    private List<MemberInfoRequestDto> onlineMembers;
+    private List<MemberInfoDto> onlineMembers;
 
     @Override
     public String toString() {

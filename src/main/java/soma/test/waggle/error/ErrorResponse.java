@@ -12,14 +12,19 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+/**
+ * 예외 처리에서 공통적으로 응답될 객체
+ *      status  : http 응답 코드 (400, 500...)
+ *      code    : 자체 에러 식별 코드
+ *      message : error message
+ *      errors  : @Valid 로 발생한 에러(value, field, reason) 모음
+ * */
 public class ErrorResponse {
 
     private int status;
     private String code;
     private String message;
     private List<FieldError> errors;
-
-
 
     private ErrorResponse(final ErrorCode code, final List<FieldError> errors) {
         this.message = code.getMessage();

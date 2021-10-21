@@ -6,6 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PhotonRoomIdDto {
-
     private Long roomId;
 }

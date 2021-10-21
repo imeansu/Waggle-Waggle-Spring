@@ -6,7 +6,5 @@ import java.util.List;
 
 public interface TopicService {
 
-    public void publishTopic(TopicRequestMessage topicRequestMessage);
-
     void recommendTopic(Long memberId, List<String> sentences);
 }

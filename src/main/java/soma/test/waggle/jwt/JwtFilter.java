@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1. Request header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
 
-        // Photon Webhook 제외
+        // 1-2. Photon Webhook 제외
         if (request.getHeader("AppId") == photonAppId){
             System.out.println("=============pass============");
             Collection<? extends GrantedAuthority> authorities =

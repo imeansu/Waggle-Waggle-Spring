@@ -2,10 +2,7 @@ package soma.test.waggle.dto;
 
 import lombok.*;
 import soma.test.waggle.entity.*;
-import soma.test.waggle.type.AvatarType;
-import soma.test.waggle.type.CountryType;
-import soma.test.waggle.type.LanguageType;
-import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.type.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -18,7 +15,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 @ToString
-public class MemberInfoRequestDto {
+/**
+ * 기본적으로 멤버 정보를 받고 반환하는 데 쓰이는 Dto
+ * */
+public class MemberInfoDto {
 
     private Long id;
     @Size(max=10)
@@ -32,11 +32,11 @@ public class MemberInfoRequestDto {
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
-    private Friendship friendship;
+    private FriendshipType friendship;
     private List<String> interests;
 
-    public static MemberInfoRequestDto of(Member member) throws NullPointerException{
-        return MemberInfoRequestDto.builder()
+    public static MemberInfoDto of(Member member) throws NullPointerException{
+        return MemberInfoDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())
                 .country(member.getCountryType())

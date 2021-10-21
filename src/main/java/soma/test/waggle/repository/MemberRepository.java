@@ -31,6 +31,20 @@ public class MemberRepository {
         return  em.find(Member.class, id);
     }
 
+    public Optional<Member> findByEmail(String email){
+        return Optional.ofNullable(em.createQuery("select m from Member m where m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getSingleResult());
+    }
+
+    public List<Member> findByName(String name){
+        return em.createQuery(
+                "select m from Member m" +
+                        " where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
     public Long getMemberIdByFirebaseId(String id){
         String jpql = "select m from Member m where m.firebaseId = :firebaseId";
         List<Member> findMember = em.createQuery(jpql, Member.class)
@@ -47,12 +61,6 @@ public class MemberRepository {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
     }
-
-    public Optional<Member> findByEmail(String email){
-        return Optional.ofNullable(em.createQuery("select m from Member m where m.email = :email", Member.class)
-                .setParameter("email", email)
-                .getSingleResult());
-    };
 
     public List<Member> getOnlineFollowingMembers(){
         return getOnlineFollowingMembers(SecurityUtil.getCurrentMemberId());
@@ -93,6 +101,10 @@ public class MemberRepository {
         return true;
     }
 
+    /**
+     * 팔로우 취소
+     * param : 토큰 주인이 팔로우 취소할 memberId
+     * */
     public boolean deleteFollowing(Long followedUserId) {
         Member deleteMember = em.find(Member.class, followedUserId);
         Member followingMember = em.find(Member.class, SecurityUtil.getCurrentMemberId());
@@ -201,8 +213,12 @@ public class MemberRepository {
         }
     }
 
-    public List<Member> findWhoIsFollower(Long userId) {
-        Member member = em.find(Member.class, userId);
+    /**
+     * 누구에게 팔로우 당하고 있는지 조회
+     * param: 팔로워 조회할 memberId
+     * */
+    public List<Member> findWhoIsFollower(Long memberId) {
+        Member member = em.find(Member.class, memberId);
         return em.createQuery(
                 "select m from Following f" +
                         " join f.followingMember m" +
@@ -211,7 +227,10 @@ public class MemberRepository {
                 .getResultList();
     }
 
-
+    /**
+     * 누구를 차단 하고 있는지 조회
+     * param: 차단 조회할 memberId
+     * */
     public List<Member> findBlockingWho(Long memberId) {
         Member member = em.find(Member.class, memberId);
         return em.createQuery(

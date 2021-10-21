@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RedisMessageQueueServiceImpl implements MessageQueueService{
+public class MessageQueueServiceImpl implements MessageQueueService{
 
     private final ProduceService produceService;
 

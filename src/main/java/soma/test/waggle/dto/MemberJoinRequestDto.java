@@ -2,10 +2,7 @@ package soma.test.waggle.dto;
 
 import lombok.*;
 import soma.test.waggle.entity.*;
-import soma.test.waggle.type.AvatarType;
-import soma.test.waggle.type.CountryType;
-import soma.test.waggle.type.LanguageType;
-import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.type.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -17,6 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * 회원가입 시, firebase token과 회원 정보를 모두 받기 위한 Dto
+ * */
 public class MemberJoinRequestDto {
 
     @NotEmpty
@@ -34,7 +34,7 @@ public class MemberJoinRequestDto {
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
     private EntranceRoom entranceRoom;
-    private Friendship friendship;
+    private FriendshipType friendship;
 
     private List<String> interests;
 
@@ -52,8 +52,8 @@ public class MemberJoinRequestDto {
                 .build();
     }
 
-    public MemberInfoRequestDto toMemberInfoRequestDto() {
-        return MemberInfoRequestDto.builder()
+    public MemberInfoDto toMemberInfoRequestDto() {
+        return MemberInfoDto.builder()
                 .id(this.getId())
                 .nickName(this.getNickname())
                 .country(this.getCountry())

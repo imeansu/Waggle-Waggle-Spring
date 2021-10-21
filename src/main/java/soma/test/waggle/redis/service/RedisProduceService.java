@@ -3,13 +3,9 @@ package soma.test.waggle.redis.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 import soma.test.waggle.redis.entity.TopicRequestMessage;
-import soma.test.waggle.redis.entity.TopicResponseMessage;
-import soma.test.waggle.redis.repository.RedisSentenceDto;
 import soma.test.waggle.service.ProduceService;
 
 import javax.annotation.Resource;

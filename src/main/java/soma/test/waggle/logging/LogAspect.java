@@ -32,7 +32,7 @@ public class LogAspect {
      *      RESPONSE | URI: {request uri} | Method: {HTTP Method} | {Controller.method} = {return result} ({걸린 시간}ms)
      * */
 //    @Around("execution(* soma.test.waggle.controller..*.*(..)")
-    @Around("within(soma.test.waggle.controller..*) && !bean(firebaseController)")
+    @Around("within(soma.test.waggle.controller..*) && !bean(authController)")
     public Object controllerLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 
@@ -115,7 +115,7 @@ public class LogAspect {
      *  log 내역
      *      [ELK LOG] |MEMBERLOG | REQUEST | URI: {uri} | Method: {} | {} = {Args based on params}
      * */
-    @Around("execution(* soma.test.waggle.controller.FirebaseController.*(..))")
+    @Around("execution(* soma.test.waggle.controller.AuthController.*(..))")
     public Object memberLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 

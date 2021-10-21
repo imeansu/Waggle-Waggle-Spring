@@ -25,10 +25,6 @@ public class InterestMember {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // 관심사를 enum으로 관리?
-    // 추가할 경우 어려움... 동적으로 관리하기 편하게
-    // 새로 interest entity 만들고 동적으로 관리
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interest_id")
     private Interest interest;

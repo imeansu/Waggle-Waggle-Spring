@@ -27,6 +27,9 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    /**
+     * Firebase 기본 정보로 회원가입
+     * */
     @Transactional
     public MemberResponseDto signup(MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase){
 //        if(memberRepository.existsByEmail(memberRequestDto.getEmail())){
@@ -36,6 +39,7 @@ public class AuthService {
         Member member = memberInfoDtoBasedOnFirebase.toMember(passwordEncoder);
         return MemberResponseDto.of(memberRepository.save(member));
     }
+
 
     @Transactional
     public TokenDto login(MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase){

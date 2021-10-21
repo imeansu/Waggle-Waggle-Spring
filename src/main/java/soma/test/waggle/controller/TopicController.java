@@ -13,11 +13,4 @@ public class TopicController {
 
     private final TopicServiceImpl topicServiceImpl;
 
-    @PostMapping("/{conversationId}")
-    public ResponseEntity<String> newTopic(@PathVariable String conversationId, @RequestBody TopicRequestMessage topicRequestMessage){
-        topicRequestMessage.setConversationId(conversationId);
-        topicServiceImpl.publishTopic(topicRequestMessage);
-        return ResponseEntity.ok("ok");
-    }
-
 }

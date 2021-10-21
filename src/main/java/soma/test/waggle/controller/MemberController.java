@@ -19,78 +19,98 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/me")
-    public ResponseEntity<MemberResponseDto> getMyMemberInfo(){
-        return ResponseEntity.ok(memberService.getMyInfo());
-    }
-
-    // ambiguous uri and anti pattern
-//    @GetMapping("/{email}")
-//    public ResponseEntity<MemberResponseDto> getMemberInfo(@PathVariable String email) {
-//        return ResponseEntity.ok(memberService.getMemberInfo(email));
-//    }
-
+    /**
+     * 토큰 인증 정보를 바탕으로 다른 멤버(memberId) 정보를 조회 (friendship 정보 포함)
+     * */
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberInfoRequestDto> findMemberById(@PathVariable Long memberId){
+    public ResponseEntity<MemberInfoDto> findMemberById(@PathVariable Long memberId){
         return ResponseEntity.ok(memberService.getMemberInfo(memberId));
     }
 
+    /**
+     * 토큰 인증 정보를 바탕으로 회원 정보 수정
+     * */
     @PutMapping("/edit-member")
-    public ResponseEntity<Object> editMemberInfo(@RequestBody MemberInfoRequestDto memberInfoRequestDto){
-        return ResponseEntity.ok(memberService.putMemberInfo(memberInfoRequestDto));
+    public ResponseEntity<Object> editMemberInfo(@RequestBody MemberInfoDto memberInfoDto){
+        return ResponseEntity.ok(memberService.putMemberInfo(memberInfoDto));
     }
 
+    /**
+     * 토큰 인증 정보를 바탕으로 회원 탈퇴
+     * */
     @DeleteMapping("/{memberId}")
     public ResponseEntity<CommandResponseDto> deleteMember(@PathVariable Long memberId){
         return ResponseEntity.ok(memberService.deleteMember());
     }
 
+    /**
+     * 토큰 인증 정보를 바탕으로 온라인 멤버 조회
+     * Returns: 팔로우 멤버와 일반 멤버 구분해서 반환
+     * */
     @GetMapping("/online")
     public ResponseEntity<OnlineMemberResponseDto> onlineMemberList(){
         return ResponseEntity.ok(memberService.getOnlineMembers());
     }
 
-    @PostMapping("/{followed-user-id}/follow")
-    public ResponseEntity<Object> newFollowing(@PathVariable Long followedUserId){
-        return ResponseEntity.ok(memberService.createFollowing(followedUserId));
+    /**
+     * followed-member-id => 토큰 주인이 팔로우할 멤버
+     * */
+    @PostMapping("/{followed-member-id}/follow")
+    public ResponseEntity<Object> newFollowing(@PathVariable Long followedMemberId){
+        return ResponseEntity.ok(memberService.createFollowing(followedMemberId));
     }
 
-    @DeleteMapping("/{followed-user-id}/unfollow")
-    public ResponseEntity<CommandResponseDto> unfollow(@PathVariable Long followedUserId){
-        return ResponseEntity.ok(memberService.deleteFollowing(followedUserId));
+    /**
+     * followed-member-id => 토큰 주인이 언팔로우할 멤버
+     * */
+    @DeleteMapping("/{followed-member-id}/unfollow")
+    public ResponseEntity<CommandResponseDto> unfollow(@PathVariable Long followedMemberId){
+        return ResponseEntity.ok(memberService.deleteFollowing(followedMemberId));
     }
 
-    @GetMapping("/{user-id}/following")
-    public ResponseEntity<MemberListDto> following(@PathVariable Long userId){
-        return ResponseEntity.ok(memberService.getFollowingWho(userId));
+    /**
+     * member-id => 토큰 주인이 언팔로우할 멤버
+     * */
+    @GetMapping("/{member-id}/following")
+    public ResponseEntity<MemberListDto> following(@PathVariable Long memberId){
+        return ResponseEntity.ok(memberService.getFollowingWho(memberId));
     }
 
-    @GetMapping("/{user-id}/follower")
-    public ResponseEntity<MemberListDto> follower(@PathVariable Long userId){
-        return ResponseEntity.ok(memberService.getWhoIsFollower(userId));
+    /**
+     * member-id => 이 멤버를 누가 팔로우 하고 있는지 조회
+     * */
+    @GetMapping("/{member-id}/follower")
+    public ResponseEntity<MemberListDto> follower(@PathVariable Long memberId){
+        return ResponseEntity.ok(memberService.getWhoIsFollower(memberId));
     }
 
-    @PostMapping("/{blocked-user-id}/block")
-    public ResponseEntity<Object> newBlocking(@PathVariable Long blockedUserId){
-        return ResponseEntity.ok(memberService.createBlocking(blockedUserId));
+    /**
+     * blocked-member-id => 토큰 주인이 차단할 멤버
+     * */
+    @PostMapping("/{blocked-member-id}/block")
+    public ResponseEntity<Object> newBlocking(@PathVariable Long blockedMemberId){
+        return ResponseEntity.ok(memberService.createBlocking(blockedMemberId));
     }
 
-    @DeleteMapping("/{blocked-user-id}/unblock")
-    public ResponseEntity<CommandResponseDto> unBlock(@PathVariable Long blockedUserId){
-        return ResponseEntity.ok(memberService.deleteBlocking(blockedUserId));
+    /**
+     * blocked-member-id => 토큰 주인이 차단 해제할 멤버
+     * */
+    @DeleteMapping("/{blocked-member-id}/unblock")
+    public ResponseEntity<CommandResponseDto> unBlock(@PathVariable Long blockedMemberId){
+        return ResponseEntity.ok(memberService.deleteBlocking(blockedMemberId));
     }
 
+    /**
+     * 토큰 주인의 refresh token 삭제
+     * */
     @DeleteMapping("/logout")
     public ResponseEntity<CommandResponseDto> logout(){
         return ResponseEntity.ok(memberService.logout());
     }
 
-    @GetMapping("/test")
-    public String test(){
-        System.out.println("================sucess===============");
-        return "hello";
-    }
-
+    /**
+     * basics: permitAll
+     * */
     @GetMapping("/basics/country-list")
     public ResponseEntity<CountryListResponseDto> country(){
         List<CountryType> countries = Arrays.asList(CountryType.class.getEnumConstants());
@@ -112,6 +132,10 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getInterestList());
     }
 
+    /**
+     * isValid = true : 사용 가능한 닉네임
+     * 닉네임 관련 @Valid 추가 예정
+     * */
     @GetMapping("/basics/nickname-check")
     public ResponseEntity<Map> nicknameDuplicationCheck(@RequestParam("nickname") String nickname){
         boolean result = memberService.nicknameCheck(nickname);

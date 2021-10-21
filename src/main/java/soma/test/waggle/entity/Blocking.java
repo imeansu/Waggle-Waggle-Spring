@@ -19,12 +19,10 @@ public class Blocking {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
     @JoinColumn
     private Member blockedMember;
 
     @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
     @JoinColumn
     private Member blockingMember;
 

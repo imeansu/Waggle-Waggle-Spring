@@ -36,14 +36,6 @@ public class RedisPubSubServiceImpl implements PubService, SubService {
     // 대화의 현재 memberId 목록을 받아오기 위해
     private final CacheMemberRepository cacheMemberRepository;
 
-    // 통합관리로 필요 없어짐
-//    // 빈 등록 후, channel을 관리할 Map 초기화
-//    @PostConstruct
-//    public void init(){
-//        channels = new HashMap<>();
-//
-//    }
-
     @PostConstruct
     public void initSubscribe(){
         redisMessageListener.addMessageListener(redisSubscriber, topicChannel);
@@ -59,10 +51,6 @@ public class RedisPubSubServiceImpl implements PubService, SubService {
         redisPublisher.publish(topicChannel, topicRequestMessage);
     }
 
-    @Override
-    public void publishTopic(TopicRequestMessage topicRequestMessage, Long memberId){
-        redisPublisher.publish(topicChannel, topicRequestMessage);
-    }
 
     // 순환 참조로 삭제
 //    // Subscriber의 onMessage에서 NotificationService로 이어줌

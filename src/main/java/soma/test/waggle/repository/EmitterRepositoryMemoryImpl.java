@@ -7,12 +7,13 @@ import soma.test.waggle.entity.CustomSseEmitter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 @RequiredArgsConstructor
 public class EmitterRepositoryMemoryImpl implements EmitterRepository{
 
-    Map<String, SseEmitter> sseEmitterMap = new HashMap<>();
+    Map<String, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
 
     @Override
     public SseEmitter save(String id, SseEmitter emitter) {

@@ -10,5 +10,4 @@ public class PhotonProperties {
     @Value("${photon.AppId}")
     public String photonAppId;
 
-
 }

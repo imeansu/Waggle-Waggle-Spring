@@ -9,6 +9,7 @@ import soma.test.waggle.error.exception.MemberNotFoundException;
 import soma.test.waggle.repository.InterestMemberRepository;
 import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
+import soma.test.waggle.type.FriendshipType;
 import soma.test.waggle.util.SecurityUtil;
 
 import java.time.LocalDateTime;
@@ -38,9 +39,14 @@ public class MemberService {
     }
 
 
-    public MemberInfoRequestDto getMemberInfo(Long memberId) {
+    /**
+     * 토큰 주인을 기준으로 다른 멤버의 정보를 조회
+     * Param : 정보를 조회할 MemberId
+     * Throws : NullPointerException - 멤버가 존재하지 않을 때 (해당 memberId 없음)
+     * */
+    public MemberInfoDto getMemberInfo(Long memberId) {
         try{
-            return this.getMemberInfo(memberRepository.find(memberId));
+            return getMemberInfo(memberRepository.find(memberId));
         } catch (Exception e){
             throw new MemberNotFoundException(e.getMessage());
         }
@@ -50,35 +56,35 @@ public class MemberService {
      * 토큰 주인 ID의 멤버 정보 수정
      * */
     @Transactional
-    public MemberInfoRequestDto putMemberInfo(MemberInfoRequestDto memberInfoRequestDto) {
+    public MemberInfoDto putMemberInfo(MemberInfoDto memberInfoDto) {
         Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).get();
-        if( memberInfoRequestDto.getNickName() != null){
-            member.setNickname(memberInfoRequestDto.getNickName());
+        if( memberInfoDto.getNickName() != null){
+            member.setNickname(memberInfoDto.getNickName());
         }
-        if( memberInfoRequestDto.getCountry() != null){
-            member.setCountryType(memberInfoRequestDto.getCountry());
+        if( memberInfoDto.getCountry() != null){
+            member.setCountryType(memberInfoDto.getCountry());
         }
-        if( memberInfoRequestDto.getLanguage() != null){
-            member.setLanguageType(memberInfoRequestDto.getLanguage());
+        if( memberInfoDto.getLanguage() != null){
+            member.setLanguageType(memberInfoDto.getLanguage());
         }
-        if( memberInfoRequestDto.getIntroduction() != null){
-            member.setIntroduction(memberInfoRequestDto.getIntroduction());
+        if( memberInfoDto.getIntroduction() != null){
+            member.setIntroduction(memberInfoDto.getIntroduction());
         }
-        if( memberInfoRequestDto.getAvatar() != null){
-            member.setAvatarType(memberInfoRequestDto.getAvatar());
+        if( memberInfoDto.getAvatar() != null){
+            member.setAvatarType(memberInfoDto.getAvatar());
         }
-        if( memberInfoRequestDto.getOnlineStatus() != null){
-            member.setOnlineStatus(memberInfoRequestDto.getOnlineStatus());
+        if( memberInfoDto.getOnlineStatus() != null){
+            member.setOnlineStatus(memberInfoDto.getOnlineStatus());
         }
-        if( memberInfoRequestDto.getEntranceStatus() != null){
-            member.setEntranceStatus(memberInfoRequestDto.getEntranceStatus());
+        if( memberInfoDto.getEntranceStatus() != null){
+            member.setEntranceStatus(memberInfoDto.getEntranceStatus());
         }
-        if( memberInfoRequestDto.getEntranceRoom() != null){
-            member.setEntranceRoom(memberInfoRequestDto.getEntranceRoom());
+        if( memberInfoDto.getEntranceRoom() != null){
+            member.setEntranceRoom(memberInfoDto.getEntranceRoom());
         }
-        if( memberInfoRequestDto.getInterests() != null){
+        if( memberInfoDto.getInterests() != null){
             // 새로운 관심사
-            List<InterestMember> newInterestMemberList = toInterestMemberEntityList(memberInfoRequestDto.getInterests());
+            List<InterestMember> newInterestMemberList = toInterestMemberEntityList(memberInfoDto.getInterests());
             Set<InterestMember> interestMemberList = new HashSet<>(newInterestMemberList);
             // 이전 관심사
             Set<InterestMember> preInterestList = new HashSet<>(member.getInterests());
@@ -96,7 +102,7 @@ public class MemberService {
             // 없어진 관심사 삭제
             interestMemberRepository.deleteAll(preInterestList);
         }
-        return memberInfoRequestDto;
+        return memberInfoDto;
     }
 
     /**
@@ -117,12 +123,12 @@ public class MemberService {
 
 
     public OnlineMemberResponseDto getOnlineMembers() {
-        List<MemberInfoRequestDto> followingMembers = memberRepository.getOnlineFollowingMembers().stream()
-                .map(MemberInfoRequestDto::of)
+        List<MemberInfoDto> followingMembers = memberRepository.getOnlineFollowingMembers().stream()
+                .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
 
-        List<MemberInfoRequestDto> onlineMembers = memberRepository.getOnlineMembers().stream()
-                .map(MemberInfoRequestDto::of)
+        List<MemberInfoDto> onlineMembers = memberRepository.getOnlineMembers().stream()
+                .map(MemberInfoDto::of)
                 .filter(m -> !followingMembers.contains(m))
                 .collect(Collectors.toList());
 
@@ -136,6 +142,7 @@ public class MemberService {
 
     /**
     * 팔로잉할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 팔로우 등록
+    * param : 토큰 주인이 팔로잉할 memberId
     * */
     @Transactional
     public CommandResponseDto createFollowing(Long followedMemberId) {
@@ -151,6 +158,10 @@ public class MemberService {
         }
     }
 
+    /**
+     * 차단할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 차단 등록
+     * param : 토큰 주인이 차단할 memberId
+     * */
     @Transactional
     public CommandResponseDto deleteFollowing(Long followedMemberId) {
         if(memberRepository.deleteFollowing(followedMemberId)){
@@ -160,6 +171,12 @@ public class MemberService {
         }
     }
 
+    /**
+     * 차단할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 차단 등록
+     * 차단 당한 사람이 토큰 주인을 팔로잉하고 있으면 팔로잉 삭제
+     * 비즈니스 로직이 repository에 들어옴 -> 수정 필요
+     * param : 토큰 주인이 차단할 memberId
+     * */
     @Transactional
     public CommandResponseDto createBlocking(Long blockedMemberId) {
         Blocking blocking = Blocking.builder()
@@ -184,8 +201,8 @@ public class MemberService {
     }
 
     public MemberListDto getBlockingWho(Long memberId){
-        List<MemberInfoRequestDto> members = memberRepository.findBlockingWho(memberId).stream()
-                .map(MemberInfoRequestDto::of)
+        List<MemberInfoDto> members = memberRepository.findBlockingWho(memberId).stream()
+                .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -193,9 +210,13 @@ public class MemberService {
                 .build();
     }
 
+    /**
+     * 누구를 팔로우 하고 있는지 조회
+     * param: 팔로우 조회할 memberId
+     * */
     public MemberListDto getFollowingWho(Long memberId) {
-        List<MemberInfoRequestDto> members = memberRepository.findFollowingWho(memberId).stream()
-                .map(MemberInfoRequestDto::of)
+        List<MemberInfoDto> members = memberRepository.findFollowingWho(memberId).stream()
+                .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -204,8 +225,8 @@ public class MemberService {
     }
 
     public MemberListDto getWhoIsFollower(Long memberId) {
-        List<MemberInfoRequestDto> members = memberRepository.findWhoIsFollower(memberId).stream()
-                .map(MemberInfoRequestDto::of)
+        List<MemberInfoDto> members = memberRepository.findWhoIsFollower(memberId).stream()
+                .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -213,25 +234,32 @@ public class MemberService {
                 .build();
     }
 
-    public MemberInfoRequestDto getMemberInfo(Member member) throws NullPointerException{
-        Friendship friendship;
+    /**
+     * 토큰 주인을 기준으로 다른 멤버의 정보를 조회
+     * Params : 정보를 조회할 Member
+     * Throws : NullPointerException - 멤버가 존재하지 않을 때 (해당 memberId 없음)
+     * */
+    public MemberInfoDto getMemberInfo(Member member) throws NullPointerException{
+        FriendshipType friendship;
         Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
-        System.out.println("reqMember.getId() = " + reqMember.getId());
+
         List<Member> followedMembers = reqMember.getFollowings().stream()
                 .map(f -> f.getFollowedMember())
                 .collect(Collectors.toList());
-        System.out.println("followedMembers = " + reqMember.getFollowings());
+
         List<Member> blockedMembers = reqMember.getBlockings().stream()
                 .map(b -> b.getBlockedMember())
                 .collect(Collectors.toList());
+
         if(followedMembers.contains(member)){
-            friendship = Friendship.FOLLOW;
+            friendship = FriendshipType.FOLLOW;
         } else if (blockedMembers.contains(member)) {
-            friendship = Friendship.BLOCK;
+            friendship = FriendshipType.BLOCK;
         } else {
-            friendship = Friendship.NONE;
+            friendship = FriendshipType.NONE;
         }
-        MemberInfoRequestDto dto = MemberInfoRequestDto.of(member);
+
+        MemberInfoDto dto = MemberInfoDto.of(member);
         dto.setFriendship(friendship);
         return dto;
     }

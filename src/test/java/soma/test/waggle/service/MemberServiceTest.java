@@ -1,10 +1,9 @@
 package soma.test.waggle.service;
 
 import com.google.firebase.auth.FirebaseAuthException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,12 +15,15 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
-import soma.test.waggle.entity.*;
-import soma.test.waggle.type.CountryType;
-import soma.test.waggle.type.LanguageType;
-import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.entity.Following;
+import soma.test.waggle.entity.Member;
+import soma.test.waggle.entity.RefreshToken;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.repository.RefreshTokenRepository;
+import soma.test.waggle.type.CountryType;
+import soma.test.waggle.type.FriendshipType;
+import soma.test.waggle.type.LanguageType;
+import soma.test.waggle.type.OnStatusType;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -31,43 +33,54 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@RunWith(SpringRunner.class)
+//@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 @Transactional
+@Slf4j
 public class MemberServiceTest {
 
-    // FirebaseToken은 final, default 생성자라서 실패...
     // 외부 api 통합 함수 테스트를 위해 Mock 객체 생성
-//    @InjectMocks FirebaseService firebaseService;
-//    @Mock FirebaseAuth firebaseAuth;
-
+    // FirebaseToken은 final, default 생성자로 임의로 생성할 수 없음 -> Mock 을 통해 해결할 수 있는 방안을 찾아보아야 함
+    // @InjectMocks FirebaseService firebaseService;
+    // @Mock FirebaseAuth firebaseAuth;
 
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
     @Autowired EntityManager em;
     @Autowired AuthService authService;
-//    @AfterEach
-//    void memberCheck(){
-//        List<Member> members = memberRepository.findAll();
-//        System.out.println("members.size() = " + members.size());
-//    }
 
-    @Test
-    public void 다른사람_정보_조회(){
-
+    // securityContext에 memberId 저장
+    private void securityContext(String id) {
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream("ROLE_USER".split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        UserDetails principal = new User(id, "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
     }
 
+    private Member createMember(String name, String email) {
+        Member member1 = new Member();
+        member1.setEmail(email);
+        member1.setName(name);
+        return member1;
+    }
+
+    // 온라인 멤버 조회시 팔로우한 멤버, 일반 멤버 구분 조회
     @Test
     public void 온라인멤버() {
-
+        // given
         Member member1 = createMember("member1", "dsfsdfsd");
+        member1.setNickname("member1");
         em.persist(member1);
 
         Member member2 = createMember("member2", "dsffdsf");
+        member2.setNickname("member2");
+        member2.setOnlineStatus(OnStatusType.Y);
         em.persist(member2);
 
-        Member member3 = createMember("member2", "dsffdsf");
+        Member member3 = createMember("member3", "dsffdsf");
+        member3.setNickname("member3");
         member3.setOnlineStatus(OnStatusType.Y);
         em.persist(member3);
 
@@ -78,25 +91,27 @@ public class MemberServiceTest {
                 .build();
         em.persist(following);
 
+        // member1 입장에서 조회
         securityContext(Long.toString(member1.getId()));
 
+        // when
         OnlineMemberResponseDto dto = memberService.getOnlineMembers();
-        System.out.println("dto = " + dto.toString());
+        log.info("dto = {}", dto.toString());
+
+        // then
+        assertThat(dto.getOnlineFollowingMembers().get(0).getNickName()).isEqualTo("member2");
+        assertThat(dto.getOnlineMembers().stream()
+                        .map(infoDto -> infoDto.getNickName())
+                        .collect(Collectors.toList())
+                .contains("member3")
+        ).isEqualTo(true);
 
     }
 
-    private void securityContext(String id) {
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream("ROLE_USER".split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-        UserDetails principal = new User(id, "", authorities);
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
-    }
-
+    // 토큰 주인이 상대방을 차단하면 팔로잉 자동 삭제
     @Test
-    public void 차단(){
-
+    public void 차단() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -105,28 +120,29 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
+        // when
         memberService.createFollowing(member2.getId());
 
+        // then : following 정상 동작 확인
         Member findMember = memberRepository.findFollowingWho(member1.getId()).get(0);
-
         assertThat(findMember).isEqualTo(member2);
 
+        // when
         memberService.createBlocking(member2.getId());
 
+        // then : 차단 정상 동작 확인 & 팔로잉 삭제
         findMember = memberRepository.findBlockMember(member1.getId()).get(0);
-
         assertThat(findMember).isEqualTo(member2);
 
         List<Member> findMembers = memberRepository.findFollowingWho(member1.getId());
         assertThat(findMembers.size()).isEqualTo(0);
 
-//        fail("삭제 안됨");
-
     }
 
+    // 팔로잉 시, 팔로우 및 팔로워 조회
     @Test
-    public void 팔로잉팔로워(){
-
+    public void 팔로잉팔로워_조회() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -140,19 +156,20 @@ public class MemberServiceTest {
         em.flush();
         em.clear();
 
-        List<MemberInfoRequestDto> follower = memberService.getWhoIsFollower(member2.getId()).getMembers();
-        System.out.println("follower = " + follower.toString());
+        // when
+        List<MemberInfoDto> follower = memberService.getWhoIsFollower(member2.getId()).getMembers();
+        log.info("follower = {}", follower.toString());
+        List<MemberInfoDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
+
+        // then : 팔로워 조회, 팔로우 조회
         assertThat(follower.get(0).getId()).isEqualTo(member1.getId());
-
-        List<MemberInfoRequestDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
-
         assertThat(following.get(0).getId()).isEqualTo(member2.getId());
-
 
     }
 
     @Test
-    public void 팔로우취소(){
+    public void 팔로우취소() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -163,20 +180,18 @@ public class MemberServiceTest {
 
         memberService.createFollowing(member2.getId());
 
-        List<MemberInfoRequestDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
-
-        assertThat(following.get(0).getId()).isEqualTo(member2.getId());
-
+        // when
         memberService.deleteFollowing(member2.getId());
+        List<MemberInfoDto> following = memberService.getFollowingWho(member1.getId()).getMembers();
 
-        following = memberService.getFollowingWho(member1.getId()).getMembers();
-
+        // then : 팔로우 취소됨
         assertThat(following.size()).isEqualTo(0);
 
     }
 
     @Test
-    public void 차단취소(){
+    public void 차단취소() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -184,23 +199,21 @@ public class MemberServiceTest {
         em.persist(member2);
 
         securityContext(Long.toString(member1.getId()));
-
         memberService.createBlocking(member2.getId());
 
-        List<MemberInfoRequestDto> blocking1 = memberService.getBlockingWho(member1.getId()).getMembers();
-
-        assertThat(blocking1.get(0).getId()).isEqualTo(member2.getId());
-
+        // when
         memberService.deleteBlocking(member2.getId());
 
-        List<MemberInfoRequestDto> blocking2 = memberService.getBlockingWho(member1.getId()).getMembers();
-
+        // then
+        List<MemberInfoDto> blocking2 = memberService.getBlockingWho(member1.getId()).getMembers();
         assertThat(blocking2.size()).isEqualTo(0);
 
     }
 
-//    @Test
-    public void LAZY로딩(){
+    // 컬렉션 연관관계 LAZY 로딩 확인
+    @Test
+    public void LAZY로딩() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -210,19 +223,28 @@ public class MemberServiceTest {
         securityContext(Long.toString(member1.getId()));
 
         memberService.createFollowing(member2.getId());
+
+        // 영속성 컨텍스트 비우기
         em.flush();
         em.clear();
-        System.out.println("==========em.clear===========");
-        Member findMember = memberRepository.find(1L);
-        System.out.println("==========findMember===========");
+        log.info("==========em.clear===========");
+
+        Member findMember = memberRepository.findByName("member1").get(0);
+        log.info("==========findMember===========");
+
+        // then : 쿼리 나가야 하는 시점
+        log.info("followings: ", findMember.getFollowings());
         Following following = findMember.getFollowings().get(0);
-        System.out.println("following = " + following.getFollowingMember());
+        log.info("following = " + following.getFollowingMember());
         assertThat(following.getFollowingMember().getId()).isEqualTo(member1.getId());
 
     }
 
+
+    // 다른 멤버 조회시 관계 정보를 포함하여 제공
     @Test
-    public void 관계정보포함Dto(){
+    public void 관계정보포함Dto() {
+        // given
         Member member1 = createMember("member1", "dfsdf");
         em.persist(member1);
 
@@ -232,49 +254,51 @@ public class MemberServiceTest {
         securityContext(Long.toString(member1.getId()));
 
         CommandResponseDto d = memberService.createFollowing(member2.getId());
-        System.out.println("d.getStatus() = " + d.getStatus());
-        List<MemberInfoRequestDto> members = memberService.getFollowingWho(member1.getId()).getMembers();
-        System.out.println("members.get(0).getId() = " + members.get(0).getId());
+        List<MemberInfoDto> members = memberService.getFollowingWho(member1.getId()).getMembers();
 
         em.flush();
         em.clear();
 
-        MemberInfoRequestDto following = memberService.getMemberInfo(member2.getId());
+        // when
+        MemberInfoDto findMember = memberService.getMemberInfo(member2.getId());
 
-        assertThat(following.getFriendship()).isEqualTo(Friendship.FOLLOW);
+        // then
+        assertThat(findMember.getFriendship()).isEqualTo(FriendshipType.FOLLOW);
     }
 
-    @Autowired private RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Test
-    public void deleteRefreshToken(){
+    public void 로그아웃시_refresh_token_삭제() {
+        // given
         MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase = MemberInfoDtoBasedOnFirebase.builder()
-                .email("gcnml0@gmail.com")
-                .name("minsu kim")
-                .firebaseId("dsfs3h28xyrh38ny87sghsunc93xhu")
-                .password("dsfs3h28xyrh38ny87sghsunc93xhu")
-                .date(LocalDate.now())
-                .build();
+                                                                                    .email("gcnml0@gmail.com")
+                                                                                    .name("minsu kim")
+                                                                                    .firebaseId("dsfs3h28xyrh38ny87sghsunc93xhu")
+                                                                                    .password("dsfs3h28xyrh38ny87sghsunc93xhu")
+                                                                                    .date(LocalDate.now())
+                                                                                    .build();
+        // 회원 가입
         authService.signup(memberInfoDtoBasedOnFirebase);
+        // 로그인 - token 발급
         TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
         Member member = memberRepository.findByEmail(memberInfoDtoBasedOnFirebase.getEmail()).get();
+        // refresh token 조회
         Optional<RefreshToken> token = refreshTokenRepository.findByKey(Long.toString(member.getId()));
         assertThat(token.isPresent()).isEqualTo(true);
+
+        // when
         securityContext(Long.toString(member.getId()));
         memberService.logout();
+
+        // then
         token = refreshTokenRepository.findByKey(Long.toString(member.getId()));
         assertThat(token.isEmpty()).isEqualTo(true);
     }
 
-    private Member createMember(String name, String email) {
-        Member member1 = new Member();
-        member1.setEmail(email);
-        member1.setName(name);
-        return member1;
-    }
-
     @Test
-    public void 멤버_탈퇴(){
+    public void 멤버_탈퇴() {
         // given
         Member member = createMember("member1", "abc@gmail.com");
         memberRepository.save(member);
@@ -285,8 +309,9 @@ public class MemberServiceTest {
         securityContext(Long.toString(findMember.getId()));
 
         // when
-        // then
         memberRepository.deleteMember();
+
+        // then
         Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {
             memberRepository.findByEmail("abc@gmail.com");
         });
@@ -294,40 +319,46 @@ public class MemberServiceTest {
     }
 
     @Test
-    public void 기본_관심사_리스트(){
+    public void 기본_관심사_리스트() {
         // given
         // when
         List<String> basicInterests = memberService.getInterestList().getInterests();
         // then
         assertThat(basicInterests.size()).isEqualTo(6);
-        System.out.println("basicInterests = " + basicInterests);
+        log.info("basicInterests = " + basicInterests);
     }
 
     // 닉네임 중복 체크
     @Test
-    public void 닉네임_중목_체크(){
+    public void 닉네임_중목_체크() {
         boolean check1 = memberService.nicknameCheck("imeansu");
         boolean check2 = memberService.nicknameCheck("minsu");
         assertThat(check1).isEqualTo(true);
         assertThat(check2).isEqualTo(true);
     }
 
-//    @Getter
-    class MockDecodedToken{
+    // FirebaseToken을 대체할 Mock token
+    // FirebaseToken의 생성자가 default로 생성 불가, final로 선언되어 상속 불가
+    // 다른 방법 모색
+    class MockDecodedToken {
         String uid;
         String name;
         String email;
+
         MockDecodedToken(Map<String, String> claims) {
-            this.uid =  claims.get("sub");
+            this.uid = claims.get("sub");
             this.email = claims.get("name");
             this.name = claims.get("name");
         }
+
         public String getUid() {
             return uid;
         }
+
         public String getName() {
             return name;
         }
+
         public String getEmail() {
             return email;
         }
@@ -340,6 +371,7 @@ public class MemberServiceTest {
             put("name", "minsu");
             put("email", "gdkfsi@fhid.com");
         }};
+        MockDecodedToken decodedToken = new MockDecodedToken(claims);
 
 //        doReturn(new MockDecodedToken(claims)).when(firebaseAuth).verifyIdToken(any(String.class));
         MemberJoinRequestDto memberJoinRequestDto = MemberJoinRequestDto.builder()
@@ -348,16 +380,16 @@ public class MemberServiceTest {
                 .country(CountryType.KOREA)
                 .language(LanguageType.KOREAN)
                 .introduction("dfsdfsd")
-                .interests(new ArrayList<>(Arrays.asList("K-POP","축구")))
+                .interests(new ArrayList<>(Arrays.asList("K-POP", "축구")))
                 .build();
-        MockDecodedToken decodedToken = new MockDecodedToken(claims);
+
         MemberInfoDtoBasedOnFirebase memberInfoDtoBasedOnFirebase = MemberInfoDtoBasedOnFirebase.builder()
-                                                                    .email(decodedToken.getEmail())
-                                                                    .name(decodedToken.getName())
-                                                                    .firebaseId(decodedToken.getUid())
-                                                                    .password(decodedToken.getUid())
-                                                                    .date(LocalDate.now())
-                                                                    .build();
+                .email(decodedToken.getEmail())
+                .name(decodedToken.getName())
+                .firebaseId(decodedToken.getUid())
+                .password(decodedToken.getUid())
+                .date(LocalDate.now())
+                .build();
 
         // 일단 가입 시키고, 추가 정보 입력 (security context에 저장 해야 함)
         authService.signup(memberInfoDtoBasedOnFirebase);
@@ -379,14 +411,15 @@ public class MemberServiceTest {
         // 추가 정보 입력
         memberService.putMemberInfo(memberJoinRequestDto.toMemberInfoRequestDto());
 
-        MemberInfoRequestDto memberInfo = memberService.getMemberInfo(firebaseResponseDto.getMemberId());
+        MemberInfoDto memberInfo = memberService.getMemberInfo(firebaseResponseDto.getMemberId());
         System.out.println("memberInfo = " + memberInfo.getInterests());
         assertThat(memberInfo.getInterests().contains("K-POP")).isEqualTo(true);
 
     }
 
+    // 관심사 수정할 경우
     @Test
-    public void 관심사_추가_삭제_중복방지(){
+    public void 관심사_추가_삭제_중복방지() {
         // given
         Member member = createMember("minsu", "dsfd@fdljkdf.com");
         memberRepository.save(member);
@@ -394,7 +427,7 @@ public class MemberServiceTest {
         Long memberId = findMemberM.getId();
         System.out.println("memberId = " + memberId);
         securityContext(Long.toString(memberId));
-        MemberInfoRequestDto findMember = memberService.getMemberInfo(memberId);
+        MemberInfoDto findMember = memberService.getMemberInfo(memberId);
 
         // when
         List<String> interestString = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "IT"));
@@ -410,13 +443,12 @@ public class MemberServiceTest {
         em.clear();
 
         // then
-        MemberInfoRequestDto dto = memberService.getMemberInfo(memberId);
+        MemberInfoDto dto = memberService.getMemberInfo(memberId);
         System.out.println(dto.toString());
-        for (String interest: dto.getInterests()) {
+        for (String interest : dto.getInterests()) {
             System.out.println("interest " + interest);
         }
         assertThat(dto.getInterests().size()).isEqualTo(3);
-
 
     }
 }

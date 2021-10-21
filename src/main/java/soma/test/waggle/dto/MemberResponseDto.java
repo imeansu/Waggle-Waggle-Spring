@@ -9,6 +9,9 @@ import soma.test.waggle.entity.Member;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * 삭제 및 대체 예정
+ * */
 public class MemberResponseDto {
     private String email;
 

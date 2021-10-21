@@ -17,7 +17,6 @@ import java.nio.file.AccessDeniedException;
 
 /**
  * controller에서 발생한 예외 통합 관리
- *
  * */
 @Slf4j
 @RestControllerAdvice
@@ -25,7 +24,7 @@ public class GlobalExceptionHandler {
 
     /**
      * javax.validation.Valid or @Validated 으로 binding error 발생시 발생한다.
-     * HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생
+     * HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못 할 경우 발생
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -38,7 +37,7 @@ public class GlobalExceptionHandler {
 
     /**
      * enum type 일치하지 않아 binding 못할 경우 발생
-     * 주로 @RequestParam enum으로 binding 못했을 경우 발생
+     * 주로 @RequestParam enum 으로 binding 못했을 경우 발생
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
@@ -67,8 +66,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(ErrorCode.HANDLE_ACCESS_DENIED.getStatus()));
     }
 
-    // firebase verifyIdToken exception
-    // IllegalArgumentException도 있는데 이건 @valid로 처리
+    /**
+     * Firebase VerifyIdToken Exception
+     * IllegalArgumentException 도 있는데 이건 @valid 로 처리됨
+     */
     @ExceptionHandler(FirebaseAuthException.class)
     protected ResponseEntity<ErrorResponse> handleFirebaseTokenNotValidException(FirebaseAuthException e){
         log.error("handleFirebaseTokenNotValidException", e);

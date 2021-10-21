@@ -23,12 +23,4 @@ public class NotificationController {
         return notificationServiceImpl.subscribe(memberId, lastEventId);
     }
 
-//    @GetMapping("/subscribe/test/{memberId}")
-//    public ResponseEntity<Object> publish(@PathVariable String memberId){
-//        SseEmitter findCustomSseEmitter = notificationServiceImpl.findById(memberId);
-//        System.out.println("findSseEmitter = " + findCustomSseEmitter);
-//        notificationServiceImpl.sendToClient(findCustomSseEmitter, memberId, "이게 된다고???");
-//        return ResponseEntity.ok("ok");
-//    }
-
 }

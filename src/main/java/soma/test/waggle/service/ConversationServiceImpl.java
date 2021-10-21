@@ -74,7 +74,6 @@ public class ConversationServiceImpl implements ConversationService{
             }
         }
 
-
         // total sentence에 저장
         conversationCacheRepository.addSentenceToTotal(photonConversationDto, adjacentNodes);
     }

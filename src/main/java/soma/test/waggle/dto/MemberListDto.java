@@ -1,6 +1,5 @@
 package soma.test.waggle.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,5 +9,5 @@ import java.util.List;
 @Builder
 public class MemberListDto {
     private int size;
-    private List<MemberInfoRequestDto> members;
+    private List<MemberInfoDto> members;
 }

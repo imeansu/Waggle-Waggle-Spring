@@ -52,6 +52,7 @@ WorldRoom {
 
     private String keywords;
 
+    // 문자열로 저장된 키워드를 List로 변환
     public List<String> getKeywords() {
         if (this.keywords != null && keywords.length() > 0) {
             return Arrays.asList(this.keywords.split(","));

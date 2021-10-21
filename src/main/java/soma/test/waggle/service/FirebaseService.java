@@ -29,15 +29,6 @@ public class FirebaseService {
     private final MemberRepository memberRepository;
     private final AuthService authService;
 
-    public static MemberInfoDtoBasedOnFirebase getMemberRequestDto(FirebaseToken decodedToken){
-        return MemberInfoDtoBasedOnFirebase.builder()
-                .email(decodedToken.getEmail())
-                .name(decodedToken.getName())
-                .firebaseId(decodedToken.getUid())
-                .password(decodedToken.getUid())
-                .date(LocalDate.now())
-                .build();
-    }
 
     /**
      * 파이어베이스 로그인 시
@@ -72,6 +63,15 @@ public class FirebaseService {
         return true;
     }
 
+    /**
+     * 1. firebase token verity
+     * 2. firebase token에 담긴 기본 정보로 sign up 진행
+     * 3. memberId 받고 login을 통해 토큰 생성
+     * 4. 나머지 정보 putmemberInfo로 저장
+     * @parmas: firebase token과 여러 회원가입 정보
+     * @returns: token
+     * @throws FirebaseAuthException If an error occurs while parsing or validating the token.
+     * */
     public FirebaseResponseDto signup(MemberJoinRequestDto memberJoinRequestDto) throws FirebaseAuthException {
         // token verify
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(memberJoinRequestDto.getFirebaseToken());
@@ -112,5 +112,15 @@ public class FirebaseService {
                         .collect(Collectors.toList());
         UserDetails principal = new User(id, "", authorities);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(principal, "", authorities));
+    }
+
+    public static MemberInfoDtoBasedOnFirebase getMemberRequestDto(FirebaseToken decodedToken){
+        return MemberInfoDtoBasedOnFirebase.builder()
+                .email(decodedToken.getEmail())
+                .name(decodedToken.getName())
+                .firebaseId(decodedToken.getUid())
+                .password(decodedToken.getUid())
+                .date(LocalDate.now())
+                .build();
     }
 }

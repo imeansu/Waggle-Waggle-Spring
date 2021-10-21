@@ -1,6 +1,8 @@
 package soma.test.waggle.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import soma.test.waggle.repository.CacheMemberRepository;
@@ -12,11 +14,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class RedisMessageQueueServiceImplTest {
+class MessageQueueServiceImplTest {
 
     @Autowired MessageQueueService messageQueueService;
     @Autowired CacheMemberRepository cacheMemberRepository;
     @Autowired NotificationService notificationService;
+    @Autowired RabbitAdmin rabbitAdmin;
+
+    @AfterEach
+    public void purge(){
+        rabbitAdmin.purgeQueue("waggle-waggle");
+    }
 
     @Test
     public void 큐에_넣으면_subscribe로_응답() throws InterruptedException {

@@ -1,11 +1,8 @@
 package soma.test.waggle.service;
 
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,20 +14,19 @@ import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.Member;
-import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.entity.WorldRoom;
 import soma.test.waggle.redis.repository.RedisSentenceRepository;
 import soma.test.waggle.repository.*;
+import soma.test.waggle.type.OnStatusType;
 
 import javax.persistence.EntityManager;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-//@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @Transactional
 public class WorldRoomServiceTest {
