@@ -57,7 +57,7 @@ public class MemberController {
      * */
     @PostMapping("/{followedMemberId}/follow")
     public ResponseEntity<Object> newFollowing(@PathVariable Long followedMemberId){
-        return ResponseEntity.ok(memberService.createFollowing(followedMemberId));
+        return ResponseEntity.ok(memberService.createFollowingWithCheck(followedMemberId));
     }
 
     /**

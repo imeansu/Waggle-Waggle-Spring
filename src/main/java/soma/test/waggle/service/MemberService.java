@@ -5,7 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.error.ErrorCode;
+import soma.test.waggle.error.exception.BlockedMemberException;
+import soma.test.waggle.error.exception.DuplicatedRequestException;
 import soma.test.waggle.error.exception.MemberNotFoundException;
+import soma.test.waggle.error.exception.WaggleWaggleException;
+import soma.test.waggle.repository.FriendshipRepository;
 import soma.test.waggle.repository.InterestMemberRepository;
 import soma.test.waggle.repository.InterestRepository;
 import soma.test.waggle.repository.MemberRepository;
@@ -20,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final FriendshipRepository friendshipRepository;
     private final InterestRepository interestRepository;
     private final InterestMemberRepository interestMemberRepository;
 
@@ -141,20 +147,37 @@ public class MemberService {
     }
 
     /**
-    * 팔로잉할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 팔로우 등록
-    * param : 토큰 주인이 팔로잉할 memberId
-    * */
+     * 팔로잉할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 팔로우 등록
+     * param : 토큰 주인이 팔로잉할 memberId
+     * throws: BlockedMemberException - 차단된 경우, DuplicatedRequestException - 이미 팔로우된 경우
+     * */
     @Transactional
-    public CommandResponseDto createFollowing(Long followedMemberId) {
+    public CommandResponseDto createFollowingWithCheck(Long followedMemberId){
+        Long reqMemberId = SecurityUtil.getCurrentMemberId();
         Following following = Following.builder()
-                .followingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
+                .followingMember(memberRepository.find(reqMemberId))
                 .followedMember(memberRepository.find(followedMemberId))
                 .dateTime(LocalDateTime.now())
                 .build();
-        if(memberRepository.createFollowing(following)){
+
+        // 차단 여부 확인
+        List<Long> blockingCheck = friendshipRepository.findBlockingWho(followedMemberId).stream()
+                .map(member -> member.getId())
+                .collect(Collectors.toList());
+        if (blockingCheck.contains(reqMemberId)){
+            throw new BlockedMemberException(ErrorCode.BLOCKED_MEMBER);
+        }
+
+        // 중복 요청 여부 확인
+        List<Following> followingCheck = friendshipRepository.findFollowing(reqMemberId, followedMemberId);
+        if (followingCheck.size() > 0){
+            throw new DuplicatedRequestException(ErrorCode.DUPLICATED_REQUEST_EXCEPTION);
+        }
+
+        if(friendshipRepository.saveFollowing(following)){
             return new CommandResponseDto("ok");
         } else {
-            return new CommandResponseDto("blocked");
+            throw new WaggleWaggleException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -164,7 +187,7 @@ public class MemberService {
      * */
     @Transactional
     public CommandResponseDto deleteFollowing(Long followedMemberId) {
-        if(memberRepository.deleteFollowing(followedMemberId)){
+        if(friendshipRepository.deleteFollowing(followedMemberId)){
             return new CommandResponseDto("ok");
         } else {
             return new CommandResponseDto("no following");
@@ -174,26 +197,48 @@ public class MemberService {
     /**
      * 차단할 사람의 ID 값만 넘겨주면 토큰 주인 ID로 차단 등록
      * 차단 당한 사람이 토큰 주인을 팔로잉하고 있으면 팔로잉 삭제
-     * 비즈니스 로직이 repository에 들어옴 -> 수정 필요
+     * 차단 당하는 사람을 토큰 주인이 팔로잉 하고 있어도 팔로잉 삭제
      * param : 토큰 주인이 차단할 memberId
+     * throw : DuplicatedRequestException - 이미 차단된 경우
      * */
     @Transactional
     public CommandResponseDto createBlocking(Long blockedMemberId) {
+        Long reqMemberId = SecurityUtil.getCurrentMemberId();
         Blocking blocking = Blocking.builder()
-                .blockingMember(memberRepository.find(SecurityUtil.getCurrentMemberId()))
+                .blockingMember(memberRepository.find(reqMemberId))
                 .blockedMember(memberRepository.find(blockedMemberId))
                 .dateTime(LocalDateTime.now())
                 .build();
-        if(memberRepository.createBlocking(blocking)){
+
+        // 상대방의 follow 취소
+        List<Following> followingCheck = friendshipRepository.findFollowing(blockedMemberId, reqMemberId);
+        if(followingCheck.size() > 0){
+            friendshipRepository.deleteFollowing(followingCheck.get(0));
+        }
+
+        // 토큰 주인의 follow 취소
+        List<Following> followingCheckMe = friendshipRepository.findFollowing(reqMemberId, blockedMemberId);
+        if(followingCheckMe.size() > 0){
+            friendshipRepository.deleteFollowing(followingCheckMe.get(0));
+        }
+
+        // 중복 요청 여부 확인
+        List<Blocking> blockingCheck = friendshipRepository.findBlockingWho(reqMemberId, blockedMemberId);
+        if (blockingCheck.size() > 0){
+            throw new DuplicatedRequestException(ErrorCode.DUPLICATED_REQUEST_EXCEPTION);
+        }
+
+        if(friendshipRepository.saveBlocking(blocking)){
             return new CommandResponseDto("ok");
         } else {
-            return new CommandResponseDto("fail");
+            throw new WaggleWaggleException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @Transactional
     public CommandResponseDto deleteBlocking(Long blockedMemberId) {
-        if(memberRepository.deleteBlocking(blockedMemberId)){
+        if(friendshipRepository.deleteBlocking(blockedMemberId)){
             return new CommandResponseDto("ok");
         } else {
             return new CommandResponseDto("no blocking");
@@ -201,7 +246,7 @@ public class MemberService {
     }
 
     public MemberListDto getBlockingWho(Long memberId){
-        List<MemberInfoDto> members = memberRepository.findBlockingWho(memberId).stream()
+        List<MemberInfoDto> members = friendshipRepository.findBlockingWho(memberId).stream()
                 .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
@@ -215,7 +260,7 @@ public class MemberService {
      * param: 팔로우 조회할 memberId
      * */
     public MemberListDto getFollowingWho(Long memberId) {
-        List<MemberInfoDto> members = memberRepository.findFollowingWho(memberId).stream()
+        List<MemberInfoDto> members = friendshipRepository.findFollowingWho(memberId).stream()
                 .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
@@ -225,7 +270,7 @@ public class MemberService {
     }
 
     public MemberListDto getWhoIsFollower(Long memberId) {
-        List<MemberInfoDto> members = memberRepository.findWhoIsFollower(memberId).stream()
+        List<MemberInfoDto> members = friendshipRepository.findWhoIsFollower(memberId).stream()
                 .map(MemberInfoDto::of)
                 .collect(Collectors.toList());
         return MemberListDto.builder()

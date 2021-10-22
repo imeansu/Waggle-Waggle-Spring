@@ -18,6 +18,7 @@ import soma.test.waggle.dto.*;
 import soma.test.waggle.entity.Following;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.RefreshToken;
+import soma.test.waggle.repository.FriendshipRepository;
 import soma.test.waggle.repository.MemberRepository;
 import soma.test.waggle.repository.RefreshTokenRepository;
 import soma.test.waggle.type.CountryType;
@@ -46,6 +47,7 @@ public class MemberServiceTest {
 
     @Autowired MemberService memberService;
     @Autowired MemberRepository memberRepository;
+    @Autowired FriendshipRepository friendshipRepository;
     @Autowired EntityManager em;
     @Autowired AuthService authService;
 
@@ -121,21 +123,26 @@ public class MemberServiceTest {
         securityContext(Long.toString(member1.getId()));
 
         // when
-        memberService.createFollowing(member2.getId());
+        memberService.createFollowingWithCheck(member2.getId());
 
         // then : following 정상 동작 확인
-        Member findMember = memberRepository.findFollowingWho(member1.getId()).get(0);
+        Member findMember = friendshipRepository.findFollowingWho(member1.getId()).get(0);
         assertThat(findMember).isEqualTo(member2);
 
         // when
-        memberService.createBlocking(member2.getId());
+        securityContext(Long.toString(member2.getId()));
+        memberService.createFollowingWithCheck(member1.getId());
+        memberService.createBlocking(member1.getId());
 
         // then : 차단 정상 동작 확인 & 팔로잉 삭제
-        findMember = memberRepository.findBlockMember(member1.getId()).get(0);
-        assertThat(findMember).isEqualTo(member2);
+        findMember = memberRepository.findBlockMember(member2.getId()).get(0);
+        assertThat(findMember).isEqualTo(member1);
 
-        List<Member> findMembers = memberRepository.findFollowingWho(member1.getId());
+        List<Member> findMembers = friendshipRepository.findFollowingWho(member1.getId());
         assertThat(findMembers.size()).isEqualTo(0);
+
+        List<Member> findMembers2 = friendshipRepository.findFollowingWho(member2.getId());
+        assertThat(findMembers2.size()).isEqualTo(0);
 
     }
 
@@ -151,7 +158,7 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
-        memberService.createFollowing(member2.getId());
+        memberService.createFollowingWithCheck(member2.getId());
 
         em.flush();
         em.clear();
@@ -178,7 +185,7 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
-        memberService.createFollowing(member2.getId());
+        memberService.createFollowingWithCheck(member2.getId());
 
         // when
         memberService.deleteFollowing(member2.getId());
@@ -222,7 +229,7 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
-        memberService.createFollowing(member2.getId());
+        memberService.createFollowingWithCheck(member2.getId());
 
         // 영속성 컨텍스트 비우기
         em.flush();
@@ -253,7 +260,7 @@ public class MemberServiceTest {
 
         securityContext(Long.toString(member1.getId()));
 
-        CommandResponseDto d = memberService.createFollowing(member2.getId());
+        CommandResponseDto d = memberService.createFollowingWithCheck(member2.getId());
         List<MemberInfoDto> members = memberService.getFollowingWho(member1.getId()).getMembers();
 
         em.flush();
