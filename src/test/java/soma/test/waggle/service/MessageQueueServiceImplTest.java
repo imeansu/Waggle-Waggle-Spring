@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MessageQueueServiceImplTest {
 
     @Autowired MessageQueueService messageQueueService;
-    @Autowired CacheMemberRepository cacheMemberRepository;
     @Autowired NotificationService notificationService;
     @Autowired RabbitAdmin rabbitAdmin;
 
