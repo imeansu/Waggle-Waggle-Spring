@@ -55,7 +55,7 @@ public class MemberController {
     /**
      * followed-member-id => 토큰 주인이 팔로우할 멤버
      * */
-    @PostMapping("/{followed-member-id}/follow")
+    @PostMapping("/{followedMemberId}/follow")
     public ResponseEntity<Object> newFollowing(@PathVariable Long followedMemberId){
         return ResponseEntity.ok(memberService.createFollowing(followedMemberId));
     }
@@ -63,7 +63,7 @@ public class MemberController {
     /**
      * followed-member-id => 토큰 주인이 언팔로우할 멤버
      * */
-    @DeleteMapping("/{followed-member-id}/unfollow")
+    @DeleteMapping("/{followedMemberId}/unfollow")
     public ResponseEntity<CommandResponseDto> unfollow(@PathVariable Long followedMemberId){
         return ResponseEntity.ok(memberService.deleteFollowing(followedMemberId));
     }
@@ -71,7 +71,7 @@ public class MemberController {
     /**
      * member-id => 토큰 주인이 언팔로우할 멤버
      * */
-    @GetMapping("/{member-id}/following")
+    @GetMapping("/{memberId}/following")
     public ResponseEntity<MemberListDto> following(@PathVariable Long memberId){
         return ResponseEntity.ok(memberService.getFollowingWho(memberId));
     }
@@ -79,7 +79,7 @@ public class MemberController {
     /**
      * member-id => 이 멤버를 누가 팔로우 하고 있는지 조회
      * */
-    @GetMapping("/{member-id}/follower")
+    @GetMapping("/{memberId}/follower")
     public ResponseEntity<MemberListDto> follower(@PathVariable Long memberId){
         return ResponseEntity.ok(memberService.getWhoIsFollower(memberId));
     }
@@ -87,7 +87,7 @@ public class MemberController {
     /**
      * blocked-member-id => 토큰 주인이 차단할 멤버
      * */
-    @PostMapping("/{blocked-member-id}/block")
+    @PostMapping("/{blockedMemberId}/block")
     public ResponseEntity<Object> newBlocking(@PathVariable Long blockedMemberId){
         return ResponseEntity.ok(memberService.createBlocking(blockedMemberId));
     }
@@ -95,7 +95,7 @@ public class MemberController {
     /**
      * blocked-member-id => 토큰 주인이 차단 해제할 멤버
      * */
-    @DeleteMapping("/{blocked-member-id}/unblock")
+    @DeleteMapping("/{blockedMemberId}/unblock")
     public ResponseEntity<CommandResponseDto> unBlock(@PathVariable Long blockedMemberId){
         return ResponseEntity.ok(memberService.deleteBlocking(blockedMemberId));
     }

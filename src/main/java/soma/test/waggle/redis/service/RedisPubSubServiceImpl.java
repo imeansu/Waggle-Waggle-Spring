@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RedisPubSubServiceImpl implements PubService, SubService {
+public class RedisPubSubServiceImpl implements SubService {
 
     // topic에 발행되는 액션을 처리할 Listner
     private final RedisMessageListenerContainer redisMessageListener;
@@ -33,23 +33,23 @@ public class RedisPubSubServiceImpl implements PubService, SubService {
     private final NotificationService notificationService;
     // topic 전달은 하나의 채널로 모두 통합
     private ChannelTopic topicChannel = new ChannelTopic("topic");
-    // 대화의 현재 memberId 목록을 받아오기 위해
-    private final CacheMemberRepository cacheMemberRepository;
+//    // 대화의 현재 memberId 목록을 받아오기 위해
+//    private final CacheMemberRepository cacheMemberRepository;
 
     @PostConstruct
     public void initSubscribe(){
         redisMessageListener.addMessageListener(redisSubscriber, topicChannel);
     }
 
-    @Override
-    public void publishTopic(TopicRequestMessage topicRequestMessage) {
-        // 대화 채널이 없다면 새로 생성
-        List<String> members = cacheMemberRepository.findByConversationId(topicRequestMessage.getConversationId()).stream()
-                .map((member) -> member.getMemberId())
-                .collect(Collectors.toList());
-        topicRequestMessage.setMembers(members);
-        redisPublisher.publish(topicChannel, topicRequestMessage);
-    }
+//    @Override
+//    public void publishTopic(TopicRequestMessage topicRequestMessage) {
+//        // 대화 채널이 없다면 새로 생성
+//        List<String> members = cacheMemberRepository.findByConversationId(topicRequestMessage.getConversationId()).stream()
+//                .map((member) -> member.getMemberId())
+//                .collect(Collectors.toList());
+//        topicRequestMessage.setMembers(members);
+//        redisPublisher.publish(topicChannel, topicRequestMessage);
+//    }
 
 
     // 순환 참조로 삭제
