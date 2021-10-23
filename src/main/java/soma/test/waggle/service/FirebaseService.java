@@ -72,6 +72,7 @@ public class FirebaseService {
      * @returns: token
      * @throws FirebaseAuthException If an error occurs while parsing or validating the token.
      * */
+    @Transactional
     public FirebaseResponseDto signup(MemberJoinRequestDto memberJoinRequestDto) throws FirebaseAuthException {
         // token verify
         FirebaseToken decodedToken = firebaseAuth.verifyIdToken(memberJoinRequestDto.getFirebaseToken());

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WorldRoomService {
 
     private final WorldRoomRepository worldRoomRepository;
@@ -40,12 +41,10 @@ public class WorldRoomService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public WorldCreateRequestDto createWorldRoom(WorldCreateRequestDto worldCreateRequestDto) {
         return WorldCreateRequestDto.of(worldRoomRepository.save(worldCreateRequestDto.toWorldRoom()));
     }
 
-    @Transactional
     public PhotonResponseDto pathCreateOrClose(PhotonRoomIdDto photonRoomIdDto, OnStatusType onStatusType) {
         Optional<WorldRoom> findRoom = worldRoomRepository.findById(photonRoomIdDto.getRoomId());
         if (findRoom.isEmpty()) {
@@ -58,7 +57,6 @@ public class WorldRoomService {
 
     }
 
-    @Transactional
     public PhotonResponseDto pathJoin(PhotonMemberDto photonMemberDto) {
 
         Member member = memberRepository.find(photonMemberDto.getMemberId());
@@ -82,7 +80,6 @@ public class WorldRoomService {
         return new PhotonResponseDto(0, "OK");
     }
 
-    @Transactional
     public PhotonResponseDto pathLeave(PhotonMemberDto photonMemberDto) {
 
         Member member = memberRepository.find(photonMemberDto.getMemberId());
@@ -100,7 +97,6 @@ public class WorldRoomService {
         return new PhotonResponseDto(0, "OK");
     }
 
-    @Transactional
     public PhotonResponseDto pathEvent(PhotonConversationDto photonConversationDto) {
         // 대화 DB 저장 안함
         Conversation conversation;
