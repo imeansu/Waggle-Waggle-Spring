@@ -15,22 +15,20 @@ public class WorldRoomResponseDto {
 
     private Long id;
     private String name;
-    private String topic;
     private WorldMapType map;
     private int people;
     private LocalDateTime dateTime;
     private List<String> keywords;
-    private String photon_server;
 
     public static WorldRoomResponseDto of(WorldRoom worldRoom){
         return new WorldRoomResponseDto().builder()
                 .id(worldRoom.getId())
                 .name(worldRoom.getName())
-                .topic(worldRoom.getTopic())
+//                .topic(worldRoom.getTopic())
                 .map(worldRoom.getMap())
                 .people(worldRoom.getPeople())
                 .dateTime(worldRoom.getDateTime())
-                .photon_server(worldRoom.getPhoton_server())
+//                .photon_server(worldRoom.getPhoton_server())
                 .keywords(worldRoom.getKeywords())
                 .build();
     }

@@ -115,7 +115,7 @@ public class LogAspect {
      *  log 내역
      *      [ELK LOG] |MEMBERLOG | REQUEST | URI: {uri} | Method: {} | {} = {Args based on params}
      * */
-    @Around("execution(* soma.test.waggle.controller.AuthController.*(..))")
+    @Around("execution(* soma.test.waggle.controller.AuthController.*(..)) || execution(* soma.test.waggle.controller.MemberController.*(..))")
     public Object memberLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 

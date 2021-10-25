@@ -6,6 +6,7 @@ import soma.test.waggle.type.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Member implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private LanguageType languageType;
 
+    @Size(max=10000)
     private String introduction;
 
     @OneToMany(mappedBy = "member")

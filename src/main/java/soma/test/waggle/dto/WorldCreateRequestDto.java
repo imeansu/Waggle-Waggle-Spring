@@ -16,41 +16,39 @@ public class WorldCreateRequestDto {
 
     private Long room_id;
     private String name;
-    private String topic;
+//    private String topic;
     private WorldMapType map;
     private int people;
     private LocalDateTime dateTime;
-    private String photon_server;
+//    private String photon_server;
     private OnStatusType onStatus;
     private List<String> keywords;
-    private World world;
+//    private World world;
 
     public static WorldCreateRequestDto of(WorldRoom worldRoom) {
         return WorldCreateRequestDto.builder()
                 .room_id(worldRoom.getId())
                 .name(worldRoom.getName())
-                .topic(worldRoom.getTopic())
+//                .topic(worldRoom.getTopic())
                 .map(worldRoom.getMap())
                 .people(worldRoom.getPeople())
                 .dateTime(LocalDateTime.now())
-                .photon_server(worldRoom.getPhoton_server())
+//                .photon_server(worldRoom.getPhoton_server())
                 .onStatus(worldRoom.getOnStatus())
                 .keywords(worldRoom.getKeywords())
-                .world(worldRoom.getWorld())
                 .build();
     }
 
     public WorldRoom toWorldRoom() {
         return WorldRoom.builder()
                 .name(name)
-                .topic(topic)
+//                .topic(topic)
                 .map(map)
                 .people(people)
                 .dateTime(LocalDateTime.now())
-                .photon_server(photon_server)
+//                .photon_server(photon_server)
                 .onStatus(onStatus)
                 .keywords(WorldRoom.keywordListToString(keywords))
-                .world(world)
                 .build();
     }
 }

@@ -25,7 +25,9 @@ WorldRoom {
 
 //    @NotNull
     private String name;
-    private String topic;
+
+    // 배치 공간 문제로 보류
+//    private String topic;
 
     @Enumerated(value = EnumType.STRING)
     private WorldMapType map;
@@ -34,8 +36,10 @@ WorldRoom {
     private int people;
 //    @NotNull
     private LocalDateTime dateTime;
+
+    // worldRoom id 로 서버 이름 지정 가능할 것 같다고 하여 보류
 //    @NotNull
-    private String photon_server;
+//    private String photon_server;
 
     private OnStatusType onStatus;
 
