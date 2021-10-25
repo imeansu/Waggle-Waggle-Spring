@@ -12,19 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.entity.*;
-import soma.test.waggle.type.AuthorityType;
-import soma.test.waggle.type.AvatarType;
-import soma.test.waggle.type.OnStatusType;
+import soma.test.waggle.type.*;
 import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.InterestRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,8 +31,8 @@ public class InitDb {
     @PostConstruct
     public void init() {
         initService.securityContext("-1000");
-        initService.dbInit1();
         initService.basicInterestInsert();
+        initService.dbInit1();
         initService.dbInit2();
     }
 
@@ -71,13 +66,26 @@ public class InitDb {
                 em.persist(worldRoom);
             }
             List<InterestMember> interestMembers = new ArrayList<>();
+            Map<String, Interest> interestMap = interestRepository.findInterestMap(new ArrayList<>(Arrays.asList("K-POP", "스포츠", "축구", "BTS", "한국어", "IT")));
+            List<Interest> interestList = new ArrayList<>(interestMap.values());
+            List<CountryType> countryTypeList = Arrays.asList(CountryType.class.getEnumConstants());
+            List<LanguageType> languageTypeList = Arrays.asList(LanguageType.class.getEnumConstants());
             for (int i = 0; i <= 10; i++){
                 String j = Integer.toString(i);
 
                 Member member = new Member("Test|email|"+j, "Test|name|"+j, i%2 == 0? AvatarType.MALE1 : AvatarType.FEMALE1,"Test|password|"+j, "Test|firebaseId|"+j, AuthorityType.ROLE_USER, LocalDate.now(), "Test|nickname|"+j
                         , i%2 == 0? OnStatusType.Y : OnStatusType.N, OnStatusType.N, "Test|introduction|"+j, interestMembers);
-
+                member.setCountryType(countryTypeList.get(i%3));
+                member.setLanguageType(languageTypeList.get(i%2));
+                InterestMember interestMember1 = new InterestMember();
+                InterestMember interestMember2 = new InterestMember();
+                interestMember1.setInterest(interestList.get(i%6));
+                interestMember1.setMember(member);
                 em.persist(member);
+                em.persist(interestMember1);
+                interestMember2.setInterest(interestList.get((i+1)%6));
+                interestMember2.setMember(member);
+                em.persist(interestMember2);
             }
         }
 

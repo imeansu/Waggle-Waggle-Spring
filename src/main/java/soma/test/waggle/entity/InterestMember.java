@@ -1,9 +1,6 @@
 package soma.test.waggle.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +8,7 @@ import javax.persistence.*;
  * Interest - member 연결 중간 테이블
  * ManyToMany 를 피하기 위해
  * */
-@Entity @Getter
+@Entity @Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
