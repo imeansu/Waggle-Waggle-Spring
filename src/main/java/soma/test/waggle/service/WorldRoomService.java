@@ -119,7 +119,7 @@ public class WorldRoomService {
                 .member(memberRepository.find(photonConversationDto.getMemberId()))
                 .dateTime(LocalDateTime.now())
                 .build();
-        redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
+//        redisSentenceRepository.addSentenceToRedis(Sentence.toRedisDto(sentence), conversation.getVivoxId());
 
         // 발화 문장이 들어오면 대화 관리를 위해 전달
         conversationService.sentence(photonConversationDto);
