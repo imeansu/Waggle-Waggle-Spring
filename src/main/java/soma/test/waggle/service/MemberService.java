@@ -148,9 +148,12 @@ public class MemberService {
                 })
                 .collect(Collectors.toList());
 
+        List<Long> followingMemberId = followingMembers.stream()
+                .map(dto -> dto.getId())
+                .collect(Collectors.toList());
         List<MemberInfoDto> onlineMembers = memberRepository.getOnlineMembers().stream()
                 .map(MemberInfoDto::of)
-                .filter(m -> !followingMembers.contains(m))
+                .filter(dto -> !followingMemberId.contains(dto.getId()))
                 .filter(dto -> !blockingMemberIds.contains(dto.getId()))
                 .filter(dto -> !blockedByWhoIds.contains(dto.getId()))
                 .map(dto -> {
