@@ -135,7 +135,7 @@ public class MemberServiceTest {
         memberService.createBlocking(member1.getId());
 
         // then : 차단 정상 동작 확인 & 팔로잉 삭제
-        findMember = memberRepository.findBlockMember(member2.getId()).get(0);
+        findMember = friendshipRepository.findBlockingWho(member2.getId()).get(0);
         assertThat(findMember).isEqualTo(member1);
 
         List<Member> findMembers = friendshipRepository.findFollowingWho(member1.getId());

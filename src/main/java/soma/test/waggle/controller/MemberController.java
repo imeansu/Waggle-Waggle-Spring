@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soma.test.waggle.dto.*;
+import soma.test.waggle.service.MemberService;
 import soma.test.waggle.type.CountryType;
 import soma.test.waggle.type.LanguageType;
-import soma.test.waggle.service.MemberService;
+import soma.test.waggle.util.SecurityUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -98,6 +99,14 @@ public class MemberController {
     @DeleteMapping("/{blockedMemberId}/unblock")
     public ResponseEntity<CommandResponseDto> unBlock(@PathVariable Long blockedMemberId){
         return ResponseEntity.ok(memberService.deleteBlocking(blockedMemberId));
+    }
+
+    /**
+     * 토큰 주인의 blocking 하고 있는 멤버
+     * */
+    @GetMapping("/me/blocking")
+    public ResponseEntity<MemberListDto> blocking(){
+        return ResponseEntity.ok(memberService.getBlockingWho(SecurityUtil.getCurrentMemberId()));
     }
 
     /**

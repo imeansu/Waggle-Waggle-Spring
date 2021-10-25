@@ -129,13 +129,33 @@ public class MemberService {
 
 
     public OnlineMemberResponseDto getOnlineMembers() {
+        List<Long> blockingMemberIds = getBlockingWho(SecurityUtil.getCurrentMemberId()).getMembers().stream()
+                .map(MemberInfoDto::getId)
+                .collect(Collectors.toList());
+        List<Long> blockedByWhoIds = friendshipRepository.findBlockedByWho(SecurityUtil.getCurrentMemberId()).stream()
+                .map(MemberInfoDto::of)
+                .map(MemberInfoDto::getId)
+                .collect(Collectors.toList());
+
         List<MemberInfoDto> followingMembers = memberRepository.getOnlineFollowingMembers().stream()
                 .map(MemberInfoDto::of)
+                .filter(dto -> !blockingMemberIds.contains(dto.getId()))
+                .filter(dto -> !blockedByWhoIds.contains(dto.getId()))
+                .map(dto -> {
+                    dto.setFriendship(FriendshipType.FOLLOW);
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         List<MemberInfoDto> onlineMembers = memberRepository.getOnlineMembers().stream()
                 .map(MemberInfoDto::of)
                 .filter(m -> !followingMembers.contains(m))
+                .filter(dto -> !blockingMemberIds.contains(dto.getId()))
+                .filter(dto -> !blockedByWhoIds.contains(dto.getId()))
+                .map(dto -> {
+                    dto.setFriendship(FriendshipType.NONE);
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         return OnlineMemberResponseDto.builder()
@@ -245,9 +265,17 @@ public class MemberService {
         }
     }
 
+    /**
+     * 누구를 차단 하고 있는지 조회
+     * param: 차단 조회할 memberId
+     * */
     public MemberListDto getBlockingWho(Long memberId){
         List<MemberInfoDto> members = friendshipRepository.findBlockingWho(memberId).stream()
                 .map(MemberInfoDto::of)
+                .map(dto -> {
+                    dto.setFriendship(FriendshipType.BLOCK);
+                    return dto;
+                })
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -256,12 +284,27 @@ public class MemberService {
     }
 
     /**
+     * 누구에게 차단당하고 있는지
+     * param: 차단 당함 조회할 memberId
+     * */
+    public List<MemberInfoDto> getBlockedByWho(Long memberId){
+        List<MemberInfoDto> members = friendshipRepository.findBlockedByWho(memberId).stream()
+                .map(MemberInfoDto::of)
+                .map(dto -> {
+                    dto.setFriendship(FriendshipType.BLOCK);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return members;
+    }
+
+    /**
      * 누구를 팔로우 하고 있는지 조회
      * param: 팔로우 조회할 memberId
      * */
     public MemberListDto getFollowingWho(Long memberId) {
         List<MemberInfoDto> members = friendshipRepository.findFollowingWho(memberId).stream()
-                .map(MemberInfoDto::of)
+                .map(this::getMemberInfo)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -271,7 +314,7 @@ public class MemberService {
 
     public MemberListDto getWhoIsFollower(Long memberId) {
         List<MemberInfoDto> members = friendshipRepository.findWhoIsFollower(memberId).stream()
-                .map(MemberInfoDto::of)
+                .map(this::getMemberInfo)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())

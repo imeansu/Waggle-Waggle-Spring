@@ -8,6 +8,7 @@ import soma.test.waggle.entity.Member;
 import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -173,6 +174,17 @@ public class FriendshipRepository {
                         " where b.blockingMember = :blockingMember" +
                         " and b.blockedMember = :blockedMember", Blocking.class)
                 .setParameter("blockingMember", blockingMember)
+                .setParameter("blockedMember", blockedMember)
+                .getResultList();
+    }
+
+    public List<Member> findBlockedByWho(Long blockedId) {
+        Member blockedMember = em.find(Member.class, blockedId);
+        return em.createQuery(
+                "select ming from Blocking b" +
+                        " join b.blockedMember med" +
+                        " join b.blockingMember ming" +
+                        " where med = :blockedMember", Member.class)
                 .setParameter("blockedMember", blockedMember)
                 .getResultList();
     }

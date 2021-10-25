@@ -2,11 +2,13 @@ package soma.test.waggle.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import soma.test.waggle.dto.MemberInfoDto;
 import soma.test.waggle.entity.*;
 import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.util.SecurityUtil;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,15 +88,25 @@ public class MemberRepository {
 
 
 
-    public List<Member> findBlockMember(Long id){
-        Member member = em.find(Member.class, id);
-        return em.createQuery(
-                "select m from Blocking b" +
-                        " join b.blockedMember m" +
-                        " where b.blockingMember = :member", Member.class)
-                .setParameter("member", member)
-                .getResultList();
-    }
+//    public List<Member> findBlockMember(Long id){
+//        Member member = em.find(Member.class, id);
+//        return em.createQuery(
+//                "select m from Blocking b" +
+//                        " join b.blockedMember m" +
+//                        " where b.blockingMember = :member", Member.class)
+//                .setParameter("member", member)
+//                .getResultList();
+//    }
+
+//    public List<Member> findBlockedByWho(Long id) {
+//        Member member = em.find(Member.class, id);
+//        return em.createQuery(
+//                "select m from Blocking b" +
+//                        " join b.blockedMember m" +
+//                        " where m = :member", Member.class)
+//                .setParameter("member", member)
+//                .getResultList();
+//    }
 
     public boolean deleteRefreshToken() {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKey(Long.toString(SecurityUtil.getCurrentMemberId()));
@@ -132,4 +144,7 @@ public class MemberRepository {
             return false;
         }
     }
+
+
+
 }
