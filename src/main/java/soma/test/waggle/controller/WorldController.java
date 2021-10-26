@@ -3,13 +3,11 @@ package soma.test.waggle.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import soma.test.waggle.dto.WorldCreateRequestDto;
+import soma.test.waggle.dto.PhotonMemberInOutDto;
+import soma.test.waggle.dto.WorldRoomCreateRequestDto;
 import soma.test.waggle.dto.WorldRoomListResponseDto;
 import soma.test.waggle.dto.WorldRoomResponseDto;
-import soma.test.waggle.dto.photon.PhotonConversationDto;
-import soma.test.waggle.dto.photon.PhotonMemberDto;
-import soma.test.waggle.dto.photon.PhotonResponseDto;
-import soma.test.waggle.dto.photon.PhotonRoomIdDto;
+import soma.test.waggle.dto.photon.*;
 import soma.test.waggle.service.WorldRoomService;
 import soma.test.waggle.service.WorldService;
 import soma.test.waggle.type.OnStatusType;
@@ -37,8 +35,8 @@ public class WorldController {
      * worldRoom 생성
      * */
     @PostMapping("/world-room/new")
-    public ResponseEntity<WorldCreateRequestDto> CreateWorld(@RequestBody WorldCreateRequestDto worldCreateRequestDto){
-        return ResponseEntity.ok(worldRoomService.createWorldRoom(worldCreateRequestDto));
+    public ResponseEntity<WorldRoomCreateRequestDto> CreateWorld(@RequestBody WorldRoomCreateRequestDto worldRoomCreateRequestDto){
+        return ResponseEntity.ok(worldRoomService.createWorldRoom(worldRoomCreateRequestDto));
     }
 
     /**
@@ -80,7 +78,16 @@ public class WorldController {
      *      3. Sentence         : 내가 발화한 문장 전송
      * */
     @PostMapping("/world-room/path-event")
-    public ResponseEntity<PhotonResponseDto> pathEvent(@RequestBody PhotonConversationDto photonConversationDto){
-        return ResponseEntity.ok(worldRoomService.pathEvent(photonConversationDto));
+    public ResponseEntity<PhotonResponseDto> pathEvent(@RequestBody PhotonPathEventDto photonPathEventDto){
+        ResponseEntity<PhotonResponseDto> responseEntity = null;
+        switch (photonPathEventDto.getEventName()){
+            case "Sentence":
+                PhotonConversationDto photonConversationDto = photonPathEventDto.toConversation();
+                responseEntity = ResponseEntity.ok(worldRoomService.pathEvent(photonConversationDto));
+            case "MemberInOut":
+                PhotonMemberInOutDto photonMemberInOutDto = photonPathEventDto.toMemberInOut();
+                responseEntity = ResponseEntity.ok(worldRoomService.pathEvent(photonMemberInOutDto));
+        }
+        return responseEntity;
     }
 }

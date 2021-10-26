@@ -11,8 +11,10 @@ import lombok.*;
 public class PhotonConversationDto {
 
     private Long roomId;
-    private String vivoxId;
     private Long memberId;
     private String sentence;
+
+    // vivoxId 를 roomId 로 할 수 있는지 확인 중...
+    //    private String vivoxId;
 
 }

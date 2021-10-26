@@ -108,8 +108,14 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
         return setOperations.add(KEY_CONVERSATION_GRAPH_MEMBERID+sayingMemberId, hearingMemberId) > 0 ? true : false;
     }
 
+
     @Override
     public boolean deleteAdjacentNode(Long sayingMemberId, Long hearingMemberId) {
         return setOperations.remove(KEY_CONVERSATION_GRAPH_MEMBERID+sayingMemberId, hearingMemberId) > 0 ? true : false;
+    }
+
+    @Override
+    public boolean hasGraphKey(Long memberId){
+        return redisTemplate.hasKey(KEY_CONVERSATION_GRAPH_MEMBERID+memberId);
     }
 }

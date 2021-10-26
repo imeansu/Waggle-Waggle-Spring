@@ -33,4 +33,6 @@ public interface ConversationCacheRepository {
     boolean addAdjacentNode(Long sayingMemberId, Long hearingMemberId);
 
     boolean deleteAdjacentNode(Long sayingMemberId, Long sayingMemberId1);
+
+    boolean hasGraphKey(Long memberId);
 }

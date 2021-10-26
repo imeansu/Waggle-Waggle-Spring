@@ -22,17 +22,17 @@ public class ConversationRepositoty {
         return em.find(Conversation.class, id);
     }
 
-    public List<Conversation> findByVivoxId(String id){
-        return  em.createQuery(
-                "select c from Conversation c where c.vivoxId = :vivoxId", Conversation.class)
-                .setParameter("vivoxId", id)
-                .getResultList();
+//    public List<Conversation> findByVivoxId(String id){
+//        return  em.createQuery(
+//                "select c from Conversation c where c.vivoxId = :vivoxId", Conversation.class)
+//                .setParameter("vivoxId", id)
+//                .getResultList();
 //        if (findConversation.size() == 0){
 ////            throw new NoConversationException("해당 대화가 없습니다.");
 //            return new ArrayList<Conversation>();
 //        } else{
 //            return findConversation.get(0);
 //        }
-    }
+//    }
 
 }

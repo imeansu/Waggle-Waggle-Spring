@@ -1,7 +1,7 @@
 package soma.test.waggle.service;
 
 
-import soma.test.waggle.dto.VivoxMemberInOutDto;
+import soma.test.waggle.dto.PhotonMemberInOutDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 
 public interface ConversationService {
@@ -14,7 +14,7 @@ public interface ConversationService {
 
     void sendSentenceSetToRecommendation(Long memberId);
 
-    void vivoxMemberIn(VivoxMemberInOutDto vivoxMemberInOutDto);
+    void vivoxMemberIn(PhotonMemberInOutDto photonMemberInOutDto);
 
-    void vivoxMemberOut(VivoxMemberInOutDto vivoxMemberInOutDto);
+    void vivoxMemberOut(PhotonMemberInOutDto photonMemberInOutDto);
 }

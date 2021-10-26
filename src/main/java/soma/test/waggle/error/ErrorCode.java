@@ -16,10 +16,12 @@ public enum ErrorCode {
     // Auth
     INVALID_FIREBASE_TOKEN(400, "F001", " Invalid Firebase Token"),
     // Member
-    MEMBER_NOT_FOUND(400, "M001", "Member Not Found"),
+    MEMBER_NOT_FOUND(404, "M001", "Member Not Found"),
         // following, blocking 중복 요청시
     DUPLICATED_REQUEST_EXCEPTION(400, "M002", "Request has done before"),
-    BLOCKED_MEMBER(400, "M003", "Blocked Member")
+    BLOCKED_MEMBER(400, "M003", "Blocked Member"),
+    // WorldRoom
+    WORLDROOM_NOT_FOUND(404, "W001", "WorldRoom Not Found")
 
     ;
 

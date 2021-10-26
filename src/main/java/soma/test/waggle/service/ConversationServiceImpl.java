@@ -3,7 +3,7 @@ package soma.test.waggle.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import soma.test.waggle.dto.VivoxMemberInOutDto;
+import soma.test.waggle.dto.PhotonMemberInOutDto;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.repository.ConversationCacheRepository;
 
@@ -26,10 +26,17 @@ public class ConversationServiceImpl implements ConversationService{
         conversationCacheRepository.createSentenceList(memberId);
     }
 
-    // room에서 퇴장시, graph와 sentence list 삭제
+    // room 에서 퇴장시, graph 와 sentence list 삭제
     @Override
     public void leaveRoom(Long memberId) {
-        // graph에서 노드 삭제
+        // graph 인접 노드들에서 자신을 삭제
+        /**  vivox 로그 방식 보고 결정
+        Set<Long> adjacentNode = conversationCacheRepository.getAdjacentNode(memberId);
+        adjacentNode.stream()
+                .map(node -> conversationCacheRepository.deleteAdjacentNode(node, memberId))
+                .allMatch(result -> result);
+         */
+        // graph 에서 노드 삭제
         conversationCacheRepository.deleteGraph(memberId);
 
         // sentence list 삭제
@@ -87,13 +94,13 @@ public class ConversationServiceImpl implements ConversationService{
 
     // 자신의 영역에 사람이 들어옴
     @Override
-    public void vivoxMemberIn(VivoxMemberInOutDto vivoxMemberInOutDto) {
-        conversationCacheRepository.addAdjacentNode(vivoxMemberInOutDto.getSayingMemberId(), vivoxMemberInOutDto.getHearingMemberId());
+    public void vivoxMemberIn(PhotonMemberInOutDto photonMemberInOutDto) {
+        conversationCacheRepository.addAdjacentNode(photonMemberInOutDto.getSayingMemberId(), photonMemberInOutDto.getHearingMemberId());
     }
 
     // 자신의 영역에서 사람이 나감
     @Override
-    public void vivoxMemberOut(VivoxMemberInOutDto vivoxMemberInOutDto) {
-        conversationCacheRepository.deleteAdjacentNode(vivoxMemberInOutDto.getSayingMemberId(), vivoxMemberInOutDto.getHearingMemberId());
+    public void vivoxMemberOut(PhotonMemberInOutDto photonMemberInOutDto) {
+        conversationCacheRepository.deleteAdjacentNode(photonMemberInOutDto.getSayingMemberId(), photonMemberInOutDto.getHearingMemberId());
     }
 }

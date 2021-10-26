@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WorldCreateRequestDto {
+public class WorldRoomCreateRequestDto {
 
     private Long room_id;
     private String name;
@@ -25,8 +25,8 @@ public class WorldCreateRequestDto {
     private List<String> keywords;
 //    private World world;
 
-    public static WorldCreateRequestDto of(WorldRoom worldRoom) {
-        return WorldCreateRequestDto.builder()
+    public static WorldRoomCreateRequestDto of(WorldRoom worldRoom) {
+        return WorldRoomCreateRequestDto.builder()
                 .room_id(worldRoom.getId())
                 .name(worldRoom.getName())
 //                .topic(worldRoom.getTopic())

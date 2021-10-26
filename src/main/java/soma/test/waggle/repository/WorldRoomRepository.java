@@ -31,4 +31,12 @@ public class WorldRoomRepository {
                 .setParameter("status", onStatusType)
                 .getResultList();
     }
+
+    public List<WorldRoom> findByName(String name){
+        return em.createQuery(
+                "select wr from WorldRoom wr" +
+                        " where wr.name = :name")
+                .setParameter("name", name)
+                .getResultList();
+    }
 }
