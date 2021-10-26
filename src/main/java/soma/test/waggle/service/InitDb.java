@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.repository.WorldRoomRepository;
 import soma.test.waggle.type.*;
-import soma.test.waggle.repository.ConversationRepositoty;
 import soma.test.waggle.repository.InterestRepository;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +30,8 @@ public class InitDb {
     public void init() {
         initService.securityContext("-1000");
         initService.basicInterestInsert();
-        initService.dbInit_member();
         initService.dbInit_worldRoom();
+        initService.dbInit_member();
     }
 
     @Transactional
@@ -40,10 +40,10 @@ public class InitDb {
     static class InitService{
 
         private final EntityManager em;
-        private final AuthService authService;
-        private final ConversationRepositoty conversationRepositoty;
-        private final WorldRoomService worldRoomService;
         private final InterestRepository interestRepository;
+        private final WorldRoomRepository worldRoomRepository;
+        private List<Member> members;
+        List<WorldRoom> worldRooms;
 
         public void basicInterestInsert(){
             Interest root = Interest.builder()
@@ -60,12 +60,13 @@ public class InitDb {
         }
 
         public void dbInit_member() {
+            worldRooms = worldRoomRepository.findAllByCriteria(OnStatusType.Y);
             List<InterestMember> interestMembers = new ArrayList<>();
             Map<String, Interest> interestMap = interestRepository.findInterestMap(new ArrayList<>(Arrays.asList("K-POP", "스포츠", "축구", "BTS", "한국어", "IT")));
             List<Interest> interestList = new ArrayList<>(interestMap.values());
             List<CountryType> countryTypeList = Arrays.asList(CountryType.class.getEnumConstants());
             List<LanguageType> languageTypeList = Arrays.asList(LanguageType.class.getEnumConstants());
-            List<Member> members = new ArrayList<>(){{
+            members = new ArrayList<>(){{
                 add(getMember("sam", AvatarType.MALE1, "samuel", OnStatusType.Y, "Hey everybody! I’m Interested in learning about everything Korean and Japanese. I am a native English speaker from the USA. I speak Spanish fluently as well. I was born and raised in Texas, which is part of the USA. I work in the medical field, edit videos, develop mobile apps, and DJ on the side. I’ll be glad to help you as best I can. I look forward to your message! Don’t be shy! I’ll make you laugh! I promise! \n" +
                         "\n" +
                         "Feel free to send me a message! ✍️ \n" +
@@ -123,7 +124,15 @@ public class InitDb {
                 interestMember2.setInterest(interestList.get((i+1)%6));
                 interestMember2.setMember(member);
                 em.persist(interestMember2);
+
+                EntranceRoom entranceRoom = EntranceRoom.builder()
+                        .member(members.get(i))
+                        .worldRoom(worldRooms.get(i%4))
+                        .isLast(OnStatusType.Y)
+                        .build();
+                em.persist(entranceRoom);
             }
+
         }
 
         private Member getMember(String name, AvatarType avatarType, String nickname, OnStatusType onStatusType, String introduction) {
@@ -134,7 +143,7 @@ public class InitDb {
 
         public void dbInit_worldRoom(){
 
-            List<WorldRoom> worldRooms = new ArrayList<>(){{
+            worldRooms = new ArrayList<>(){{
                 add(getWorldRoom("Let's talk in English", OnStatusType.Y, Arrays.asList("한국어", "영어", "언어교환", "free talking"), 3, WorldMapType.GWANGHWAMUN));
                 add(getWorldRoom("Talk and Read '핸드폰'(Cell phones)", OnStatusType.Y, Arrays.asList("아이폰", "갤럭시", "KT 먹통 현상", "앱등이"), 5, WorldMapType.Jongmyo));
                 add(getWorldRoom("주말에 뭐했어요?", OnStatusType.Y, Arrays.asList("주말", "weekend", "산책", "계룡산 스파게티"), 8, WorldMapType.GWANGHWAMUN));
@@ -142,9 +151,8 @@ public class InitDb {
                 add(getWorldRoom("test", OnStatusType.N, Arrays.asList("test1", "test2"), 3, WorldMapType.GWANGHWAMUN));
 
             }};
-            for (int i = 1; i < 5; i++){
+            for (int i = 0; i < 5; i++){
                 WorldRoom worldRoom = worldRooms.get(i);
-//                worldRoom.setId(Long.valueOf(i));
                 em.persist(worldRoom);
             }
 

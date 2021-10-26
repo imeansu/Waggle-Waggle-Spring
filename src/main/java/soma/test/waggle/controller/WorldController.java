@@ -23,6 +23,14 @@ public class WorldController {
     private final WorldRoomService worldRoomService;
 
     /**
+     * worldRoom 단일 정보
+     * */
+    @GetMapping("/world-room/{worldRoomId}")
+    public ResponseEntity<WorldRoomResponseDto> worldRoomInfo(@PathVariable Long worldRoomId){
+        return ResponseEntity.ok(worldRoomService.getWorldRoomInfo(worldRoomId));
+    }
+
+    /**
      * Returns: open worldRoom list
      * */
     @GetMapping("/world-room/list")

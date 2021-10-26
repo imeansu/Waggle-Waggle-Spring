@@ -31,6 +31,10 @@ public class WorldRoomService {
     private final SentenceRepository sentenceRepository;
     private final ConversationService conversationService;
 
+    @Transactional(readOnly = true)
+    public WorldRoomResponseDto getWorldRoomInfo(Long worldRoomId) {
+        return WorldRoomResponseDto.of(worldRoomRepository.find(worldRoomId));
+    }
 
     /**
      * OnStatusType 이 Y인 worldRoom

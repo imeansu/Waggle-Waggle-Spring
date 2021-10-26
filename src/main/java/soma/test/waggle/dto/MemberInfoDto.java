@@ -31,11 +31,16 @@ public class MemberInfoDto {
     private AvatarType avatar;
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
-    private EntranceRoom entranceRoom;
+    private WorldRoomResponseDto worldRoomResponseDto;
     private FriendshipType friendship;
     private List<String> interests;
 
     public static MemberInfoDto of(Member member) throws NullPointerException{
+        // entranceRooms 중에서 현재 접속 중인 방
+        List<EntranceRoom> ers = member.getEntranceRooms();
+        List<EntranceRoom> currentER = ers.stream()
+                .filter(er -> er.getIsLast() == OnStatusType.Y)
+                .collect(Collectors.toList());
         return MemberInfoDto.builder()
                 .id(member.getId())
                 .nickName(member.getNickname())
@@ -45,7 +50,7 @@ public class MemberInfoDto {
                 .avatar(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
-                .entranceRoom(member.getEntranceRoom())
+                .worldRoomResponseDto(currentER.size() == 0 ? null : WorldRoomResponseDto.of(currentER.get(0).getWorldRoom()))
                 .interests(member.getInterests().stream()
                         .map(interestMember -> interestMember.getInterest().getSubject())
                         .collect(Collectors.toList()))

@@ -52,9 +52,8 @@ public class Member implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private OnStatusType entranceStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "entrance_id")
-    private EntranceRoom entranceRoom;
+    @OneToMany(mappedBy = "member")
+    private List<EntranceRoom> entranceRooms;
 
     @OneToMany(mappedBy = "followingMember", cascade = CascadeType.ALL)
     private List<Following> followings = new ArrayList<>();

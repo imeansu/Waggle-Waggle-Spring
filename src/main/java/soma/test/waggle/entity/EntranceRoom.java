@@ -1,8 +1,6 @@
 package soma.test.waggle.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import soma.test.waggle.type.OnStatusType;
 
 import javax.persistence.*;
@@ -12,6 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EntranceRoom {
 
     @Id @GeneratedValue
@@ -29,6 +29,7 @@ public class EntranceRoom {
     private Member member;
 
     @NotNull
+    @Enumerated(value = EnumType.STRING)
     private OnStatusType isLast;
 
     private LocalDateTime joinTime;

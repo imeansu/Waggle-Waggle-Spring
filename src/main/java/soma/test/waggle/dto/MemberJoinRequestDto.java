@@ -33,7 +33,7 @@ public class MemberJoinRequestDto {
     private AvatarType avatar;
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
-    private EntranceRoom entranceRoom;
+//    private EntranceRoom entranceRoom;
     private FriendshipType friendship;
 
     private List<String> interests;
@@ -48,7 +48,7 @@ public class MemberJoinRequestDto {
                 .avatar(member.getAvatarType())
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
-                .entranceRoom(member.getEntranceRoom())
+//                .entranceRoom(member.getEntranceRoom())
                 .build();
     }
 
@@ -62,7 +62,7 @@ public class MemberJoinRequestDto {
                 .avatar(this.getAvatar())
                 .onlineStatus(this.getOnlineStatus())
                 .entranceStatus(this.getEntranceStatus())
-                .entranceRoom(this.getEntranceRoom())
+//                .entranceRoom(this.getEntranceRoom())
                 .interests(this.getInterests())
                 .build();
     }
