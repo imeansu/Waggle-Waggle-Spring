@@ -31,7 +31,7 @@ public class MemberController {
     /**
      * 토큰 인증 정보를 바탕으로 회원 정보 수정
      * */
-    @PutMapping("/edit-member")
+    @PatchMapping("/member-info")
     public ResponseEntity<Object> editMemberInfo(@RequestBody MemberInfoDto memberInfoDto){
         return ResponseEntity.ok(memberService.putMemberInfo(memberInfoDto));
     }
