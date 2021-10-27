@@ -31,6 +31,7 @@ public class NotificationController {
 
     private final ProduceService produceService;
     // test 용  test////
+    //
     @GetMapping("/pub")
     public ResponseEntity<Object> test(){
         produceService.produceMessage(new TopicRequestMessage(Arrays.asList("dsf"), Arrays.asList("1")));
