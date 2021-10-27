@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/auth/**").permitAll()
             .antMatchers("/world/**").permitAll()    // test permitAll
-            .antMatchers("/notification/**").permitAll()    // test permitAll
+//            .antMatchers("/notification/**").permitAll()    // test permitAll
             .antMatchers("/member/basics/**").permitAll()   // 회원가입 관련 기본 정보 permitAll
             .antMatchers("/").permitAll()                   // elb health check
             .anyRequest().authenticated()       // 나머지 API 는 전부 인증 필요

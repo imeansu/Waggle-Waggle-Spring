@@ -7,6 +7,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import soma.test.waggle.redis.entity.TopicRequestMessage;
 import soma.test.waggle.service.NotificationServiceImpl;
 import soma.test.waggle.service.ProduceService;
+import soma.test.waggle.util.SecurityUtil;
 
 import java.util.Arrays;
 
@@ -22,9 +23,9 @@ public class NotificationController {
     * 재연결 요청시
     * sse 연결을 수행
     * */
-    @GetMapping(value = "/subscribe/{memberId}", produces = "text/event-stream")
-    public SseEmitter subscribe(@PathVariable String memberId,
-                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId ){
+    @GetMapping(value = "/subscribe", produces = "text/event-stream")
+    public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId ){
+        String memberId = Long.toString(SecurityUtil.getCurrentMemberId());
         return notificationServiceImpl.subscribe(memberId, lastEventId);
     }
 
