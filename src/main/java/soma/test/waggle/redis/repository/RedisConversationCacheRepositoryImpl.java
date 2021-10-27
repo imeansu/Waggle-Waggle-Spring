@@ -1,4 +1,4 @@
-package soma.test.waggle.redis.service;
+package soma.test.waggle.redis.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
