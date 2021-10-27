@@ -86,9 +86,7 @@ public class MemberService {
         if( memberInfoDto.getEntranceStatus() != null){
             member.setEntranceStatus(memberInfoDto.getEntranceStatus());
         }
-//        if( memberInfoDto.getEntranceRoom() != null){
-//            member.setEntranceRoom(memberInfoDto.getEntranceRoom());
-//        }
+
         if( memberInfoDto.getInterests() != null){
             // 새로운 관심사
             List<InterestMember> newInterestMemberList = toInterestMemberEntityList(memberInfoDto.getInterests());
