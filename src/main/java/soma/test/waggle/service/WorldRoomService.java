@@ -14,6 +14,7 @@ import soma.test.waggle.entity.*;
 import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.repository.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -110,8 +111,9 @@ public class WorldRoomService {
      * 1. entranceRoom isLast = N
      * 2. entranceRoom leaveTime = now()
      * 3. worldRoom 사람 수 -1
-     * 3. 멤버 OnState => N
-     * 4. cache 대화 관리 제거
+     * 4. 멤버 OnState => N
+     * 5. 대화 시간 저장
+     * 6. cache 대화 관리 제거
      * */
     public PhotonResponseDto pathLeave(PhotonMemberDto photonMemberDto) {
 
@@ -124,7 +126,12 @@ public class WorldRoomService {
         member.setEntranceStatus(OnStatusType.N);
         worldRoom.setPeople(worldRoom.getPeople()-1);
 
-        // member가 방을 나갔으므로 대화 관리 제거
+        // 대화 시간 저장 : 단위 sec
+        Duration duration = Duration.between(entranceRoom.getJoinTime(), entranceRoom.getLeaveTime());
+        Long seconds = duration.getSeconds();
+        member.setConversationTime(member.getConversationTime() + seconds);
+
+        // member 가 방을 나갔으므로 대화 관리 제거
         conversationService.leaveRoom(photonMemberDto.getMemberId());
 
         return new PhotonResponseDto(0, "OK");

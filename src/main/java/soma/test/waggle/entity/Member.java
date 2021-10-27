@@ -66,6 +66,8 @@ public class Member implements Serializable {
     @Enumerated(EnumType.STRING)
     private AuthorityType authorityType;
 
+    private Long conversationTime = 0L;
+
     public void addInterestMember(InterestMember interestMember){
         this.interests.add(interestMember);
     }

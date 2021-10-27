@@ -25,7 +25,7 @@ public class MemberController {
      * */
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberInfoDto> findMemberById(@PathVariable Long memberId){
-        return ResponseEntity.ok(memberService.getMemberInfo(memberId));
+        return ResponseEntity.ok(memberService.getMemberInfoWithFriendship(memberId));
     }
 
     /**
@@ -70,7 +70,7 @@ public class MemberController {
     }
 
     /**
-     * member-id => 토큰 주인이 언팔로우할 멤버
+     * member-id => 이 멤버가 누구를 팔로우 하고 있는지 조회
      * */
     @GetMapping("/{memberId}/following")
     public ResponseEntity<MemberListDto> following(@PathVariable Long memberId){

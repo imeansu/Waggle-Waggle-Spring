@@ -52,9 +52,9 @@ public class MemberService {
      * Throws : NullPointerException - 멤버가 존재하지 않을 때 (해당 memberId 없음)
      * */
     @Transactional(readOnly = true)
-    public MemberInfoDto getMemberInfo(Long memberId) {
+    public MemberInfoDto getMemberInfoWithFriendship(Long memberId) {
         try{
-            return getMemberInfo(memberRepository.find(memberId));
+            return getMemberInfoWithFriendship(memberRepository.find(memberId));
         } catch (Exception e){
             throw new MemberNotFoundException(e.getMessage());
         }
@@ -313,7 +313,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberListDto getFollowingWho(Long memberId) {
         List<MemberInfoDto> members = friendshipRepository.findFollowingWho(memberId).stream()
-                .map(this::getMemberInfo)
+                .map(this::getMemberInfoWithFriendship)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -324,7 +324,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberListDto getWhoIsFollower(Long memberId) {
         List<MemberInfoDto> members = friendshipRepository.findWhoIsFollower(memberId).stream()
-                .map(this::getMemberInfo)
+                .map(this::getMemberInfoWithFriendship)
                 .collect(Collectors.toList());
         return MemberListDto.builder()
                 .size(members.size())
@@ -337,7 +337,7 @@ public class MemberService {
      * Params : 정보를 조회할 Member
      * Throws : NullPointerException - 멤버가 존재하지 않을 때 (해당 memberId 없음)
      * */
-    public MemberInfoDto getMemberInfo(Member member) throws NullPointerException{
+    public MemberInfoDto getMemberInfoWithFriendship(Member member) throws NullPointerException{
         FriendshipType friendship;
         Member reqMember = memberRepository.find(SecurityUtil.getCurrentMemberId());
 

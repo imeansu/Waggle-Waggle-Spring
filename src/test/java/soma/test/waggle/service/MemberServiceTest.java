@@ -267,7 +267,7 @@ public class MemberServiceTest {
         em.clear();
 
         // when
-        MemberInfoDto findMember = memberService.getMemberInfo(member2.getId());
+        MemberInfoDto findMember = memberService.getMemberInfoWithFriendship(member2.getId());
 
         // then
         assertThat(findMember.getFriendship()).isEqualTo(FriendshipType.FOLLOW);
@@ -418,7 +418,7 @@ public class MemberServiceTest {
         // 추가 정보 입력
         memberService.putMemberInfo(memberJoinRequestDto.toMemberInfoRequestDto());
 
-        MemberInfoDto memberInfo = memberService.getMemberInfo(firebaseResponseDto.getMemberId());
+        MemberInfoDto memberInfo = memberService.getMemberInfoWithFriendship(firebaseResponseDto.getMemberId());
         System.out.println("memberInfo = " + memberInfo.getInterests());
         assertThat(memberInfo.getInterests().contains("K-POP")).isEqualTo(true);
 
@@ -434,7 +434,7 @@ public class MemberServiceTest {
         Long memberId = findMemberM.getId();
         System.out.println("memberId = " + memberId);
         securityContext(Long.toString(memberId));
-        MemberInfoDto findMember = memberService.getMemberInfo(memberId);
+        MemberInfoDto findMember = memberService.getMemberInfoWithFriendship(memberId);
 
         // when
         List<String> interestString = new ArrayList<>(Arrays.asList("K-POP", "스포츠", "IT"));
@@ -450,7 +450,7 @@ public class MemberServiceTest {
         em.clear();
 
         // then
-        MemberInfoDto dto = memberService.getMemberInfo(memberId);
+        MemberInfoDto dto = memberService.getMemberInfoWithFriendship(memberId);
         System.out.println(dto.toString());
         for (String interest : dto.getInterests()) {
             System.out.println("interest " + interest);

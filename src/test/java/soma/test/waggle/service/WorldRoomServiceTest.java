@@ -1,5 +1,6 @@
 package soma.test.waggle.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@Slf4j
 public class WorldRoomServiceTest {
 
     @Autowired WorldRoomService worldRoomService;
@@ -108,7 +110,7 @@ public class WorldRoomServiceTest {
 
 
     @Test
-    public void pathJoinAndLeave(){
+    public void pathJoinAndLeave() throws InterruptedException {
         // given
         WorldRoom worldRoom = getWorldRoom("test123", OnStatusType.Y, Arrays.asList("한국어", "영어", "언어교환", "free talking"), 3, WorldMapType.GWANGHWAMUN);
         worldRoom.setOnStatus(OnStatusType.Y);
@@ -128,6 +130,7 @@ public class WorldRoomServiceTest {
         assertThat(worldRoom.getPeople()).isEqualTo(4);
         assertThat(conversationCacheRepository.getAdjacentNode(member.getId()).size()).isEqualTo(1);
 
+        Thread.sleep(1000L);
         // when
         worldRoomService.pathLeave(new PhotonMemberDto(worldRoom.getId(), member.getId()));
 
@@ -136,6 +139,8 @@ public class WorldRoomServiceTest {
         assertThat(member.getEntranceStatus()).isEqualTo(OnStatusType.N);
         assertThat(worldRoom.getPeople()).isEqualTo(3);
         assertThat(conversationCacheRepository.hasGraphKey(member.getId())).isEqualTo(false);
+        log.info("member.getConversationTime() = {}", member.getConversationTime());
+        assertThat(member.getConversationTime() > 0).isEqualTo(true);
 
     }
 

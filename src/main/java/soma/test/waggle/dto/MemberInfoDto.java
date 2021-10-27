@@ -32,6 +32,7 @@ public class MemberInfoDto {
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
     private WorldRoomResponseDto worldRoomResponseDto;
+//    private Long conversationTime;
     private FriendshipType friendship;
     private List<String> interests;
 
