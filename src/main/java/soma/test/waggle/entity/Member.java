@@ -53,7 +53,7 @@ public class Member implements Serializable {
     private OnStatusType entranceStatus;
 
     @OneToMany(mappedBy = "member")
-    private List<EntranceRoom> entranceRooms;
+    private List<EntranceRoom> entranceRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "followingMember", cascade = CascadeType.ALL)
     private List<Following> followings = new ArrayList<>();
