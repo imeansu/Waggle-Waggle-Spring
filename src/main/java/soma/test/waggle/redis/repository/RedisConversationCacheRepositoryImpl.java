@@ -27,7 +27,7 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
     private SetOperations<String, Long> setOperations;
     private static final String KEY_CONVERSATION_GRAPH_MEMBERID = "conversation:graph:memberId";
 
-    // graph set 과 sentence list 의 캐시 유효시간
+    // graph set 과 sentence list 의 캐시 유효시간 600L = 10분
     private static final Long DURATION_OF_SECONDS = 600L;
 
 
