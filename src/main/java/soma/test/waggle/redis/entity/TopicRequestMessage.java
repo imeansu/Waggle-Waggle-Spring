@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class TopicRequestMessage implements Serializable {
-    private String conversationId;
+//    private String conversationId;
     private List<String> sentences;
     private List<String> members;
 }

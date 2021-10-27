@@ -32,7 +32,7 @@ public class NotificationServiceImpl implements NotificationService{
         String id = memberId;//Long.toString(memberId);
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 
-        System.out.println("subscribe: emitter = " + emitter);
+        log.info("subscribe: emitter = {}", emitter);
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
         emitter.onTimeout(() -> emitterRepository.deleteById(id));
