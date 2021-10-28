@@ -31,7 +31,7 @@ public class MemberInfoDto {
     private AvatarType avatar;
     private OnStatusType onlineStatus;
     private OnStatusType entranceStatus;
-    private WorldRoomResponseDto worldRoomResponseDto;
+    private WorldRoomResponseDto worldRoomInfo;
     private Long conversationTime;
     private FriendshipType friendship;
     private List<String> interests;
@@ -52,7 +52,7 @@ public class MemberInfoDto {
                 .onlineStatus(member.getOnlineStatus())
                 .entranceStatus(member.getEntranceStatus())
                 .conversationTime(member.getConversationTime())
-                .worldRoomResponseDto(currentER.size() == 0 ? null : WorldRoomResponseDto.of(currentER.get(0).getWorldRoom()))
+                .worldRoomInfo(currentER.size() == 0 ? null : WorldRoomResponseDto.of(currentER.get(0).getWorldRoom()))
                 .interests(member.getInterests().stream()
                         .map(interestMember -> interestMember.getInterest().getSubject())
                         .collect(Collectors.toList()))
