@@ -119,18 +119,21 @@ public class InitDb {
                 InterestMember interestMember2 = new InterestMember();
                 interestMember1.setInterest(interestList.get(i%6));
                 interestMember1.setMember(member);
-                em.persist(member);
                 em.persist(interestMember1);
                 interestMember2.setInterest(interestList.get((i+1)%6));
                 interestMember2.setMember(member);
                 em.persist(interestMember2);
-
-                EntranceRoom entranceRoom = EntranceRoom.builder()
-                        .member(members.get(i))
-                        .worldRoom(worldRooms.get(i%4))
-                        .isLast(OnStatusType.Y)
-                        .build();
-                em.persist(entranceRoom);
+                em.persist(member);
+                if (i%4 != 1) {
+                    member.setEntranceStatus(OnStatusType.Y);
+                    EntranceRoom entranceRoom = EntranceRoom.builder()
+                            .member(members.get(i))
+                            .worldRoom(worldRooms.get(i % 4))
+                            .isLast(OnStatusType.Y)
+                            .build();
+                    em.persist(entranceRoom);
+                }
+                em.persist(member);
             }
 
         }
