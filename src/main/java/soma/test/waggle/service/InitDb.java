@@ -124,6 +124,9 @@ public class InitDb {
                 interestMember2.setMember(member);
                 em.persist(interestMember2);
                 em.persist(member);
+                if (i%4 == 0){
+                    member.setConversationTime(Long.valueOf(60*i + i%3*31));
+                }
                 if (i%4 != 1) {
                     member.setEntranceStatus(OnStatusType.Y);
                     EntranceRoom entranceRoom = EntranceRoom.builder()
