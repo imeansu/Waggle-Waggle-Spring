@@ -25,6 +25,7 @@ import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.Member;
 import soma.test.waggle.entity.WorldRoom;
+import soma.test.waggle.error.exception.PeopleOverLimitException;
 import soma.test.waggle.repository.*;
 import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.type.WorldMapType;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SpringBootTest
@@ -141,6 +143,26 @@ public class WorldRoomServiceTest {
         assertThat(conversationCacheRepository.hasGraphKey(member.getId())).isEqualTo(false);
         log.info("member.getConversationTime() = {}", member.getConversationTime());
         assertThat(member.getConversationTime() > 0).isEqualTo(true);
+
+    }
+
+    @Test
+    public void 월드룸_인원제한_초과시(){
+        // given
+        WorldRoom worldRoom = getWorldRoom("test123", OnStatusType.Y, Arrays.asList("한국어", "영어", "언어교환", "free talking"), 3, WorldMapType.GWANGHWAMUN);
+        worldRoom.setOnStatus(OnStatusType.Y);
+        worldRoom.setPeople(20);
+        em.persist(worldRoom);
+
+        Member member = createMember("minsu", "dgxc@vkdl.com");
+        em.persist(member);
+
+        securityContext(Long.toString(member.getId()));
+
+        // when, then
+        Assertions.assertThrows(PeopleOverLimitException.class, () ->
+                worldRoomService.pathJoin(new PhotonMemberDto(worldRoom.getId(), member.getId()))
+        );
 
     }
 

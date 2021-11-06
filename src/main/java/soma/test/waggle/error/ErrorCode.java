@@ -21,7 +21,8 @@ public enum ErrorCode {
     DUPLICATED_REQUEST_EXCEPTION(400, "M002", "Request has done before"),
     BLOCKED_MEMBER(400, "M003", "Blocked Member"),
     // WorldRoom
-    WORLDROOM_NOT_FOUND(404, "W001", "WorldRoom Not Found")
+    WORLDROOM_NOT_FOUND(404, "W001", "WorldRoom Not Found"),
+    THE_NUMBER_OF_PEOPLE_OVER_LIMIT(401, "W001", "The number of people over limit")
 
     ;
 

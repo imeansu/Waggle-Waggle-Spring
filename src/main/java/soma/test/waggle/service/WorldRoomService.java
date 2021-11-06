@@ -11,6 +11,8 @@ import soma.test.waggle.dto.photon.PhotonMemberDto;
 import soma.test.waggle.dto.photon.PhotonResponseDto;
 import soma.test.waggle.dto.photon.PhotonRoomIdDto;
 import soma.test.waggle.entity.*;
+import soma.test.waggle.error.ErrorCode;
+import soma.test.waggle.error.exception.PeopleOverLimitException;
 import soma.test.waggle.type.OnStatusType;
 import soma.test.waggle.repository.*;
 
@@ -31,6 +33,8 @@ public class WorldRoomService {
     private final ConversationRepositoty conversationRepositoty;
     private final SentenceRepository sentenceRepository;
     private final ConversationService conversationService;
+
+    private static final int PEOPLE_LIMIT = 20;
 
     @Transactional(readOnly = true)
     public WorldRoomResponseDto getWorldRoomInfo(Long worldRoomId) {
@@ -84,6 +88,11 @@ public class WorldRoomService {
         // 멤버와 worldRoom 을 가져온다
         Member member = memberRepository.find(photonMemberDto.getMemberId());
         WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getRoomId());
+
+        // worldRoom 인원 제한 초과시 exception
+        if (worldRoom.getPeople() >= PEOPLE_LIMIT){
+            throw new PeopleOverLimitException(ErrorCode.THE_NUMBER_OF_PEOPLE_OVER_LIMIT);
+        }
 
         // entranceRoom 생성 및 저장
         EntranceRoom entranceRoom = EntranceRoom
