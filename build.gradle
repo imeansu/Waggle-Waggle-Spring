@@ -48,6 +48,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	// mock test final possible
 	testImplementation 'org.mockito:mockito-inline'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// Could not write JSON: Java 8 date/time type `java.time.LocalDateTime`
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
