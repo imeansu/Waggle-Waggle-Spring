@@ -37,7 +37,7 @@
 
 - 플로우 차트
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5181e3a1-045a-44d3-8019-1bf4e48de128/Untitled.png)
+    ![Untitled](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F5181e3a1-045a-44d3-8019-1bf4e48de128%2FUntitled.png?table=block&id=0acb975c-ce4f-450f-8c5b-3dde82bf72a3&spaceId=3ff3cc55-be4f-4375-ab1b-692684f19695&width=2000&userId=cf16c311-461d-4956-8b1a-92572df9e58c&cache=v2)
     
 
 ## 3. 백엔드 아키텍쳐
