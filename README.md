@@ -5,8 +5,6 @@
 3. [백엔드 아키텍쳐](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
 4. [ERD](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
 5. [핵심 기능 구현 방법](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-6. [중간 회고](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-7. [프로젝트 이외 개인 영역](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
 
 ### 🔗 Github
 
