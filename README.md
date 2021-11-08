@@ -1,10 +1,10 @@
 ### 목차
 
-1. [서비스 및 핵심 기능 설명](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-2. [플로우 차트](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-3. [백엔드 아키텍쳐](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-4. [ERD](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
-5. [핵심 기능 구현 방법](https://www.notion.so/d879e319b9d942118936261b8ef5ff1d)
+1. 서비스 및 핵심 기능 설명
+2. 플로우 차트
+3. 백엔드 아키텍쳐
+4. ERD
+5. 핵심 기능 구현 방법
 
 ### 🔗 Github
 
