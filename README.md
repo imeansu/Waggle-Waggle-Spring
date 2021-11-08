@@ -44,14 +44,14 @@
 
 - 아키텍쳐
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/85a02b40-1eba-4eb7-8d5b-cf04900308c0/Untitled.png)
+    ![Untitled](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F85a02b40-1eba-4eb7-8d5b-cf04900308c0%2FUntitled.png?table=block&id=4137a135-209a-4702-843f-d9e37ed79121&spaceId=3ff3cc55-be4f-4375-ab1b-692684f19695&width=2000&userId=cf16c311-461d-4956-8b1a-92572df9e58c&cache=v2)
     
 
 ## 4. ERD
 
 ---
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dd816ad6-3af4-47d0-a3b5-58ef24ebd348/Untitled.png)
+![Untitled](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fdd816ad6-3af4-47d0-a3b5-58ef24ebd348%2FUntitled.png?table=block&id=058d593b-3d40-44eb-afdb-59957b8212f8&spaceId=3ff3cc55-be4f-4375-ab1b-692684f19695&width=2000&userId=cf16c311-461d-4956-8b1a-92572df9e58c&cache=v2)
 
 - 스키마 설명
 1. `Member`
