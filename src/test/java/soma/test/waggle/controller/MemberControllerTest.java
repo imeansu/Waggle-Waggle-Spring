@@ -37,7 +37,7 @@ public class MemberControllerTest {
     @MockBean private MemberService memberService;
 
     @WithMockUser(username = "1")
-    @Test
+//    @Test
     public void 팔로우_멤버_조회() throws Exception {
         // given
         MemberListDto memberListDto = MemberListDto.builder()

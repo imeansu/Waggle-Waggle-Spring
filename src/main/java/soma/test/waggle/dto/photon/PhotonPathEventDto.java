@@ -10,8 +10,8 @@ import soma.test.waggle.dto.PhotonMemberInOutDto;
 @ToString
 public class PhotonPathEventDto {
 
-    private Long roomId;
-    private Long memberId;
+    private Long GameId;
+    private Long UserId;
     private String eventName;
 
     private String sentence;
@@ -23,8 +23,8 @@ public class PhotonPathEventDto {
 
     public PhotonConversationDto toConversation() {
         return PhotonConversationDto.builder()
-                .memberId(this.memberId)
-                .roomId(this.roomId)
+                .memberId(this.UserId)
+                .roomId(this.GameId)
                 .sentence(this.sentence)
                 .build();
     }

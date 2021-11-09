@@ -63,7 +63,7 @@ public class WorldRoomService {
      * close 방식에 대해서 Unity 와 논의 후 후속 처리 추가 필요
      * */
     public PhotonResponseDto pathCreateOrClose(PhotonRoomIdDto photonRoomIdDto, OnStatusType onStatusType) {
-        Optional<WorldRoom> findRoom = worldRoomRepository.findById(photonRoomIdDto.getRoomId());
+        Optional<WorldRoom> findRoom = worldRoomRepository.findById(photonRoomIdDto.getGameId());
         if (findRoom.isEmpty()) {
             return new PhotonResponseDto(1, "No Room");
         } else {
@@ -86,8 +86,8 @@ public class WorldRoomService {
     public PhotonResponseDto pathJoin(PhotonMemberDto photonMemberDto) {
 
         // 멤버와 worldRoom 을 가져온다
-        Member member = memberRepository.find(photonMemberDto.getMemberId());
-        WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getRoomId());
+        Member member = memberRepository.find(photonMemberDto.getUserId());
+        WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getGameId());
 
         // worldRoom 인원 제한 초과시 exception
         if (worldRoom.getPeople() >= PEOPLE_LIMIT){
@@ -110,7 +110,7 @@ public class WorldRoomService {
         member.setEntranceStatus(OnStatusType.Y);
 
         // member 가 방에 입장하였으므로 대화 관리(내 대화를 듣고 있는 사람, 토픽 추출을 위한 대화 set 모음) 시작
-        conversationService.joinRoom(photonMemberDto.getMemberId());
+        conversationService.joinRoom(photonMemberDto.getUserId());
 
         return new PhotonResponseDto(0, "OK");
     }
@@ -126,9 +126,9 @@ public class WorldRoomService {
      * */
     public PhotonResponseDto pathLeave(PhotonMemberDto photonMemberDto) {
 
-        Member member = memberRepository.find(photonMemberDto.getMemberId());
-        WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getRoomId());
-        EntranceRoom entranceRoom = entranceRoomRepository.findByMemberId(photonMemberDto.getMemberId());
+        Member member = memberRepository.find(photonMemberDto.getUserId());
+        WorldRoom worldRoom = worldRoomRepository.find(photonMemberDto.getGameId());
+        EntranceRoom entranceRoom = entranceRoomRepository.findByMemberId(photonMemberDto.getUserId());
 
         entranceRoom.setIsLast(OnStatusType.N);
         entranceRoom.setLeaveTime(LocalDateTime.now());
@@ -141,7 +141,7 @@ public class WorldRoomService {
         member.setConversationTime(member.getConversationTime() + seconds);
 
         // member 가 방을 나갔으므로 대화 관리 제거
-        conversationService.leaveRoom(photonMemberDto.getMemberId());
+        conversationService.leaveRoom(photonMemberDto.getUserId());
 
         return new PhotonResponseDto(0, "OK");
     }

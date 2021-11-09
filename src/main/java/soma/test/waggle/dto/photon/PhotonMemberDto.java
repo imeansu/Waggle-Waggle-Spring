@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PhotonMemberDto {
 
-    private Long roomId;
-    private Long memberId;
+    private Long GameId;
+    private Long UserId;
 }
