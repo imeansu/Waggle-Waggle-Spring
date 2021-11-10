@@ -13,9 +13,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import soma.test.waggle.dto.MemberInfoDto;
 import soma.test.waggle.dto.MemberListDto;
 import soma.test.waggle.jwt.TokenProvider;
 import soma.test.waggle.service.MemberService;
+import soma.test.waggle.type.FriendshipType;
+import soma.test.waggle.type.OnStatusType;
 
 import java.util.ArrayList;
 
@@ -26,10 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@WebMvcTest()
+@WebMvcTest(MemberController.class)
 @Import(MemberController.class)
 @ContextConfiguration(classes = {TokenProvider.class})
-@AutoConfigureMockMvc
 public class MemberControllerTest {
 
     @Autowired MockMvc mvc;
@@ -52,7 +54,7 @@ public class MemberControllerTest {
 
         // when
         final ResultActions actions = mvc.perform(get("/member/1/follower")
-                .header("Authorization", jwt)
+//                .header("Authorization", jwt)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print());
 
@@ -62,5 +64,33 @@ public class MemberControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size", is(0)))
                 .andDo(print());
+    }
+
+    @WithMockUser(username = "1")
+    @Test
+    public void memberInfo() throws Exception {
+        // given
+        MemberInfoDto memberInfoDto = MemberInfoDto.builder()
+                .id(1L)
+                .onlineStatus(OnStatusType.Y)
+                .friendship(FriendshipType.NONE)
+                .build();
+
+        given(memberService.getMemberInfoWithFriendship(1L))
+                .willReturn(memberInfoDto);
+
+        // when
+        final ResultActions actions = mvc.perform(get("/member/1"))
+                .andDo(print());
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.onlineStatus", is("Y")))
+                .andExpect(jsonPath("$.friendship", is("NONE")))
+                .andDo(print());
+
     }
 }
