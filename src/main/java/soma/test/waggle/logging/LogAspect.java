@@ -32,7 +32,7 @@ public class LogAspect {
      *      RESPONSE | URI: {request uri} | Method: {HTTP Method} | {Controller.method} = {return result} ({걸린 시간}ms)
      * */
 //    @Around("execution(* soma.test.waggle.controller..*.*(..)")
-    @Around("within(soma.test.waggle.controller..*) && !bean(authController)")
+    @Around("within(soma.test.waggle.controller..*) && !bean(authController) && !bean(baseController)")
     public Object controllerLogging(ProceedingJoinPoint pjp) throws Throwable {
         Map<String, String> params = getRequestParams();
 

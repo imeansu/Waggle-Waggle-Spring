@@ -1,5 +1,6 @@
 package soma.test.waggle.dto.photon;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import soma.test.waggle.dto.PhotonMemberInOutDto;
 
@@ -10,7 +11,9 @@ import soma.test.waggle.dto.PhotonMemberInOutDto;
 @ToString
 public class PhotonPathEventDto {
 
+    @JsonProperty("GameId")
     private Long GameId;
+    @JsonProperty("UserId")
     private Long UserId;
     private String eventName;
 
