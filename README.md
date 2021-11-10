@@ -42,7 +42,7 @@
 
 - 아키텍쳐
     
-    ![Untitled](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F85a02b40-1eba-4eb7-8d5b-cf04900308c0%2FUntitled.png?table=block&id=4137a135-209a-4702-843f-d9e37ed79121&spaceId=3ff3cc55-be4f-4375-ab1b-692684f19695&width=2000&userId=cf16c311-461d-4956-8b1a-92572df9e58c&cache=v2)
+    ![Untitled](https://s3.us-west-2.amazonaws.com/secure.notion-static.com/eda31d94-2734-4d66-aafc-0272896845bd/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20211110%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20211110T122415Z&X-Amz-Expires=86400&X-Amz-Signature=6e1f9a9fd1d06c86377b1f5ce74906a945c08e675f8aac94910b850268e567bb&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22)
     
 
 ## 4. ERD
