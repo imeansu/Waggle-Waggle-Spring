@@ -92,9 +92,11 @@ public class WorldController {
             case "Sentence":
                 PhotonConversationDto photonConversationDto = photonPathEventDto.toConversation();
                 responseEntity = ResponseEntity.ok(worldRoomService.pathEvent(photonConversationDto));
+                break;
             case "MemberInOut":
                 PhotonMemberInOutDto photonMemberInOutDto = photonPathEventDto.toMemberInOut();
                 responseEntity = ResponseEntity.ok(worldRoomService.pathEvent(photonMemberInOutDto));
+                break;
         }
         return responseEntity;
     }
