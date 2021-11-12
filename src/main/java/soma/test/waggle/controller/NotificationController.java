@@ -33,7 +33,7 @@ public class NotificationController {
     //
     @GetMapping("/pub")
     public ResponseEntity<Object> test(){
-        produceService.produceMessage(new TopicRequestMessage(Arrays.asList("dsf"), Arrays.asList("1")));
+        produceService.produceMessage(new TopicRequestMessage(Arrays.asList("The fact that squid game most likely took inspiration from WWH’s jacket at 5:00 is epic lol", "How is this squid cooked prior to preparation", "Cutting squid so perfectly thin takes professional skills to achieve.  Great job"), Arrays.asList("1")));
         return ResponseEntity.ok("success");
     }
 
