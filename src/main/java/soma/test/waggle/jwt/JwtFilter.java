@@ -1,6 +1,7 @@
 package soma.test.waggle.jwt;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +19,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -40,9 +43,18 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1. Request header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
 
+        // 임시 코드
+        byte[] bytes;
+        String requestBody;
+        InputStream in = request.getInputStream();
+//        bytes = IOUtils.toByteArray(in);
+        bytes = in.readAllBytes();
+        requestBody = new String(bytes);
+        log.info("http request : {}", requestBody);
+
         // 1-2. Photon Webhook 제외
         if (request.getHeader("AppId") == photonAppId){
-            System.out.println("=============pass============");
+            log.info("=============pass============");
             Collection<? extends GrantedAuthority> authorities =
                     Arrays.stream("ROLE_USER".split(","))
                             .map(SimpleGrantedAuthority::new)
