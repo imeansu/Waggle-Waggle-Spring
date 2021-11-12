@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.support.HttpRequestWrapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -42,15 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 1. Request header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
-
-        // 임시 코드
-        byte[] bytes;
-        String requestBody;
-        InputStream in = request.getInputStream();
-//        bytes = IOUtils.toByteArray(in);
-        bytes = in.readAllBytes();
-        requestBody = new String(bytes);
-        log.info("http request : {}", requestBody);
 
         // 1-2. Photon Webhook 제외
         if (request.getHeader("AppId") == photonAppId){
