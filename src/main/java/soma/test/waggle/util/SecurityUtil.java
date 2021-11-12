@@ -20,7 +20,11 @@ public class SecurityUtil {
 
         if (authentication.getName().startsWith("ano")){
             return -1000L;
-        };
+        }
+
+        if (authentication.getName().startsWith("photon")){
+            return -2000L;
+        }
 
         return Long.parseLong(authentication.getName());
     }

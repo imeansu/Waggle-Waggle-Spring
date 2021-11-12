@@ -47,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwt = resolveToken(request);
 
         // 1-2. Photon Webhook 제외
-        if (request.getHeader("AppId") == photonAppId){
+        if (request.getHeader("AppId").equals(photonAppId)){
             log.info("=============pass============");
             Collection<? extends GrantedAuthority> authorities =
                     Arrays.stream("ROLE_USER".split(","))
