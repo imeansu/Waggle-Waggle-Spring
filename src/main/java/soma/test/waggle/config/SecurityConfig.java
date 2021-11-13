@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .antMatchers("/auth/**").permitAll()
-//            .antMatchers("/world/**").permitAll()    // test permitAll
+            .antMatchers("/world/**").permitAll()    // test permitAll
 //            .antMatchers("/notification/**").permitAll()    // test permitAll
             .antMatchers("/member/basics/**").permitAll()   // 회원가입 관련 기본 정보 permitAll
             .antMatchers("/").permitAll()                   // elb health check
