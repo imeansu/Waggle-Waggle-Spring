@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import soma.test.waggle.dto.TopicTestDto;
 import soma.test.waggle.redis.entity.TopicRequestMessage;
 import soma.test.waggle.service.NotificationServiceImpl;
 import soma.test.waggle.service.ProduceService;
@@ -32,8 +33,8 @@ public class NotificationController {
     // test 용  test////
     //
     @GetMapping("/pub")
-    public ResponseEntity<Object> test(){
-        produceService.produceMessage(new TopicRequestMessage(Arrays.asList("The fact that squid game most likely took inspiration from WWH’s jacket at 5:00 is epic lol", "How is this squid cooked prior to preparation", "Cutting squid so perfectly thin takes professional skills to achieve.  Great job"), Arrays.asList("1")));
+    public ResponseEntity<Object> test(@RequestBody TopicTestDto topicTestDto){
+        produceService.produceMessage(new TopicRequestMessage(topicTestDto.getSentences(), topicTestDto.getMembers()));
         return ResponseEntity.ok("success");
     }
 
