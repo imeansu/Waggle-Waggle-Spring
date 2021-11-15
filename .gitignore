@@ -49,6 +49,7 @@ application-local.yml
 ### logback yml ###
 logback-spring.xml
 logback-spring-local.xml
+logback-spring-dev.xml
 
 ### firebase 키 ###
 speak-world-firebase-adminsdk-keggh-346661a91e.json

@@ -41,6 +41,7 @@ WorldRoom {
 //    @NotNull
 //    private String photon_server;
 
+    @Enumerated(value = EnumType.STRING)
     private OnStatusType onStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
