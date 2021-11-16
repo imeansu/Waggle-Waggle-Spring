@@ -55,11 +55,11 @@ public class FirebaseService {
             firebaseResponseDto.setMemberId(memberId);
             TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
             firebaseResponseDto.setToken(tokenDto);
-        }
 
-        // 임시 online 체크
-        Member member = memberRepository.find(memberId);
-        member.setOnlineStatus(OnStatusType.Y);
+            // 임시 online 체크
+            Member member = memberRepository.find(memberId);
+            member.setOnlineStatus(OnStatusType.Y);
+        }
 
         return firebaseResponseDto;
     }
