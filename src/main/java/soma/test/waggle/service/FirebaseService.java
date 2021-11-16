@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
+import soma.test.waggle.entity.Member;
 import soma.test.waggle.repository.MemberRepository;
+import soma.test.waggle.type.OnStatusType;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -54,6 +56,11 @@ public class FirebaseService {
             TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
             firebaseResponseDto.setToken(tokenDto);
         }
+
+        // 임시 online 체크
+        Member member = memberRepository.find(memberId);
+        member.setOnlineStatus(OnStatusType.Y);
+
         return firebaseResponseDto;
     }
 
