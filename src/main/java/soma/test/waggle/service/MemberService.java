@@ -10,6 +10,7 @@ import soma.test.waggle.error.exception.BlockedMemberException;
 import soma.test.waggle.error.exception.DuplicatedRequestException;
 import soma.test.waggle.error.exception.MemberNotFoundException;
 import soma.test.waggle.error.exception.WaggleWaggleException;
+import soma.test.waggle.redis.repository.RedisConversationCacheRepositoryImpl;
 import soma.test.waggle.repository.FriendshipRepository;
 import soma.test.waggle.repository.InterestMemberRepository;
 import soma.test.waggle.repository.InterestRepository;
@@ -29,6 +30,7 @@ public class MemberService {
     private final FriendshipRepository friendshipRepository;
     private final InterestRepository interestRepository;
     private final InterestMemberRepository interestMemberRepository;
+    private final RedisConversationCacheRepositoryImpl redisRepository;
 
     @Transactional(readOnly = true)
     public MemberResponseDto getMemberInfo(String email) {
@@ -149,6 +151,7 @@ public class MemberService {
         List<Long> followingMemberId = followingMembers.stream()
                 .map(dto -> dto.getId())
                 .collect(Collectors.toList());
+
         List<MemberInfoDto> onlineMembers = memberRepository.getOnlineMembers().stream()
                 .map(MemberInfoDto::of)
                 .filter(dto -> !followingMemberId.contains(dto.getId()))
@@ -159,6 +162,21 @@ public class MemberService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+        // 임시 online member 가져오기
+        List<Long> cacheOnlineMemberIds = redisRepository.getOnlineMemberIds().stream().map(Long::parseLong).collect(Collectors.toList());
+        List<MemberInfoDto> cacheOnlineMemberDtos = cacheOnlineMemberIds.stream()
+                .map(memberId -> MemberInfoDto.of(memberRepository.find(memberId)))
+                .filter(dto -> !followingMemberId.contains(dto.getId()))
+                .filter(dto -> !blockingMemberIds.contains(dto.getId()))
+                .filter(dto -> !blockedByWhoIds.contains(dto.getId()))
+                .map(dto -> {
+                    dto.setFriendship(FriendshipType.NONE);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        // 중복 제거 필요함
+        onlineMembers.addAll(cacheOnlineMemberDtos);
 
         return OnlineMemberResponseDto.builder()
                 .onlineFollowingMemberSize(followingMembers.size())

@@ -28,10 +28,10 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
-        initService.securityContext("-1000");
-        initService.basicInterestInsert();
-        initService.dbInit_worldRoom();
-        initService.dbInit_member();
+//        initService.securityContext("-1000");
+//        initService.basicInterestInsert();
+//        initService.dbInit_worldRoom();
+//        initService.dbInit_member();
     }
 
     @Transactional

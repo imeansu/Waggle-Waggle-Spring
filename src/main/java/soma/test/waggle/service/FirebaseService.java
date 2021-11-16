@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import soma.test.waggle.dto.*;
+import soma.test.waggle.redis.repository.RedisConversationCacheRepositoryImpl;
 import soma.test.waggle.repository.MemberRepository;
 
 import java.time.LocalDate;
@@ -54,7 +55,19 @@ public class FirebaseService {
             TokenDto tokenDto = authService.login(memberInfoDtoBasedOnFirebase);
             firebaseResponseDto.setToken(tokenDto);
         }
+
+        // 임시 online member 저장
+        onlineStatusSetting(Long.toString(memberId));
+
         return firebaseResponseDto;
+    }
+
+    /**
+     * 임시 online member 저장
+     * */
+    private final RedisConversationCacheRepositoryImpl redisRepository;
+    public void onlineStatusSetting(String memberId){
+        redisRepository.setOnlineStatus(memberId);
     }
 
     public boolean firebaseAuthentication(String idToken) throws FirebaseAuthException {

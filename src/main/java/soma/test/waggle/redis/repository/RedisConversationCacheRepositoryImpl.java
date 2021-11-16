@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 import soma.test.waggle.dto.photon.PhotonConversationDto;
 import soma.test.waggle.repository.ConversationCacheRepository;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,6 +32,25 @@ public class RedisConversationCacheRepositoryImpl implements ConversationCacheRe
 
     // graph set 과 sentence list 의 캐시 유효시간 600L = 10분
     private static final Long DURATION_OF_SECONDS = 600L;
+
+    /**
+     * 임시 online member 저장
+     */
+    @Resource(name = "redisTemplate")
+    ValueOperations<String, String> stringValueOperations;
+    private static final String KEY_ONLINE_STATUS_MEMBER = "online:memberId:";
+    public void setOnlineStatus(String memberId){
+        stringValueOperations.set(KEY_ONLINE_STATUS_MEMBER+memberId, memberId);
+        redisTemplate.expire(KEY_ONLINE_STATUS_MEMBER+memberId, Duration.ofSeconds(300));
+    }
+
+    public List<String> getOnlineMemberIds(){
+        List<String> memberIds = new ArrayList<String>(redisTemplate.keys(KEY_ONLINE_STATUS_MEMBER+"*"));
+        memberIds = memberIds.stream()
+                .map(key -> key.substring(16))
+                .collect(Collectors.toList());
+        return memberIds;
+    }
 
 
     @Override
