@@ -154,6 +154,7 @@ public class MemberService {
                 .filter(dto -> !followingMemberId.contains(dto.getId()))
                 .filter(dto -> !blockingMemberIds.contains(dto.getId()))
                 .filter(dto -> !blockedByWhoIds.contains(dto.getId()))
+                .filter(dto -> dto.getId() != SecurityUtil.getCurrentMemberId())
                 .map(dto -> {
                     dto.setFriendship(FriendshipType.NONE);
                     return dto;
