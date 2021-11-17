@@ -76,7 +76,7 @@ public class ConversationServiceImpl implements ConversationService{
 //                        .map((adjacentNode) -> {
 //
 //                        });
-                sendSentenceSetToRecommendation(memberId);
+//                sendSentenceSetToRecommendation(memberId);
 
             }
         }
