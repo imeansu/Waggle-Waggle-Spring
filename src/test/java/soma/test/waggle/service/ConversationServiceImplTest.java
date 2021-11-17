@@ -65,7 +65,7 @@ class ConversationServiceImplTest {
     Long memberE = 5L;
 
 
-//    @Test
+    @Test
     public void redis_삭제_테스트(){
         // given
         // test용 security context
